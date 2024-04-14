@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -64,5 +64,71 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+} */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.list-group-item.active{
+background-color: #FFFFFF !important;
+
+}
+.list-group-item.active a{
+  color: #8224E3 !important;
+}
+.list-group-item a{
+  color: #838daa !important;
+}
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(73,60,102, 0.3);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(73,60,102); 
+}
+
+.lsm{
+  color: #838daa;
+}
+.lsm.active{
+  color: #8224e3 !important;
+}
+.profile-active {
+  height: max-content;
+  background: linear-gradient(135deg, #c395f1 0%, #8224e3 75%);
+}
+.profile-active a{
+  color: #FFFFFF !important;
+}
+
+.people-card:hover{
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+@media (max-width: 1200px) {
+  .sessionLeft2_profile{
+    visibility: hidden;
   }
 }
