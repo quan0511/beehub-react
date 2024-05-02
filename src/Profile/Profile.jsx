@@ -72,8 +72,8 @@ function Profile (){
                                                     </ListGroup.Item>
                                                     <ListGroup.Item style={{width: "72px"}}  className="border-0">
                                                         <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
-                                                            <ThreeDotsVertical size={20}/>
-                                                            <span>More</span>
+                                                            <GearFill size={20}/>
+                                                            <span>Setting</span>
                                                         </a>
                                                     </ListGroup.Item>
                                                 </ListGroup>    

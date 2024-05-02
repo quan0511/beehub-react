@@ -56,7 +56,7 @@ function NavigatorBar2(){
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item >
-                            <Nav.Link href="/" className="text-nowrap">
+                            <Nav.Link href="/member/profile" className="text-nowrap">
                             <Image src="\assets\images\user\meme-6.jpg" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                             @CatTuong
                             </Nav.Link>
