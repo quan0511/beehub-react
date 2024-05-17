@@ -3,7 +3,7 @@ import { Col, Container, Image, Row } from 'react-bootstrap';
 import { CameraReelsFill, EmojiLaughing,Images} from 'react-bootstrap-icons';
 import SessionRight from '../SessionRight/SessionRight';
 import SessionLeft from '../SessionLeft/SessionLeft';
-import NavigatorBar2 from '../navigation_bar/NavigatorBar2';
+import NavigatorBar from '../navigation_bar/NavigatorBar';
 import Post from '../Post/Post';
 
 function Homepage(){
@@ -14,7 +14,7 @@ function Homepage(){
             </Col>
             <Col xl={9} className='p-0'>
               <div className='d-flex flex-column'>
-                <NavigatorBar2 />
+                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col lg={8}>

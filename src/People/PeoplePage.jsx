@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Badge, Col, Container, Form, InputGroup, Nav, Row } from "react-bootstrap"
 import SessionLeft from "../SessionLeft/SessionLeft"
-import NavigatorBar2 from "../navigation_bar/NavigatorBar2"
+import NavigatorBar from "../navigation_bar/NavigatorBar"
 import PeopleCard from "../PeopleCard/PeopleCard"
 import { Search } from "react-bootstrap-icons"
 function PeoplePage(){
@@ -134,7 +134,7 @@ function PeoplePage(){
             </Col>
             <Col xl={9} className='p-0'>
               <div className='d-flex flex-column'>
-                <NavigatorBar2 />
+                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col xl={12} className="mt-2">

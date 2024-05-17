@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SessionLeftGroup from "../SessionLeft/SessionLeftGroup";
 import {Col, Container, Image, Button, Row, Nav,Form,Table} from "react-bootstrap";
 import { Dot, GlobeAmericas, ThreeDots,Images, Eye } from "react-bootstrap-icons";
-import NavigatorBar2 from "../navigation_bar/NavigatorBar2";
+import NavigatorBar from "../navigation_bar/NavigatorBar";
 
 import GroupMedia from "./GroupMedia/GroupMedia";
 import GroupPeople from "./GroupPeople/GroupPeople";
@@ -26,7 +26,7 @@ function Group (){
     }
     return (
         <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
-            <NavigatorBar2/>
+            <NavigatorBar/>
             <Col xl={3} className="p-0 position-relative" >
              <SessionLeftGroup/>
             </Col>

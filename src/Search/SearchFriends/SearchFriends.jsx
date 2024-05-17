@@ -1,6 +1,6 @@
 import React from "react";
 import {Col, Row } from "react-bootstrap";
-import PeopleCard from "../PeopleCard/PeopleCard"
+import PeopleCard from "../../PeopleCard/PeopleCard"
 function SearchFriends () { 
     return (
         <Row xl={3} md={2}>

@@ -4,7 +4,7 @@ import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "rea
 import { useLocation } from "react-router-dom";
 import OffcanvasMessages from "../Offcanvas/OffcanvasMessages";
 
-function NavigatorBar2(){
+function NavigatorBar(){
     const location = useLocation();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -76,4 +76,4 @@ function NavigatorBar2(){
         </>
     );
 }
-export default NavigatorBar2;
+export default NavigatorBar;

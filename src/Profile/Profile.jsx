@@ -1,20 +1,49 @@
-import React from "react";
-import { Button, Col, Container, Form, Image, ListGroup, Row } from "react-bootstrap";
-import NavigatorBar2 from "../navigation_bar/NavigatorBar2";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Image, ListGroup, Nav, Row } from "react-bootstrap";
+import NavigatorBar from "../navigation_bar/NavigatorBar";
 import Panel from "../Panel/Panel";
 import { CardImage, ChatDots, ColumnsGap, GearFill, People, PersonVcard, Sliders2, ThreeDotsVertical } from "react-bootstrap-icons";
-import Post from "../Post/Post";
+
+import ProfileAbout from "./About/ProfileAbout";
+import ProfilePost from "./Posts/ProfilePost";
+import ProfileFriends from "./Friends/ProfileFriends";
+import ProfileForum from "./Forums/ProfileForum";
+import ProfilePhotos from "./Photo/ProfilePhotos";
+import ProfileSetting from "./Setting/ProfileSetting";
+
 
 function Profile (){
-    
+    const [tab, setTab] = useState('posts');
+    const handelSelectTab = (selectKey)=>{
+        console.log(selectKey);
+        setTab(selectKey);
+    }
+    const tabSession = ()=>{
+        switch(tab){
+            case "posts": 
+                return <ProfilePost/>;
+            case "friends":
+                return <ProfileFriends/>;
+            case "forums":
+                return <ProfileForum/>; 
+            case "about":
+                return <ProfileAbout />;
+            case "photos":
+                return <ProfilePhotos/>;
+            case "setting":
+                return <ProfileSetting />;
+            default:
+                return  <ProfilePost/>;
+        }
+    }
     return (
         <div className="d-flex flex-row m-0 ">
             <Panel />
-            <div className='d-flex flex-column ' style={{width: "-webkit-fill-available"}}>
-                <NavigatorBar2/>
-                <Container style={{marginTop: "50px",width: "100vw"}}>
-                    <Row >
-                        <Col xl={12} className="p-0" style={{height: "350px",width: "100vw",position: "relative"}}>
+            <div className='d-flex flex-column '>
+                <NavigatorBar/>
+                <Container style={{marginTop: "50px",width: "100vw",}}>
+                    <div >
+                        <Row className="p-0" style={{height: "350px",position: "relative"}}>
                             <Image src="\assets\images\library\arknights-bg9.png" className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
                             <div className="position-absolute"style={{top: "250px",left: "1rem",width: "90%"}} >
                                 <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow p-2">
@@ -39,105 +68,79 @@ function Profile (){
                                                 </ListGroup>
                                             </Col>
                                             <Col xl={8} className="mx-auto" >
-                                                <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-start align-items-center">
-                                                    <ListGroup.Item style={{width: "72px"}} className="border-0 profile-active">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                <Nav horizontal="md"  variant="tabs" defaultActiveKey="posts" className="my-2 flex-wrap justify-content-start align-items-center" onSelect={handelSelectTab}>
+                                                    <Nav.Item>
+                                                        <Nav.Link eventKey="posts"  style={{width: "80px"}} className="profile-active d-flex flex-column align-items-center justify-content-between text-light p-2 text-dark">
                                                             <ColumnsGap size={20}/>
                                                             <span>Posts</span>
-                                                        </a>
-                                                    </ListGroup.Item>
-                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                    <Nav.Item  >
+                                                        <Nav.Link eventKey="about"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                             <PersonVcard size={20}/>
-                                                            <span>About</span>    
-                                                        </a>
-                                                    </ListGroup.Item>
-                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                            <span>About</span>
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                    <Nav.Item>
+                                                        <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                             <People size={20}/>
                                                             <span>Friends</span>
-                                                        </a>
-                                                    </ListGroup.Item>
-                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                    <Nav.Item   >
+                                                        <Nav.Link eventKey="photos" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                             <CardImage size={20}/>
                                                             <span>Photos</span>
-                                                        </a>
-                                                    </ListGroup.Item>
-                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                    <Nav.Item  action accessKey="about">
+                                                        <Nav.Link eventKey="forums"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark" >
                                                             <ChatDots size={20}/>
                                                             <span>Forums</span>
-                                                        </a>
-                                                    </ListGroup.Item>
-                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0">
-                                                        <a href="" className="d-flex flex-column align-items-center justify-content-between text-decoration-none">
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                    <Nav.Item >
+                                                        <Nav.Link eventKey="setting" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                             <GearFill size={20}/>
                                                             <span>Setting</span>
-                                                        </a>
+                                                        </Nav.Link>
+                                                    </Nav.Item>
+                                                </Nav>
+                                                {/* <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-start align-items-center" defaultActiveKey="posts" onSelect={handelSelectTab}>
+                                                    <ListGroup.Item style={{width: "72px"}} className="border-0 profile-active d-flex flex-column align-items-center justify-content-between text-light p-2" action accessKey="posts">
+                                                        <ColumnsGap size={20}/>
+                                                        <span>Posts</span>
+                                                        
                                                     </ListGroup.Item>
-                                                </ListGroup>    
+                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0 border-0 d-flex flex-column align-items-center justify-content-between p-2" action accessKey="about">
+                                                        <PersonVcard size={20}/>
+                                                        <span>About</span>    
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0 border-0 d-flex flex-column align-items-center justify-content-between p-2" action href="profile/friends">
+                                                        <People size={20}/>
+                                                        <span>Friends</span>
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0 border-0 d-flex flex-column align-items-center justify-content-between p-2" action href="profile/photo">
+                                                        <CardImage size={20}/>
+                                                        <span>Photos</span>
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0 border-0 d-flex flex-column align-items-center justify-content-between p-2" action href="profile/forum">
+                                                        <ChatDots size={20}/>
+                                                        <span>Forums</span>
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item style={{width: "72px"}}  className="border-0 border-0 d-flex flex-column align-items-center justify-content-between p-2" action href="profile/setting">
+                                                        <GearFill size={20}/>
+                                                        <span>Setting</span>
+                                                    </ListGroup.Item>
+                                                </ListGroup>     */}
                                             </Col>
                                         </Row>
                                     </Container>
                                 </div>
                             </div>
-                        </Col>
-                        <Col xl={4} style={{width: "-webkit-fill-available",marginTop: "150px"}}>
-                            <Container fluid>
-                                <Row>
-                                    <Col xl={3} className="text-start">
-                                        <h5>My Photos <a className="ms-4 float-end text-black-50 mt-2" style={{fontSize:"14px", fontWeight: "400"}}>More</a></h5>
-                                        <hr/>
-                                        <Row className="g-1">
-                                            <Col>
-                                            <Image src="\assets\images\library\arknights-bg9.png" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                                            </Col>
-                                            <Col>
-                                            <Image src="\assets\images\library\fuxuan-10.jpg" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                                            </Col>
-                                            <Col>
-                                            <Image src="\assets\images\library\meme-1.jpg" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                                            </Col>
-                                            <Col>
-                                            <Image src="\assets\images\groups\lol.png" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                                            </Col>
-                                        </Row>
-                                    </Col>
-                                    <Col xl={6} className="me-auto ms-5">
-                                        <div className="border-1 rounded-2 border mt-2" style={{paddingTop:"10px", paddingLeft: "1px"}}>
-                                            <Form method="post" className="row pe-2">
-                                                <label className="col-1 mx-auto mb-3 col-form-label">
-                                                    <Image src="\assets\images\user\meme-6.jpg" style={{width:"50px",height: "50px"}}roundedCircle />
-                                                </label>
-                                                <div className='col-9 d-flex flex-row justify-content-center align-items-center'>
-                                                    <input type="text" className="col-11 mb-3 mx-auto form-control " style={{borderRadius: "30px", padding: "5px 20px "}} placeholder="What do you think?"/>
-                                                </div>
-                                                <div className='col-1'></div>
-                                            </Form>
-                                        </div>
-                                        <hr/>
-                                        <div className="d-flex border px-5 py-3 rounded-3">
-                                            <div>
-                                                <h5>Posts</h5>
-                                            </div>
-                                            <div className="w-50 ms-auto d-flex flex-row me-2">
-                                               <Button variant="secondary" className="me-2 ">
-                                                <Sliders2 size={20} />
-                                                <span className="ms-2">Filters</span>
-                                               </Button>
-                                               <Button variant="secondary">
-                                                <GearFill size={20}/>
-                                                <span className="ms-2">Manager Post</span>
-                                               </Button>
-                                            </div>
-                                        </div>
-                                        <Post />
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Col>
-                    </Row>
+                        </Row>
+                        {tabSession()}
+                    </div>
                 </Container>
             </div>
             

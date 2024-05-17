@@ -1,10 +1,10 @@
 import React, { useState } from "react"
-import SearchFriends from "../SearchFriends/SearchFriends"
+import SearchFriends from "./SearchFriends/SearchFriends"
 import SessionLeft from "../SessionLeft/SessionLeft"
 import { Badge, Col, Container, Nav, Row } from "react-bootstrap"
-import NavigatorBar2 from "../navigation_bar/NavigatorBar2"
-import SearchGroups from "../SearchGroups/SearchGroups"
-import SearchForums from "../SearchForums/SearchForums"
+import NavigatorBar from "../navigation_bar/NavigatorBar"
+import SearchGroups from "./SearchGroups/SearchGroups"
+import SearchForums from "./SearchForums/SearchForums"
 function Searching(){
     const [page,setPage]=useState('friend');
     const handleSelectTab = (selectedKey) => {
@@ -50,7 +50,7 @@ function Searching(){
             </Col>
             <Col xl={9} lg={10} className='p-0'>
               <div className='d-flex flex-column'>
-                <NavigatorBar2 />
+                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col xl={10} md={12} className="mt-2">
