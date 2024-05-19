@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import {
   createBrowserRouter,
@@ -6,15 +5,14 @@ import {
   Route,
   RouterProvider
 } from "react-router-dom"
-import Homepage from './Hompage/Homepage'
-import Layout from './Layout/Layout'
-import Profile from './Profile/Profile'
-import PeoplePage from './People/PeoplePage'
-import Searching from './Search/Searching'
-import Group from './Group/Group'
+import Homepage from './pages/Homepage'
+import Layout from './layouts/Layout'
+import Profile from './pages/Profile/Profile'
+import PeoplePage from './pages/PeoplePage'
+import Searching from './pages/Search/Searching'
+import Group from './pages/Group/Group'
 
 function App() {
-  const [count, setCount] = useState(0)
   const router = createBrowserRouter(createRoutesFromElements(
       <Route element={<Layout />}>
         <Route path='/' element={<Homepage/>} />
@@ -27,8 +25,8 @@ function App() {
   return (
     <>
       <div className="App" >
-      <RouterProvider router={router} />
-    </div>
+        <RouterProvider router={router} />
+      </div>
     </>
   )
 }

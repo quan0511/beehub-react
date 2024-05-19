@@ -1,0 +1,95 @@
+.h-100vh {
+    min-height: 100vh;
+}
+
+body {
+    background-color: unset;
+}
+
+.bg {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    z-index: -1;
+}
+.bg video {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: fill;
+}
+.bg .bg-backup {
+    height: 100%;
+    width: 100%;
+    background: url(https://mythemestore.com/beehive-preview/wp-content/uploads/2020/01/video-fallback.png) 50% 50%;
+    background-size: cover;
+}
+.bg .bg-overlay {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    position: absolute;
+    background-color: black;
+    opacity: .7;
+    z-index: 0;
+}
+
+.background-primary {
+    background-color: rgba(130, 36, 227, 0.8);
+}
+
+.custom-container {
+    margin: auto;
+    background-color: unset;
+    height: 100%;
+}
+@media (min-width: 621px) {
+    .custom-container {
+        max-width: 1024px;
+    }
+}
+
+.login-form {
+    margin: auto;
+}
+.login-form .form-control {
+    min-width: 100%;
+}
+
+.label-icon {
+    position: absolute;
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    background-color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.primary-button {
+    width: 100%;
+    min-height: calc(2.5rem + 2px);
+    background-image: linear-gradient(90deg, #8224e3 0, #a968ec 50%, #8224e3 100%);
+    background-size: 200%;
+    box-shadow: 0 1px 2px 0 rgba(130, 36, 227, 0.5);
+    color: #fff;
+    font-size: 14px;
+    transition: all 750ms ease;
+}
+.primary-button:hover {
+    background-position: right center;
+}
+
+.icon-wrapper {
+    width: fit-content;
+    padding: 6px 12px 12px;
+    margin: 0 auto 1rem;
+    border: 1px solid white;
+    border-radius: 12px;
+    font-size: 21px;
+}
