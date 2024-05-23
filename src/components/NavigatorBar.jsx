@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
 import { useLocation } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 
-function NavigatorBar(){
+function NavigatorBar({user, search,setSearch}){
     const location = useLocation();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
+    
     return (
-        <>
          <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
             <Container fluid >
                 
@@ -25,6 +25,7 @@ function NavigatorBar(){
                                         <Form.Control style={{borderLeft: 0}} 
                                             placeholder="Search"
                                             aria-describedby="basic-addon2"
+                                            onChange={(e)=>{let value = e.target.value;console.log(value);setSearch(value)}}
                                         />
                                     </InputGroup>
                                 </Form>
@@ -56,9 +57,17 @@ function NavigatorBar(){
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item >
-                            <Nav.Link href="/member/profile" className="text-nowrap">
-                            <Image src="\assets\images\user\meme-6.jpg" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                            @CatTuong
+                            <Nav.Link href={`/member/profile/`+user.username} className="text-nowrap">
+                            {
+                                user.image!=null? 
+                                    <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                :(
+                                    user.gender=="female"?
+                                    <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                )
+                            }
+                            {user.fullname}
                             </Nav.Link>
                         </Nav.Item>
                         {location.pathname!="/"?<Nav.Item>
@@ -73,7 +82,6 @@ function NavigatorBar(){
             </Container>
 
          </Navbar>
-        </>
     );
 }
 export default NavigatorBar;

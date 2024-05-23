@@ -1,7 +1,7 @@
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
-function ProfilePost (){
+function ProfilePost ({user}){
     return<Row>
         <Col xl={4} style={{width: "-webkit-fill-available",marginTop: "150px"}}>
             <Container fluid>
@@ -28,7 +28,13 @@ function ProfilePost (){
                         <div className="border-1 rounded-2 border mt-2" style={{paddingTop:"10px", paddingLeft: "1px"}}>
                             <Form method="post" className="row pe-2">
                                 <label className="col-1 mx-auto mb-3 col-form-label">
-                                    <Image src="\assets\images\user\meme-6.jpg" style={{width:"50px",height: "50px"}}roundedCircle />
+                                    {user.image!=null?
+                                        <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        : (user.gender=='female'?
+                                        <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px"}}roundedCircle />
+                                        :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px"}}roundedCircle />
+                                        )
+                                    }
                                 </label>
                                 <div className='col-9 d-flex flex-row justify-content-center align-items-center'>
                                     <input type="text" className="col-11 mb-3 mx-auto form-control " style={{borderRadius: "30px", padding: "5px 20px "}} placeholder="What do you think?"/>
@@ -52,7 +58,9 @@ function ProfilePost (){
                                 </Button>
                             </div>
                         </div>
-                        <Post />
+                        {
+                        user.posts.map((post)=> <Post post={post}/>)
+                        }
                     </Col>
                 </Row>
             </Container>

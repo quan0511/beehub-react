@@ -1,7 +1,7 @@
 import React from "react";
 import {Col, Row,Card, Form, InputGroup, Button } from "react-bootstrap";
 import { Search, ThreeDots, } from "react-bootstrap-icons";
-function ProfileFriends(){
+function ProfileFriends({user}){
     return (
         <Row className="mb-5">
             <Col xl={9} className="mx-auto" style={{marginTop: "150px"}}>

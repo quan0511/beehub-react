@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {Image, ListGroup } from "react-bootstrap";
 import { Briefcase, CardImage, Cart3, ChatDots, Display,  JournalBookmark, Newspaper, People, Person, Play} from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
-function SessionLeft (){
+function SessionLeft ({user}){
+    
     return (
         <div className="d-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
             <div style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", display: "block",textAlign:"center"}}>
@@ -11,18 +12,27 @@ function SessionLeft (){
                 
                 <div className="rounded-3 mx-auto px-5 py-4 shadow-sm sessionLeft2_profile" style={{width: "250px",height: "250px",backgroundColor: "#FFFFFF", marginTop: "1.2rem"}} >
                     <div className="d-flex flex-column align-items-center ">
-                        <Link to="/member/profile" className="text-decoration-none "><Image src="\assets\images\user\meme-6.jpg" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
-                        <p className="h6 mt-2 text-black" style={{fontSize: "17px"}}>Cat Tuong</p></Link>
-                        <span className="text-black-50 " style={{fontSize: "12px"}}>Member</span>
+                        <Link to={"/member/profile/"+user.username} className="text-decoration-none ">
+                            { user.image!=null?
+                                <Image src="\assets\images\user\meme-6.jpg" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                :
+                                (
+                                    user.gender == 'female'? 
+                                    <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                    :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                )
+                            }
+                        <p className="h6 mt-2 text-black" style={{fontSize: "17px"}}>{user.fullname}</p></Link>
+                        <span className="text-black-50 " style={{fontSize: "12px"}}>@{user.username}</span>
                     </div>
                     <hr/>
                     <ListGroup horizontal>
                         <ListGroup.Item className="w-50 border-0">
-                            <p className="text-center">7<span className="d-block text-black-50">Friends</span></p>
+                            <p className="text-center">{user.friend_counter}<span className="d-block text-black-50">Friends</span></p>
                             
                         </ListGroup.Item>
                         <ListGroup.Item className="w-50 border-0">
-                            <p className="text-center">22<span  className="d-block text-black-50">Groups</span></p>
+                            <p className="text-center">{user.group_counter}<span  className="d-block text-black-50">Groups</span></p>
                             
                         </ListGroup.Item>
                     </ListGroup>

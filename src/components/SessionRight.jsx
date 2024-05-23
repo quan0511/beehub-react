@@ -2,7 +2,7 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { Search, ThreeDots } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
-function SessionRight(){
+function SessionRight({friends}){
     return (
         <div className="d-flex flex-column justify-content-start align-items-start mt-5"  style={{overflowY: "scroll", overflowX: "hidden",height: "100vh", position: "fixed", width: "inherit"}}>
             <Row className="mb-2 w-100 pb-2 bg-white" style={{zIndex: "4"}}>
@@ -12,7 +12,7 @@ function SessionRight(){
                     <ThreeDots size={16}/>
                 </Col>
             </Row>
-            <ListFriend />
+            <ListFriend friends={friends} />
         </div>
     );
 }

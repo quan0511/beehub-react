@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Card, Col, Row } from "react-bootstrap";
 import { Pencil } from "react-bootstrap-icons";
 
-function ProfileAbout() {
+function ProfileAbout({biography}) {
     return (
         <Row className="mb-5">
             <Col xl={8} className="mx-auto" style={{marginTop: "150px"}}>
@@ -14,7 +14,7 @@ function ProfileAbout() {
                         </Button>
                     </Card.Header>
                     <Card.Body className="px-4">
-                    Biography Biography Biography Biography Biography Biography Biography Biography Biography 
+                    {biography}
                     </Card.Body>
                 </Card>
             </Col>

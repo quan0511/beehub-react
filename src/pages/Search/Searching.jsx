@@ -1,17 +1,21 @@
-import React, { useState } from "react"
-import { Badge, Col, Container, Nav, Row } from "react-bootstrap"
-
-import SessionLeft from "../../components/SessionLeft"
-import NavigatorBar from "../../components/NavigatorBar"
+import React, { useEffect, useState } from "react"
+import { Badge, Col, Container, Nav, Row, Spinner} from "react-bootstrap"
 
 import SearchGroups from "./SearchGroups"
-import SearchForums from "./SearchForums"
-import SearchFriends from "./SearchFriends"
-function Searching(){
-    const [page,setPage]=useState('friend');
+import SearchPeople from "./SearchPeople"
+import SearchPosts from "./SearchPost"
+import axios from "axios"
+import { ThreeDots} from "react-bootstrap-icons"
+function Searching({search, loading, setLoading}){
+    const [tab,setTab]=useState('post');
     const handleSelectTab = (selectedKey) => {
-      setPage(selectedKey);
+      setTab(selectedKey);
     };
+    const [resultOfSearch, setResultOfSearch]= useState({
+        posts: [],
+        people: [],
+        groups: []
+    });
     const handelClick=(e)=>{
         const badge= e.target.querySelector(".badge");
         const otherbadge =document.querySelectorAll('.badge');
@@ -26,60 +30,56 @@ function Searching(){
             badge.classList.toggle('bg-primary');
         }
     }
+    useEffect(()=>{
+        axios.get(`http://localhost:9001/api/user/1/search_all?search=${search}`).then((res)=>{
+            setResultOfSearch(res.data);
+        })
+    },[search])
     const section = ()=>{
         let res = <></>;
-        switch (page){
+        switch (tab){
+            case "post":
+                res = <SearchPosts posts={resultOfSearch.posts}/>
+                break;
             case "friend":
-                res = <SearchFriends/>
-                    break;
+                res = <SearchPeople people={resultOfSearch.people} />
+                break;
             case "group":
-                 res = <SearchGroups/>;
+                 res = <SearchGroups groups={resultOfSearch.groups}/>;
                 break;
-            case "forum":
-                res= <SearchForums/>;
-                break;
-            case "blog":
-                res= <><h2>Blogs</h2></>;
+            default:
+                res = <SearchPosts posts={resultOfSearch.posts}/>
                 break;
         }
         
         return res;
     }
+    
     return (
         <Row>
-            <Col xl={3} lg={2} className='p-0 d-md-none d-lg-block' >
-              <SessionLeft />
-            </Col>
-            <Col xl={9} lg={10} className='p-0'>
-              <div className='d-flex flex-column'>
-                <NavigatorBar />
-                <Container fluid className='ps-4' style={{marginTop: "60px"}}>
-                    <Row>
-                        <Col xl={10} md={12} className="mt-2">
-                            <Nav justify  variant="tabs" defaultActiveKey="friend" onSelect={handleSelectTab}>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="friend" onClick={handelClick}>Friends <Badge bg="primary">3</Badge></Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">10</Badge></Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="forum" onClick={handelClick}>Forums <Badge bg="secondary">3</Badge></Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="blog" onClick={handelClick}>Blogs <Badge bg="secondary">33</Badge></Nav.Link>
-                                </Nav.Item>
-                            </Nav>
-                            <hr/>
-                            <Container fluid>
-                                {section()}
-                            </Container>
-                        </Col>
-                        <Col>
-                        </Col>
-                    </Row>
+            <Col xl={10} md={12} className="mt-2">
+                <Nav justify  variant="tabs" defaultActiveKey="post" onSelect={handleSelectTab}>
+                <Nav.Item>
+                        <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.posts.length}</Badge></Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="friend" onClick={handelClick}>Friends <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.people.length}</Badge></Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{loading? <ThreeDots />:resultOfSearch.groups.length}</Badge></Nav.Link>
+                    </Nav.Item>
+                </Nav>
+                <hr/>
+                <Container fluid>
+                    {loading? 
+                        <div className='d-flex flex-column justify-content-center align-items-center'>
+                        <Spinner animation="border"  role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner></div>
+                    :section()}
                 </Container>
-              </div>
+            </Col>
+            <Col>
             </Col>
         </Row>
     );
