@@ -43,12 +43,12 @@ class Homepage extends React.Component{
             }, 1500);
             window.scrollTo({top:0,behavior: "smooth"});
         });
-        axios.get(`${APIService.URL_REST_API}/api/user/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/1`).then((res)=>{
             this.setState({
                 user: res.data
             });
         });
-        axios.get(`${APIService.URL_REST_API}/api/friends/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/friends/1`).then((res)=>{
             this.setState({
                 friends: res.data
             });

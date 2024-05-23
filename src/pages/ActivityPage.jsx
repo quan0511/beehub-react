@@ -48,10 +48,11 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
                 })    
             }
             {
-            !loading??
+            !loading?
             <div className='mt-4 mb-3'>
                 <Button variant='secondary' onClick={handleScrollToTop}>Reload</Button>
-            </div>
+            </div>:
+            <div></div>
             }
         </Col>
         <Col lg={4}>
