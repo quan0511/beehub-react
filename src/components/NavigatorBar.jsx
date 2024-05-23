@@ -3,7 +3,7 @@ import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } fro
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
 import { useLocation } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
-
+import APIService from "../auth/APIService";
 function NavigatorBar({user, search,setSearch}){
     const location = useLocation();
     const [show,setShow] = useState(false);
@@ -63,8 +63,8 @@ function NavigatorBar({user, search,setSearch}){
                                     <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 :(
                                     user.gender=="female"?
-                                    <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                    :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 )
                             }
                             {user.fullname}

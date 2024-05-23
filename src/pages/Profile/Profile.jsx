@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Image, ListGroup, Nav, Row, Spinner } from "react-bootstrap";
-import { CardImage, ChatDots, ColumnsGap, GearFill, People, PersonVcard, PlusCircle, Sliders2, ThreeDotsVertical } from "react-bootstrap-icons";
+import { CardImage, ColumnsGap, GearFill, People, PersonVcard, PlusCircle,} from "react-bootstrap-icons";
 
 import NavigatorBar from "../../components/NavigatorBar";
 import Panel from "../../components/Panel";
@@ -12,7 +12,7 @@ import ProfilePhotos from "./ProfilePhotos";
 import ProfileSetting from "./ProfileSetting";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import APIService from "../../auth/APIService";
 
 function Profile (){
     const [user, setUser] = useState();
@@ -41,7 +41,7 @@ function Profile (){
     }
     useEffect(() => {
         if(id!=null){
-            axios.get(`http://192.168.1.5:9001/api/profile/${id}`).then((res)=>{
+            axios.get(`${APIService.URL_REST_API}/profile/${id}`).then((res)=>{
                 setUser(res.data);
                 console.log(res.data);
             }).finally(()=>{
@@ -71,7 +71,7 @@ function Profile (){
                         <Row className="p-0" style={{height: "350px",position: "relative"}}>
                             {
                                 user.background!=null?
-                                <Image src={"http://192.168.1.5:9001/api/files/"+user.background} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
+                                <Image src={`${APIService.URL_REST_API}/files/`+user.background} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
                                 :
                                 <div className="d-flex justify-content-center align-items-center bg-secondary">
                                     <Button variant="link">
@@ -83,12 +83,12 @@ function Profile (){
                                 <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow p-2">
                                     {
                                         user.image!=null?
-                                        <Image src={"http://192.168.1.5:9001/api/files/"+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                        <Image src={`${APIService.URL_REST_API}/files/`+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                         :
                                         (user.gender=='female'?
-                                        <Image src="http://192.168.1.5:9001/api/files/user_female.png"  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                        <Image src={`${APIService.URL_REST_API}/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                         :
-                                        <Image src="http://192.168.1.5:9001/api/files/user_male.png"  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                        <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                         )
                                     }
                                     <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>

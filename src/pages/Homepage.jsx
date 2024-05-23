@@ -1,13 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, Col, Container, Image, Row, Spinner } from 'react-bootstrap';
-import { CameraReelsFill, EmojiLaughing,Images} from 'react-bootstrap-icons';
+import {Col, Container, Image, Row, Spinner } from 'react-bootstrap';
 import AcitivityPage from './ActivityPage';
 import SessionLeft from '../components/SessionLeft';
 import NavigatorBar from '../components/NavigatorBar';
-import Post from '../components/Post';
-import APIService from '../auth/APIService';
 import Searching from './Search/Searching';
+import APIService from '../auth/APIService';
 
 class Homepage extends React.Component{
     constructor(props) {
@@ -34,7 +32,7 @@ class Homepage extends React.Component{
         }
     }
     componentDidMount(){
-        axios.get(`http://192.168.1.5:9001/api/homepage/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
             this.setState({
                 posts:res.data,
                 loading: true
@@ -45,12 +43,12 @@ class Homepage extends React.Component{
             }, 1500);
             window.scrollTo({top:0,behavior: "smooth"});
         });
-        axios.get(`http://192.168.1.5:9001/api/user/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/api/user/1`).then((res)=>{
             this.setState({
                 user: res.data
             });
         });
-        axios.get(`http://192.168.1.5:9001/api/friends/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/api/friends/1`).then((res)=>{
             this.setState({
                 friends: res.data
             });

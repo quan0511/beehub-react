@@ -3,10 +3,10 @@ import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
 import { Button, Col, Image, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-
+import APIService from '../auth/APIService';
 const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
     const handleScrollToTop=()=>{
-        axios.get(`http://192.168.1.5:9001/api/homepage/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
             setPosts(res.data);
             setLoading(true);
         }).finally(()=>{
@@ -26,8 +26,8 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
                                 <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                             :(
                                 user.gender=='female'?
-                                <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px"}}roundedCircle />
-                                :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px"}}roundedCircle />
+                                <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                             )
                         }
                     </label>
@@ -47,9 +47,12 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
                     return <Post post={post} />;
                 })    
             }
+            {
+            !loading??
             <div className='mt-4 mb-3'>
                 <Button variant='secondary' onClick={handleScrollToTop}>Reload</Button>
             </div>
+            }
         </Col>
         <Col lg={4}>
             <SessionRight friends={friends}/>

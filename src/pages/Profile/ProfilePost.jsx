@@ -1,6 +1,7 @@
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
+import APIService from "../../auth/APIService";
 function ProfilePost ({user}){
     return<Row>
         <Col xl={4} style={{width: "-webkit-fill-available",marginTop: "150px"}}>
@@ -31,8 +32,8 @@ function ProfilePost ({user}){
                                     {user.image!=null?
                                         <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                         : (user.gender=='female'?
-                                        <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px"}}roundedCircle />
-                                        :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px"}}roundedCircle />
+                                        <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                                         )
                                     }
                                 </label>

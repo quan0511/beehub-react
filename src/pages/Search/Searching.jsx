@@ -6,6 +6,8 @@ import SearchPeople from "./SearchPeople"
 import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
+import APIService from "../../auth/APIService"
+
 function Searching({search, loading, setLoading}){
     const [tab,setTab]=useState('post');
     const handleSelectTab = (selectedKey) => {
@@ -31,7 +33,7 @@ function Searching({search, loading, setLoading}){
         }
     }
     useEffect(()=>{
-        axios.get(`http://localhost:9001/api/user/1/search_all?search=${search}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/1/search_all?search=${search}`).then((res)=>{
             setResultOfSearch(res.data);
         })
     },[search])

@@ -1,11 +1,12 @@
 import React from "react";
 import { Image, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import APIService from "../auth/APIService";
 function ListFriend ({friends}){
     return (
         <ListGroup className=" w-100" >
             {friends.map((e)=>{
-                let imageSrc = e.image !=null? e.image:(e.gender=='female'? "http://192.168.1.5:9001/api/files/user_female.png":"http://192.168.1.5:9001/api/files/user_male.png");
+                let imageSrc = e.image !=null? e.image:(e.gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
                 return <ListGroup.Item className='text-start p-2 border-bottom-1 border-start-0 border-end-0 border-top-0' >
                     <Link style={{
                         textDecoration: "none",

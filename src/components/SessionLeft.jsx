@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {Image, ListGroup } from "react-bootstrap";
 import { Briefcase, CardImage, Cart3, ChatDots, Display,  JournalBookmark, Newspaper, People, Person, Play} from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
-
+import APIService from "../auth/APIService";
 function SessionLeft ({user}){
     
     return (
@@ -18,8 +18,8 @@ function SessionLeft ({user}){
                                 :
                                 (
                                     user.gender == 'female'? 
-                                    <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
-                                    :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
                                 )
                             }
                         <p className="h6 mt-2 text-black" style={{fontSize: "17px"}}>{user.fullname}</p></Link>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from "react-bootstrap";
-import { ChatLeft, Dot, Globe, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
+import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
+import APIService from "../auth/APIService";
 
 function Post ({post}){
     const getSettingType=()=>{
@@ -42,15 +43,15 @@ function Post ({post}){
                         post.group_id!=null?(
                             post.group_image!=null?
                                 <Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle />
-                                : <Image src="http://192.168.1.5:9001/api/files/group_image.png" style={{width:"50px",height: "50px"}} roundedCircle />
+                                : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
                         )
                         :(
                             post.user_image!=null?
                                 <Image src={post.user_image} style={{width:"50px",height: "50px"}} roundedCircle />
                                 : (
                                     post.user_gender=='female'?
-                                    <Image src="http://192.168.1.5:9001/api/files/user_female.png" style={{width:"50px",height: "50px"}} roundedCircle />
-                                    :<Image src="http://192.168.1.5:9001/api/files/user_male.png" style={{width:"50px",height: "50px"}} roundedCircle />
+                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle />
+                                    :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle />
                                 )
                         ) 
                     }
@@ -75,7 +76,6 @@ function Post ({post}){
                 </div>
                 <div className="col-12 text-start">
                     <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>
-                    {/* <Image src="\assets\images\user\36_g3_redleafforest.png" fluid style={{maxHeight: "200px", marginLeft: "60px"}} /> */}
                 </div>
                 <div className="col-md-3 col-lg-4 justify-content-center d-flex mt-2">
                     <HandThumbsUpFill size={20} fill='#006CDE' className='mx-1' />
