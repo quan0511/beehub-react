@@ -31,7 +31,7 @@ function Profile ({appUser}){
             case "about":
                 return <ProfileAbout biography={user.bio} />;
             case "photos":
-                return <ProfilePhotos user={user}/>;
+                return <ProfilePhotos galleries={user.galleries}/>;
             case "setting":
                 return <ProfileSetting user={user} />;
             default:
