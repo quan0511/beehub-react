@@ -1,10 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import {Col, Container, Image, Row, Spinner } from 'react-bootstrap';
+import {Col, Container,  Row } from 'react-bootstrap';
 import AcitivityPage from './ActivityPage';
 import SessionLeft from '../components/SessionLeft';
 import NavigatorBar from '../components/NavigatorBar';
-import Searching from './Search/Searching';
 import APIService from '../auth/APIService';
 
 class Homepage extends React.Component{
@@ -12,24 +11,12 @@ class Homepage extends React.Component{
         super(props)
         this.state = {
             posts: [],
-            user: {},
             friends: [],
             loading: true,
-            page: "activity",
-            searchString: ""
         }
     }
     componentDidUpdate(prevProps, prevState, snapshot){
-        if(this.state.searchString != prevState.searchString && this.state.searchString.length>0){
-            this.setState({page: "search"});
-        }else if(this.state.searchString != prevState.searchString){
-            this.setState({loading:true})
-            this.setState({page: "activity"});
-            
-            setTimeout(()=>{
-                this.setState({loading:false})
-            },1000);
-        }
+        
     }
     componentDidMount(){
         axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
@@ -40,13 +27,8 @@ class Homepage extends React.Component{
         }).finally(()=>{ 
             setTimeout(() => {
                 this.setState({loading: false})
-            }, 1500);
+            }, 1200);
             window.scrollTo({top:0,behavior: "smooth"});
-        });
-        axios.get(`${APIService.URL_REST_API}/user/1`).then((res)=>{
-            this.setState({
-                user: res.data
-            });
         });
         axios.get(`${APIService.URL_REST_API}/friends/1`).then((res)=>{
             this.setState({
@@ -55,26 +37,16 @@ class Homepage extends React.Component{
         });
     }
     render(){
-        let getPage = ()=> {
-            switch (this.state.page) {
-                case "search":
-                    return <Searching search={this.state.searchString} loading={this.state.loading} setLoading={(newVal)=> this.setState({loading: newVal})} />
-                case "activity":
-                    return <AcitivityPage user={this.state.user} friends={this.state.friends} posts={this.state.posts} setPosts={(newposts)=>this.setState({posts: newposts})} loading={this.state.loading} setLoading={(newVal)=> this.setState({loading: newVal})} />;
-                default:
-                    return <AcitivityPage user={this.state.user} friends={this.state.friends} posts={this.state.posts} setPosts={(newposts)=>this.setState({posts: newposts})} loading={this.state.loading} setLoading={(newVal)=> this.setState({loading: newVal})} />;
-            }
-        }
         return (
             <Row>
                 <Col xl={3} className='p-0 ' >
-                  <SessionLeft user={this.state.user}/>
+                  <SessionLeft user={this.props.appUser}/>
                 </Col>
                 <Col xl={9} className='p-0'>
                   <div className='d-flex flex-column'>
-                    <NavigatorBar user={this.state.user} search={this.state.searchString} setSearch={(str)=>this.setState({searchString: str})}/>
+                    <NavigatorBar user={this.props.appUser}/>
                     <Container fluid className='ps-4' style={{marginTop: "60px"}}>
-                        {getPage()}
+                        <AcitivityPage user={this.props.appUser} friends={this.state.friends} posts={this.state.posts} setPosts={(newposts)=>this.setState({posts: newposts})} loading={this.state.loading} setLoading={(newVal)=> this.setState({loading: newVal})}/>
                     </Container>
                   </div>
                 </Col>

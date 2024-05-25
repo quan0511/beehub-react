@@ -4,13 +4,14 @@ import { Dot } from "react-bootstrap-icons";
 import GroupCard from "../../components/GroupCard";
 import APIService from "../../auth/APIService";
 function SearchGroups({groups}){
+    console.log(groups);
     return (
         <Row>
             <Col lg={10} md={12} className="mx-auto">
                 <div className="d-flex flex-column text-start">
-                    {groups.map((group)=>{
+                    {groups.map((group, index)=>{
                         let urlImage = group.image !=null? group.image: APIService.URL_REST_API+"/files/group_image.png";
-                        return <GroupCard id={group.id} image={urlImage} groupname={group.groupname} description={group.description} is_public={group.public_group} joined={group.joined} member_count={group.member_count}/>
+                        return <GroupCard key={index} id={group.id} image={urlImage} groupname={group.groupname} description={group.description} is_public={group.public_group} joined={group.joined} member_count={group.member_count}/>
                     })}
                 </div>
             </Col>

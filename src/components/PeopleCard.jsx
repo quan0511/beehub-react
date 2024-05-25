@@ -2,6 +2,19 @@ import React from "react";
 import { Button, Card, Image, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 function PeopleCard({img,name, username, groups,friends,size, relationship}){
+    const setButton = () => {
+        if(relationship == null){
+            return <Button variant="primary" className="w-100 rounded-pill" >Add Friend</Button>
+        }
+        switch(relationship){
+            case "FRIEND":
+                return <Button variant="outline-primary" className="w-100 rounded-pill" >View Friend Profile</Button>
+            case "BLOCKED": 
+                return <Button variant="danger" className="w-100 rounded-pill" >Unblock</Button> 
+            default:
+                return <Button variant="warning" className="w-100 rounded-pill" >Cancel Request</Button>
+        }
+    }
     return (
         <Card className="people-card" style={{ width: size,padding: "10px 15px" ,transition: "box-shadow .3s"}}>
             <Card.Body className="m-0 py-3 px-0">
@@ -18,12 +31,7 @@ function PeopleCard({img,name, username, groups,friends,size, relationship}){
                         </ListGroup.Item>
                     </ListGroup>
                 {
-                    relationship ==null?
-                    <Button variant="primary" className="w-100 rounded-pill" >Add Friend</Button>
-                    :("BLOCKED" === relationship? 
-                    <Button variant="danger" className="w-100 rounded-pill" >Unblock</Button>  
-                     :<Button variant="outline-primary" className="w-100 rounded-pill" >View Friend Profile</Button>
-                    )
+                    setButton()
                 }
             </Card.Body>
         </Card>

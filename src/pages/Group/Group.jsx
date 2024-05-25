@@ -7,7 +7,7 @@ import NavigatorBar from "../../components/NavigatorBar";
 import GroupMedia from "./GroupMedia";
 import GroupPeople from "./GroupPeople";
 import GroupDiscussion from "./GroupDiscussion";
-function Group (){
+function Group ({appUser}){
     const [tab, setTab] = useState('discussion');
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
@@ -26,7 +26,7 @@ function Group (){
     }
     return (
         <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
-            <NavigatorBar/>
+            <NavigatorBar user={appUser}/>
             <Col xl={3} className="p-0 position-relative" >
              <SessionLeftGroup/>
             </Col>

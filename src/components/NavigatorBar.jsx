@@ -1,14 +1,21 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../auth/APIService";
-function NavigatorBar({user, search,setSearch}){
+function NavigatorBar({user}){
     const location = useLocation();
+    const navigate = useNavigate();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
-    
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setSearchParams({ search: searchQuery });
+        navigate(`/search?search=${encodeURIComponent(searchQuery)}`);
+    };
     return (
          <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
             <Container fluid >
@@ -17,7 +24,7 @@ function NavigatorBar({user, search,setSearch}){
                     <Col lg={6} md={4} xs={4}>
                         <Row>
                             <Col lg={6} md={4} xs={6} className="mx-auto">
-                                <Form inline >
+                                <Form onSubmit={handleSubmit} >
                                     <InputGroup >
                                         <InputGroup.Text id="basic-addon2" style={{borderRight: 0,backgroundColor: "#ffffff"}}>
                                             <Search />
@@ -25,8 +32,8 @@ function NavigatorBar({user, search,setSearch}){
                                         <Form.Control style={{borderLeft: 0}} 
                                             placeholder="Search"
                                             aria-describedby="basic-addon2"
-                                            onChange={(e)=>{let value = e.target.value;console.log(value);setSearch(value)}}
-                                        />
+                                            name="search"
+                                            onChange={(event) => setSearchQuery(event.target.value)}/>
                                     </InputGroup>
                                 </Form>
                             </Col>

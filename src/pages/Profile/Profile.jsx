@@ -14,13 +14,12 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
 
-function Profile (){
+function Profile ({appUser}){
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('posts');
     const { id } = useParams();
     const handelSelectTab = (selectKey)=>{
-        console.log(selectKey);
         setTab(selectKey);
     }
     const tabSession = ()=>{
@@ -28,7 +27,7 @@ function Profile (){
             case "posts": 
                 return <ProfilePost user={user}/>;
             case "friends":
-                return <ProfileFriends user={user} />;
+                return <ProfileFriends friends={user.relationships} />;
             case "about":
                 return <ProfileAbout biography={user.bio} />;
             case "photos":
@@ -43,7 +42,6 @@ function Profile (){
         if(id!=null){
             axios.get(`${APIService.URL_REST_API}/profile/${id}`).then((res)=>{
                 setUser(res.data);
-                console.log(res.data);
             }).finally(()=>{
                 setTimeout(() => {
                     setLoading(false);
@@ -66,7 +64,7 @@ function Profile (){
                 </div>
                 :
                 <div className='d-flex flex-column w-100'>
-                    <NavigatorBar user={{id: user.id, image: user.image, fullname: user.fullname, username: user.username}}/>
+                    <NavigatorBar user={appUser}/>
                     <Container style={{marginTop: "50px"}}>
                         <Row className="p-0" style={{height: "350px",position: "relative"}}>
                             {

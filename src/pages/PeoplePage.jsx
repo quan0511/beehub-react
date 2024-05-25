@@ -1,88 +1,19 @@
-import React, { useState } from "react"
-import { Badge, Col, Container, Form, InputGroup, Nav, Row } from "react-bootstrap"
+import React, { useEffect, useState } from "react"
+import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "react-bootstrap"
 import SessionLeft from "../components/SessionLeft"
 import NavigatorBar from "../components/NavigatorBar"
 import PeopleCard from "../components/PeopleCard"
 import { Search } from "react-bootstrap-icons"
-function PeoplePage(){
-    const [select, setSelect]=useState('friends');
+import APIService from "../auth/APIService"
+import axios from "axios"
+function PeoplePage({appUser}){
+    const [select, setSelect]=useState('suggestions');
+    const [loading, setLoading] = useState(true);
+    const [people, setPeople] = useState();
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);
-      };
-    let friends = [
-        {
-            name: "Fu Xuan",
-            image: "fuxuan3.png",
-            groups: 24,
-            friends: 2
-        },{
-            name: "Jingliu",
-            image: "jingliu.png",
-            groups: 0,
-            friends: 1
-        },{
-            name: "Mr Tail",
-            image: "huohuo-6.png",
-            groups : 2,
-            friends: 10
-        },{
-            name: "Black Swan",
-            image: "bw-1.png",
-            groups : 12,
-            friends: 30
-        }
-    ];
-    let following = [
-        {
-            name: "Acheron",
-            image: "Acheron_1.png",
-            groups: 0,
-            friends: 0
-        },{
-            name: "Ruan Mei",
-            image: "Ruan Mei_2.png",
-            groups: 1,
-            friends: 0
-        },{
-            name: "Furina",
-            image: "Furina_4.png",
-            groups : 23,
-            friends: 112
-        },{
-            name: "Black Swan",
-            image: "bw-2.png",
-            groups : 12,
-            friends: 3
-        },{
-            name: "Fu Xuan",
-            image: "fuxuan1.png",
-            groups : 1,
-            friends: 33
-        },{
-            name: "Arlecchino",
-            image: "arlecchino_1.png",
-            groups : 1,
-            friends: 10
-        }
-    ];
-    let follower=[
-        {
-            name: "Acheron 2",
-            image: "Acheron_2.png",
-            groups: 0,
-            friends: 2
-        },{
-            name: "FuRina ",
-            image: "Furina_5.png",
-            groups: 10,
-            friends: 23
-        },{
-            name: "Ruan Mei",
-            image: "Ruan Mei_4.png",
-            groups: 0,
-            friends: 2
-        },
-    ]
+    };
+    
     const handelClick=(e)=>{
         
         const badge= e.target.querySelector(".badge");
@@ -100,62 +31,75 @@ function PeoplePage(){
     }
     const handleSelect= ()=>{
         switch(select){
-            case "friends": 
-             return friends.map((val,key)=>{
-                    let sr = String.raw`\assets\images\user\\`+val.image;
+            case "suggestions": 
+             return people["people"].map((val,key)=>{
+                    let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} size="16rem" name={val.name} groups={val.groups} friends={val.friends}/>
+                            <PeopleCard img={sr} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={val.typeRelationship}/>
                         </Col>
                 });
             
-            case "following":
-                return following.map((val, key)=>{
-                    let sr = String.raw`\assets\images\user\\`+val.image;
+            case "friends":
+                return people["friends"].map((val, key)=>{
+                    let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} size="16rem" name={val.name} groups={val.groups} friends={val.friends}/>
+                            <PeopleCard img={sr} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={val.typeRelationship}/>
                         </Col>
                 });
-            case "follower": 
-                return follower.map((val, key)=>{
-                    let sr = String.raw`\assets\images\user\\`+val.image;
+            case "send_request": 
+                return people["addfriend"].map((val, key)=>{
+                    let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} size="16rem" name={val.name} groups={val.groups} friends={val.friends}/>
+                            <PeopleCard img={sr} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={"SENT_REQUEST"}/>
                         </Col>
                 })
             default: 
                 return <></>;
         }
     }
+    useEffect(()=>{
+        axios.get(`${APIService.URL_REST_API}/peoplepage/1`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
+            setTimeout(()=>{
+                setLoading(false);
+            },600);
+        });
+    },[])
     return (
-
         <Row>
             <Col xl={3} className='p-0 ' >
-              <SessionLeft />
+              <SessionLeft user={appUser}/>
             </Col>
             <Col xl={9} className='p-0'>
               <div className='d-flex flex-column'>
-                <NavigatorBar />
+                <NavigatorBar user={appUser}/>
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
+                        {loading ?
+                        <Col>
+                        <Spinner animation="border">
+
+                        </Spinner>
+                        </Col>
+                        :
                         <Col xl={12} className="mt-2">
-                            <Nav justify  variant="tabs" defaultActiveKey="friends" onSelect={handleSelectTab}>
+                            <Nav justify  variant="tabs" defaultActiveKey="suggestions" onSelect={handleSelectTab}>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="friends" onClick={handelClick}>Friends <Badge bg="primary">{friends.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="suggestions" onClick={handelClick}>Suggestions <Badge bg="primary">{people["people"].length}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="following" onClick={handelClick}>Following <Badge bg="secondary">{following.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="friends" onClick={handelClick}>Friends <Badge bg="secondary">{people["friends"].length}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="follower" onClick={handelClick}>Followers <Badge bg="secondary">{follower.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="send_request" onClick={handelClick}>Sent Request <Badge bg="secondary">{people["addfriend"].length}</Badge></Nav.Link>
                                 </Nav.Item>
                             </Nav>
                             <hr/>
                             <Container fluid>
                                 <Row xl={4}>
                                     <Col xl={12} className="mb-3">
-                                    <Form inline>
+                                    <Form >
                                         <InputGroup >
-                                            <InputGroup.Text id="basic-addon2" style={{borderRight: 0,backgroundColor: "#ffffff"}}>
+                                            <InputGroup.Text  style={{borderRight: 0,backgroundColor: "#ffffff"}}>
                                                 <Search />
                                             </InputGroup.Text>
                                             <Form.Control style={{borderLeft: 0}} 
@@ -170,8 +114,7 @@ function PeoplePage(){
                                 </Row>
                             </Container>
                         </Col>
-                        <Col>
-                        </Col>
+                        }
                     </Row>
                 </Container>
               </div>

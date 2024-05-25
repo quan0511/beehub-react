@@ -60,7 +60,7 @@ function ProfilePost ({user}){
                             </div>
                         </div>
                         {
-                        user.posts.map((post)=> <Post post={post}/>)
+                        user.posts.map((post, index)=> <Post key={index} post={post}/>)
                         }
                     </Col>
                 </Row>

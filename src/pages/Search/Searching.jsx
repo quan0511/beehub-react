@@ -7,8 +7,15 @@ import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
 import APIService from "../../auth/APIService"
+import { useDispatch, useSelector } from "react-redux"
+import SessionLeft from "../../components/SessionLeft"
+import NavigatorBar from "../../components/NavigatorBar"
+import { useSearchParams } from "react-router-dom"
 
-function Searching({search, loading, setLoading}){
+function Searching({appUser}){
+    const [searchStr, setSearchStr] = useSearchParams();
+    const [loading,setLoading] = useState();
+    const dispatch = useDispatch();
     const [tab,setTab]=useState('post');
     const handleSelectTab = (selectedKey) => {
       setTab(selectedKey);
@@ -33,10 +40,11 @@ function Searching({search, loading, setLoading}){
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/user/1/search_all?search=${search}`).then((res)=>{
+        setLoading(true);
+        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
             setResultOfSearch(res.data);
-        })
-    },[search])
+        }).finally(()=> setLoading(false));
+    },[searchStr])
     const section = ()=>{
         let res = <></>;
         switch (tab){
@@ -59,29 +67,41 @@ function Searching({search, loading, setLoading}){
     
     return (
         <Row>
-            <Col xl={10} md={12} className="mt-2">
-                <Nav justify  variant="tabs" defaultActiveKey="post" onSelect={handleSelectTab}>
-                <Nav.Item>
-                        <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.posts.length}</Badge></Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="friend" onClick={handelClick}>Friends <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.people.length}</Badge></Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{loading? <ThreeDots />:resultOfSearch.groups.length}</Badge></Nav.Link>
-                    </Nav.Item>
-                </Nav>
-                <hr/>
-                <Container fluid>
-                    {loading? 
-                        <div className='d-flex flex-column justify-content-center align-items-center'>
-                        <Spinner animation="border"  role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner></div>
-                    :section()}
-                </Container>
+            <Col xl={3} className='p-0 ' >
+                <SessionLeft user={appUser}/>
             </Col>
-            <Col>
+            <Col xl={9} className='p-0'>
+                <div className='d-flex flex-column'>
+                <NavigatorBar user={appUser}/>
+                <Container fluid className='ps-4' style={{marginTop: "60px"}}>
+                    <Row>
+                        <Col xl={10} md={12} className="mt-2">
+                            <Nav justify  variant="tabs" defaultActiveKey="post" onSelect={handleSelectTab}>
+                            <Nav.Item>
+                                    <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.posts.length}</Badge></Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="friend" onClick={handelClick}>Friends <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.people.length}</Badge></Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{loading? <ThreeDots />:resultOfSearch.groups.length}</Badge></Nav.Link>
+                                </Nav.Item>
+                            </Nav>
+                            <hr/>
+                            <Container fluid>
+                                {loading? 
+                                    <div className='d-flex flex-column justify-content-center align-items-center'>
+                                    <Spinner animation="border"  role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner></div>
+                                :section()}
+                            </Container>
+                        </Col>
+                        <Col>
+                        </Col>
+                    </Row>
+                </Container>
+                </div>
             </Col>
         </Row>
     );

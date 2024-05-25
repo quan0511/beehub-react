@@ -7,9 +7,9 @@ function SearchPeople ({people}) {
         <Row xl={3} md={2}>
             
             {
-                people.map((p)=>{
+                people.map((p, index)=>{
                     let urlImage = p.image!=null?p.image: (p.gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
-                    return (<Col className="mx-auto mb-3">
+                    return (<Col key={index} className="mx-auto mb-3">
                         <PeopleCard img={urlImage} size="18rem" name={p.fullname} username={p.username} groups={p.group_counter} friends={p.friend_counter} relationship={p.typeRelationship} />
                     </Col>);
                 })

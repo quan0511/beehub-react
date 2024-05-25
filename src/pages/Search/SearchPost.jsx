@@ -6,7 +6,7 @@ function SearchPosts({posts}){
         <Row>
             <Col lg={10} md={12} className="mx-auto">
                 {
-                posts.map((post)=> <Post post={post}/>)
+                posts.map((post, index)=> <Post key={index} post={post}/>)
                 }
             </Col>
         </Row>

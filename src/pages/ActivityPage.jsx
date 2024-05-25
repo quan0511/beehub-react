@@ -1,7 +1,7 @@
 import React from 'react';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
-import { Button, Col, Image, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import APIService from '../auth/APIService';
 const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
@@ -19,7 +19,7 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
     <Row>
         <Col lg={8} >
             <div className="border-2 rounded-2 border-dark mt-2 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
-                <form method="post" className="row pe-4">
+                <Form method="post" className="row pe-4">
                     <label className="col-1 mx-auto mb-3 col-form-label">
                         {
                             user.image?
@@ -36,15 +36,15 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
                     </div>
                     <div className='col-1'></div>
                 
-                </form>
+                </Form>
             </div>
             {loading? <div className='mt-5'>
                 <Spinner animation="border"  role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner></div>
                 :
-                posts.map((post)=>{
-                    return <Post post={post} />;
+                posts.map((post, index)=>{
+                    return <Post key={index} post={post} />;
                 })    
             }
             {
