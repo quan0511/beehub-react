@@ -8,11 +8,16 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { Provider } from 'react-redux'
 import { store } from './store.js'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-        <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<App/>} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
 )
