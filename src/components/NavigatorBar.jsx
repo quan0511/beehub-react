@@ -17,7 +17,7 @@ function NavigatorBar(){
                     <Col lg={6} md={4} xs={4}>
                         <Row>
                             <Col lg={6} md={4} xs={6} className="mx-auto">
-                                <Form inline >
+                                <Form inline="true" >
                                     <InputGroup >
                                         <InputGroup.Text id="basic-addon2" style={{borderRight: 0,backgroundColor: "#ffffff"}}>
                                             <Search />

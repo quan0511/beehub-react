@@ -59,6 +59,8 @@ body {
 
 .label-icon {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 31px;
     height: 31px;
     border-radius: 50%;
@@ -80,6 +82,7 @@ body {
     color: #fff;
     font-size: 14px;
     transition: all 750ms ease;
+    border: none;
 }
 .primary-button:hover {
     background-position: right center;
