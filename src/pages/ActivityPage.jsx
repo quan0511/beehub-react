@@ -44,7 +44,7 @@ const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
                 </Spinner></div>
                 :
                 posts.map((post, index)=>{
-                    return <Post key={index} post={post} />;
+                    return <Post key={index} post={post} page="activity" />;
                 })    
             }
             {

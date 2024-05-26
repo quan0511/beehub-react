@@ -9,8 +9,7 @@ import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
-import ProfileSetting from "./ProfileSetting";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
 
@@ -27,9 +26,11 @@ function Profile ({appUser}){
             case "posts": 
                 return <ProfilePost user={user}/>;
             case "friends":
-                return <ProfileFriends friends={user.relationships} />;
+                console.log(user);
+                let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
+                return <ProfileFriends friends={listsfriend} />;
             case "about":
-                return <ProfileAbout biography={user.bio} />;
+                return <ProfileAbout user={user} />;
             case "photos":
                 return <ProfilePhotos galleries={user.galleries}/>;
             case "setting":
@@ -133,12 +134,16 @@ function Profile ({appUser}){
                                                             <span>Photos</span>
                                                         </Nav.Link>
                                                     </Nav.Item>
+                                                    {appUser.username!=id?
+                                                    <></>
+                                                    :
                                                     <Nav.Item >
-                                                        <Nav.Link eventKey="setting" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
+                                                        <Link to="/account-setting" style={{width: "80px", textDecoration: "none"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                             <GearFill size={20}/>
                                                             <span>Setting</span>
-                                                        </Nav.Link>
+                                                        </Link>
                                                     </Nav.Item>
+                                                    }
                                                 </Nav>
                                             </Col>
                                         </Row>

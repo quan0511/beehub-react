@@ -3,6 +3,7 @@ import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../auth/APIService";
 function ProfilePost ({user}){
+    console.log(user);
     return<Row>
         <Col xl={4} style={{width: "-webkit-fill-available",marginTop: "150px"}}>
             <Container fluid>
@@ -11,18 +12,13 @@ function ProfilePost ({user}){
                         <h5>My Photos <a className="ms-4 float-end text-black-50 mt-2" style={{fontSize:"14px", fontWeight: "400"}}>More</a></h5>
                         <hr/>
                         <Row className="g-1">
-                            <Col>
-                            <Image src="\assets\images\library\arknights-bg9.png" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                            </Col>
-                            <Col>
-                            <Image src="\assets\images\library\fuxuan-10.jpg" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                            </Col>
-                            <Col>
-                            <Image src="\assets\images\library\meme-1.jpg" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                            </Col>
-                            <Col>
-                            <Image src="\assets\images\groups\lol.png" style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                            </Col>
+                            {user.galleries!=null && user.galleries.length>0? user.galleries.map((gallery, index)=>{
+                                let imageUrl = APIService.URL_REST_API+"/files/"+gallery.media;
+                                return (<Col key={index}>
+                                    <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
+                                    </Col>);
+                            }):<></>}
+                            
                         </Row>
                     </Col>
                     <Col xl={6} className="me-auto ms-5">
@@ -60,7 +56,7 @@ function ProfilePost ({user}){
                             </div>
                         </div>
                         {
-                        user.posts.map((post, index)=> <Post key={index} post={post}/>)
+                        user.posts.map((post, index)=> <Post key={index} post={post} page="profile"/>)
                         }
                     </Col>
                 </Row>

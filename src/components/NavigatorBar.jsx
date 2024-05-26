@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../auth/APIService";
 function NavigatorBar({user}){
     const location = useLocation();
+    console.log(location);
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -21,6 +22,12 @@ function NavigatorBar({user}){
             <Container fluid >
                 
                 <Row style={{ width: "100%", marginTop: "3px"}}>
+                    {!location.pathname.includes("/member/profile/") && location.pathname!="/"?
+                        <Col xl={2} className="ms-auto"><Link to={"/"} >
+                            <Image src="https://mythemestore.com/beehive-preview/wp-content/themes/beehive/assets/images/logo-vertical.svg" width="30" height="30" fluid />
+                        </Link></Col>
+                        :<></>
+                    }
                     <Col lg={6} md={4} xs={4}>
                         <Row>
                             <Col lg={6} md={4} xs={6} className="mx-auto">

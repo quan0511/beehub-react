@@ -1,9 +1,8 @@
 import React from "react";
-import { Badge, Image, ListGroup } from "react-bootstrap";
+import {Image, ListGroup } from "react-bootstrap";
 import APIService from "../auth/APIService";
 import { Link } from "react-router-dom";
 function ListGroups({groups}){
-    console.log(groups);
     return (
         <ListGroup className=" w-100" >
             {groups.map((group,index)=>{
@@ -16,12 +15,12 @@ function ListGroups({groups}){
                             fontSize: "17px",
                             fontWeight: "500"
                         }} to="" className="">
-                        {group.group_image!=null?
-                            <Image src={group_image} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
+                        {group.image_group!=null?
+                            <Image src={image_group} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                             :
                             <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                         }
-                        {group.group_name}                                                                                      
+                        {group.groupname}                                                                                      
                         {/* <Badge bg="primary" style={{float: "right",marginTop: "8px"}}>2 Newest Post</Badge> */}
                         </Link>
                 </ListGroup.Item>

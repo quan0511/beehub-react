@@ -35,7 +35,7 @@ const ListGroupPage =({appUser})=>{
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     {joinedGroups.map((group, index)=>{
                         let urlImage =  group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
-                        return <GroupCard key={index} id={group.id} image={urlImage} groupname={group.groupname} description={group.description} is_public={group.public_group} joined={group.joined} member_count={group.member_count} role={group.member_role}/>
+                        return <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>
              );
@@ -45,7 +45,7 @@ const ListGroupPage =({appUser})=>{
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     {ownGroups.map((group, index)=>{
                         let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
-                        return  <GroupCard key={index} id={group.id} image={urlImage} groupname={group.groupname} description={group.description} is_public={group.public_group} joined={group.joined} member_count={group.member_count} role={group.member_role}/>
+                        return  <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>);
             

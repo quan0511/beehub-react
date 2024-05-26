@@ -3,10 +3,9 @@ import {Col, Row,Card, Form, InputGroup, Button, Image, Spinner, Dropdown } from
 import { Search, ThreeDots, } from "react-bootstrap-icons";
 import APIService from "../../auth/APIService";
 function ProfileFriends({friends}){
-    console.log(friends);
     return (
         <Row className="mb-5">
-            <Col xl={10} className="mx-auto" style={{marginTop: "160px"}}>
+            <Col xl={10} className="mx-auto" style={{marginTop: "160px", minHeight: "450px"}}>
                 <div class=" w-100 ps-4 pe-2">
                     <Row >
                         <Col xl={6}>

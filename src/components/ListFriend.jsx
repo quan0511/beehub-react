@@ -17,7 +17,7 @@ function ListFriend ({friends}){
                         color: "#31363F",
                         fontSize: "17px",
                         fontWeight: "500"
-                    }} >
+                    }} to={"/member/profile/"+e.username}>
                         <Image src={imageSrc} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                         {e.fullname}
                     </Link>

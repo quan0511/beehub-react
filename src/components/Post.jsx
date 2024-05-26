@@ -2,10 +2,11 @@ import React from "react";
 import { Col, Image, Row } from "react-bootstrap";
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../auth/APIService";
+import { Link } from "react-router-dom";
 
-function Post ({post}){
+function Post ({post, page}){
     const getSettingType=()=>{
-        switch(post.setting_post){
+        switch(post.setting_type){
             case 'FOR_FRIEND':
                 return <span >
                     <PeopleFill size={15} /> For Friend
@@ -40,31 +41,34 @@ function Post ({post}){
             <Row>
                 <Col xl={1} className="mx-3">
                     {
-                        post.group_id!=null?(
+                        post.group_id!=null && page!='group'?(
                             post.group_image!=null?
                                 <Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle />
                                 : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
                         )
                         :(
                             post.user_image!=null?
-                                <Image src={post.user_image} style={{width:"50px",height: "50px"}} roundedCircle />
+                                <Link to={"/member/profile/"+post.user_username}>
+                                    <Image src={post.user_image} style={{width:"50px",height: "50px"}} roundedCircle />
+                                </Link> 
                                 : (
                                     post.user_gender=='female'?
-                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle />
-                                    :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle />
+                                    <Link to={"/member/profile/"+post.user_username}>
+                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                    :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
                                 )
                         ) 
                     }
                 </Col>
                 {
-                    post.group_id!=null?
+                    post.group_id!=null && page!="group"?
                     <div className="col-9 d-flex flex-column">
                         <p className="h5 text-black text-capitalize text-start mb-1">{post.group_name}</p>
                         <p className="text-start ">{post.user_fullname} &emsp;<Dot/> {getTimeOfPost()}</p>
                     </div>
                     :
                     <div className="col-9 d-flex flex-column">
-                        <p className="h5 text-black text-capitalize text-start mb-1">{post.user_fullname}</p>
+                        <Link to={"/member/profile/"+post.user_username} className="h5 text-black text-capitalize text-start mb-1 " style={{textDecoration:"none"}}>{post.user_fullname}</Link>
                         <p className="text-start" style={{fontSize: "12px"}}>
                             {getSettingType()} &emsp;<Dot/> {getTimeOfPost()}</p>
                     </div>

@@ -2,28 +2,30 @@ import React from "react";
 import { Button, Card, Col, Image,  Row } from "react-bootstrap";
 import { Dot } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
-const GroupCard =({id,image, groupname, description, is_public, joined, member_count, role})=>{
+const GroupCard =({group,image})=>{
     const setButton = ()=>{
-        if(!joined){
+
+        if(!group.joined){
             return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                <Button variant="primary" style={{width: "85px"}} >Join</Button>
+                <Button variant="primary" className="w-50" >Join</Button>
                 </Col>);
         }else{
-            switch(role){
+            switch(group.member_role){
                 case "MEMBER":
-                    return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center"><Button variant="outline-primary" className="w-50" >Visit</Button></Col>);
+                    return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
+                        <Link role="button" className="btn btn-outline-primary w-50" to={"/group/"+group.id} >Visit</Link></Col>);
                 case "GROUP_CREATOR":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                        <Button variant="danger"  className="w-50">Manage Group</Button>
+                        <Link role="button" className="btn btn-danger w-50">Manage Group</Link>
                         </Col>);
                 case "GROUP_MANAGER":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                        <Button variant="danger" className="w-50" >Manage Group</Button>
+                            <Link role="button"  className="btn btn-danger w-50" >Manage Group</Link>
                         </Col>);
                 default:
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
                         <Button variant="outline-secondary" className="me-2" style={{width: "85px"}}>Joined</Button>
-                        <Button variant="outline-primary" style={{width: "85px"}}>Visit</Button>
+                        <Link role="button" className="btn btn-outline-primary"  style={{width: "85px"}}>Visit</Link>
                         </Col>);
             }
         } 
@@ -37,11 +39,11 @@ const GroupCard =({id,image, groupname, description, is_public, joined, member_c
                         <Image src={image} className="mx-auto" style={{height: "80px",width: "80px", objectFit: "contain"}} roundedCircle />
                     </Col>
                     <Col xl={6}>
-                        <Card.Title style={{fontSize: "16px"}}><Link to={"/"+id} style={{textDecoration: "none", color:"black"}}>{groupname}</Link></Card.Title>
+                        <Card.Title style={{fontSize: "16px"}}><Link to={"/group/"+group.id} style={{textDecoration: "none", color:"black"}}>{group.groupname}</Link></Card.Title>
                         <Card.Text className="lh-sm" style={{overflow:"hidden",height: "50px",fontSize: "14px"}} >
-                            {is_public? "Public":"Private"} <Dot className="mx-1"/> {member_count} members 
+                            {group.is_public? "Public":"Private"} <Dot className="mx-1"/> {group.member_count} members 
                             <br/>
-                            {description}                           
+                            {group.description}                           
                         </Card.Text>
                     </Col>
                     {setButton()}

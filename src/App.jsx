@@ -11,11 +11,13 @@ import Profile from './pages/Profile/Profile'
 import PeoplePage from './pages/PeoplePage'
 import Searching from './pages/Search/Searching'
 import Group from './pages/Group/Group'
+
 import { useLayoutEffect, useState } from 'react'
 import axios from 'axios'
 import APIService from './auth/APIService'
 import { Spinner } from 'react-bootstrap'
 import ListGroupPage from './pages/Group/ListGroupPage'
+import { AccountSetting } from './pages/Setting/AccountSetting'
 
 function App() {
   const [user, setUser] = useState();
@@ -32,7 +34,8 @@ function App() {
         <Route path='/people' element={<PeoplePage appUser={user}/>}/>
         <Route path='/search' element={<Searching  appUser={user}/>}/>
         <Route path='/listgroup' element={ <ListGroupPage  appUser={user}/>}/>
-        <Route path='/group' element={<Group  appUser={user}/>}/>
+        <Route path='/group/:id' element={<Group  appUser={user}/>}/>
+        <Route path='/account-setting' element={ <AccountSetting appUser={user} />}/>
       </Route>
   ))
   return (

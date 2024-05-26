@@ -18,7 +18,7 @@ function PeopleCard({img,name, username, groups,friends,size, relationship}){
     return (
         <Card className="people-card" style={{ width: size,padding: "10px 15px" ,transition: "box-shadow .3s"}}>
             <Card.Body className="m-0 py-3 px-0">
-                <Link to={"/profile/member/"+username}>
+                <Link to={"/member/profile/"+username}>
                     <Image src={img} width={200} height={200} roundedCircle  />
                 </Link>
                 <Card.Title className="mt-3">{name}</Card.Title>

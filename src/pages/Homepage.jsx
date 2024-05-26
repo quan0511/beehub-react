@@ -16,7 +16,9 @@ class Homepage extends React.Component{
         }
     }
     componentDidUpdate(prevProps, prevState, snapshot){
-        
+        if(window.innerHeight + document.documentElement.scrollTop === document.scrollingElement.scrollHeight){
+            console.log("Bottom");
+        }
     }
     componentDidMount(){
         axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
