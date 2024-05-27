@@ -20,7 +20,7 @@ import { Spinner } from 'react-bootstrap'
 import ListGroupPage from './pages/Group/ListGroupPage'
 import { AccountSetting } from './pages/Setting/AccountSetting'
 import Layout2 from './layouts/Layout2'
-import { GroupManagementPage } from './pages/Group/GroupManagementPage'
+import { GroupManagementPage } from './pages/GroupManage/GroupManagementPage'
 
 function App() {
   const [user, setUser] = useState();
@@ -44,7 +44,7 @@ function App() {
       </Route>
       <Route  path='/group' element={<Layout2  appUser={user}/>}>
         <Route path=':id' element={<Group  appUser={user}/>}/>
-        <Route path=':id/manage' element={<GroupManagementPage /> } />
+        <Route path='manage/:id' element={<GroupManagementPage appUser={user} /> } />
       </Route>
 
     </Route>

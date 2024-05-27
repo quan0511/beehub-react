@@ -6,7 +6,6 @@ import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../auth/APIService";
 function NavigatorBar({user}){
     const location = useLocation();
-    console.log(location);
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
