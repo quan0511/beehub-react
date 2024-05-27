@@ -20,14 +20,7 @@ function NavigatorBar({user}){
     return (
          <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
             <Container fluid >
-                
                 <Row style={{ width: "100%", marginTop: "3px"}}>
-                    {!location.pathname.includes("/member/profile/") && location.pathname!="/"?
-                        <Col xl={2} className="ms-auto"><Link to={"/"} >
-                            <Image src="https://mythemestore.com/beehive-preview/wp-content/themes/beehive/assets/images/logo-vertical.svg" width="30" height="30" fluid />
-                        </Link></Col>
-                        :<></>
-                    }
                     <Col lg={6} md={4} xs={4}>
                         <Row>
                             <Col lg={6} md={4} xs={6} className="mx-auto">
@@ -64,7 +57,6 @@ function NavigatorBar({user}){
                                 <EnvelopeOpen size={20}/>
                             </Nav.Link>
                         </Nav.Item>
-                        
                         <Nav.Item  className="me-2">
                             <Nav.Link  href="/friend">
                                 <Bag size={20}/>

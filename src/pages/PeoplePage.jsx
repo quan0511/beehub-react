@@ -64,15 +64,7 @@ function PeoplePage({appUser}){
             },600);
         });
     },[])
-    return (
-        <Row>
-            <Col xl={3} className='p-0 ' >
-              <SessionLeft user={appUser}/>
-            </Col>
-            <Col xl={9} className='p-0'>
-              <div className='d-flex flex-column'>
-                <NavigatorBar user={appUser}/>
-                <Container fluid className='ps-4' style={{marginTop: "60px"}}>
+    return (<Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         {loading ?
                         <Col>
@@ -117,9 +109,6 @@ function PeoplePage({appUser}){
                         }
                     </Row>
                 </Container>
-              </div>
-            </Col>
-        </Row>
     );
 }
 export default PeoplePage;

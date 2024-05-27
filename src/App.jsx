@@ -3,7 +3,8 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider
+  RouterProvider,
+  Routes
 } from "react-router-dom"
 import Homepage from './pages/Homepage'
 import Layout from './layouts/Layout'
@@ -18,6 +19,8 @@ import APIService from './auth/APIService'
 import { Spinner } from 'react-bootstrap'
 import ListGroupPage from './pages/Group/ListGroupPage'
 import { AccountSetting } from './pages/Setting/AccountSetting'
+import Layout2 from './layouts/Layout2'
+import { GroupManagementPage } from './pages/Group/GroupManagementPage'
 
 function App() {
   const [user, setUser] = useState();
@@ -28,15 +31,23 @@ function App() {
   },[]);
 
   const router = createBrowserRouter(createRoutesFromElements(
-      <Route element={<Layout />}>
-        <Route path='/' element={<Homepage appUser={user}/>} />
-        <Route path='/member/profile/:id' element={<Profile appUser={user}/>}/>
-        <Route path='/people' element={<PeoplePage appUser={user}/>}/>
-        <Route path='/search' element={<Searching  appUser={user}/>}/>
-        <Route path='/listgroup' element={ <ListGroupPage  appUser={user}/>}/>
-        <Route path='/group/:id' element={<Group  appUser={user}/>}/>
-        <Route path='/account-setting' element={ <AccountSetting appUser={user} />}/>
+    <Route>
+      <Route path='/' element={<Layout appUser={user} />}>
+        <Route index element={<Homepage appUser={user}/>} />
+        <Route path='people' element={<PeoplePage appUser={user}/>}/>
+        <Route path='search' element={<Searching  appUser={user}/>}/>
+        <Route path='listgroup' element={ <ListGroupPage  appUser={user}/>}/>
       </Route>
+      <Route path='/member' element={<Layout2  appUser={user}/>}>
+        <Route path='profile/:username' element={<Profile appUser={user}/>}/>
+        <Route path='account-setting' element={ <AccountSetting appUser={user} />}/>
+      </Route>
+      <Route  path='/group' element={<Layout2  appUser={user}/>}>
+        <Route path=':id' element={<Group  appUser={user}/>}/>
+        <Route path=':id/manage' element={<GroupManagementPage /> } />
+      </Route>
+
+    </Route>
   ))
   return (
     <>

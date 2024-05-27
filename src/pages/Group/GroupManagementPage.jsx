@@ -9,82 +9,48 @@ export const GroupManagementPage=({appUser})=>{
     const [loading, setLoading]=useState(true);
     const [group, setGroup] = useState();
     useEffect(()=>{
-        if(!loading) setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
-            setGroup(res.data);
-            if(!res.data.public_group && res.data.member_role==null){
-                setTab("about");
-            }
-        }).finally(()=>{
-            if(group!=null){
-                setTimeout(() => {
-                    setLoading(false);
-                }, 200);
-            }
-        })
+        // if(!loading) setLoading(true);
+        // axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
+        //     setGroup(res.data);
+        //     if(!res.data.public_group && res.data.member_role==null){
+        //         setTab("about");
+        //     }
+        // }).finally(()=>{
+        //     if(group!=null){
+        //         setTimeout(() => {
+        //             setLoading(false);
+        //         }, 200);
+        //     }
+        // })
     },[])
     return (
-        <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
-            <NavigatorBar user={appUser}/>
-            <Col xl={4} className="p-0 position-relative" >
-             <SessionLeftGroup group={group}/>
-            </Col>
-            <Col xl={8} className="mx-auto">
-                <Container fluid>
-                    <Row>
-                        <Col xl={12} className="p-0" style={{height: "350px",width: "100vw",position: "relative"}}>
-                            {group.background_group !=null? 
-                                <Image src={group.background_group} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px"}}/>
-                                : <div style={{height: "inherit",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px",backgroundColor: "rgb(57,59,70,0.5)",}}></div>
-                            }
-                            <div className="position-absolute"style={{top: "250px",left: "1rem",width: "90%"}} >
-                                <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow px-2 pt-3">
-                                    {group.image_group!=null?
-                                        <Image src={group.image_group}  className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
-                                        :
-                                        <Image src={APIService.URL_REST_API+"/files/group_image.png"} className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
-                                    }
-                                    <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>
-                                        <h2 style={{fontWeight: "900"}}>{group.groupname}</h2>
-                                        <div className="d-flex flex-row justify-content-between align-items-center">
-                                            <p>{
-                                                group.public_group?
-                                                <span><GlobeAmericas /> Public group</span> 
-                                                :<span><LockFill/> Private group</span>
-                                            }<Dot/> {group.member_count} members</p>
-                                            {group.member_role ==null?
-                                            <Button variant="primary" style={{width: "100px",fontWeight: "bold"}}>Join</Button>
-                                            :
-                                            <Button variant="outline-danger" style={{width: "200px"}}>Leave Group</Button>
-                                            }
-                                        </div>
-                                        <div className="d-flex flex-row mb-2 flex-nowrap align-items-end" style={{overflowX: "hidden"}}>
-                                            {
-                                                group.public_group?
-                                                group.group_members.map((member,index)=>{
-                                                    let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService+"/files/user_female.png":APIService+"/files/user_male.png");
-                                                    return <Image key={index} src={urlImg} width={40} roundedCircle />
-                                                })
-                                                :
-                                                <></>
-                                            }
-                                            {
-                                                group.public_group? 
-                                                <Link color="secondary">
-                                                    <ThreeDots width={40}/>
-                                                </Link>
-                                                :<></>
-                                            }
-                                        </div>
-                                        
-                                    </div>
-                                </div>
+            <Row>
+                <Col xl={8} className="p-5" style={{height: "350px",width: "100vw",position: "relative"}}>
+                <div className="d-flex align-items-start" style={{padding: "100px 10px 100px 20px"}}>
+                        <div className="nav flex-column nav-underline me-3 border-end pe-4 flex-fill" id="myTab" role="tablist" aria-orientation="vertical">
+                            <h4>Settings</h4>
+                            <hr/>
+                            <button className="nav-link text-start text-black fs-5 active" id="v-tabs-general-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-general" type="button" role="tab" aria-controls="v-tabs-general" aria-selected="true">General Setting</button>
+                            <button className="nav-link text-start text-black fs-5" id="v-tabs-members-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-members" type="button" role="tab" aria-controls="v-tabs-members" aria-selected="false">Manage Members</button>
+                            <button className="nav-link text-start text-black fs-5" id="v-tabs-admin-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-admin" type="button" role="tab" aria-controls="v-tabs-admin" aria-selected="false">Manage Administrators</button>
+                            <button className="nav-link text-start text-black fs-5" id="v-tabs-report-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-report" type="button" role="tab" aria-controls="v-tabs-report" aria-selected="false">List Reports</button>
+                        </div>
+                        <div className="tab-content " id="myTabContent" style={{width: "800px"}}>
+                            <div className="tab-pane fade show active text-start px-5" id="v-tabs-general" role="tabpanel" aria-labelledby="v-tabs-general" tabIndex="0">
+                                <h3>General Setting</h3>
                             </div>
-                        </Col>
-                    </Row>
-                </Container>
-            </Col>
-        </Row>
-       
+                            <div className="tab-pane fade text-start px-5" id="v-tabs-members" role="tabpanel" aria-labelledby="v-tabs-members" tabIndex="0">
+                            <h3>List member</h3>
+                            </div>
+                            <div className="tab-pane fade text-start px-5" id="v-tabs-admin" role="tabpanel" aria-labelledby="v-tabs-admin" tabIndex="0">
+                                <h3>List Admin</h3>
+                            </div>
+                            <div className="tab-pane fade text-start px-5" id="v-tabs-report" role="tabpanel" aria-labelledby="v-tabs-report" tabIndex="0">
+                               <h3>List Reports</h3>
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
     );
 }

@@ -66,13 +66,6 @@ function Searching({appUser}){
     }
     
     return (
-        <Row>
-            <Col xl={3} className='p-0 ' >
-                <SessionLeft user={appUser}/>
-            </Col>
-            <Col xl={9} className='p-0'>
-                <div className='d-flex flex-column'>
-                <NavigatorBar user={appUser}/>
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col xl={10} md={12} className="mt-2">
@@ -101,9 +94,6 @@ function Searching({appUser}){
                         </Col>
                     </Row>
                 </Container>
-                </div>
-            </Col>
-        </Row>
     );
 }
 

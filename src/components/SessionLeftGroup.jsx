@@ -1,9 +1,27 @@
-import React from "react";
-import { Row,Col,Image } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Row,Col,Image, Spinner } from "react-bootstrap";
 import { Dot, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import NotificationListGroup from "./NotificationListGroup";
 import APIService from "../auth/APIService";
-function SessionLeftGroup({group}){
+import axios from "axios";
+import { useParams } from "react-router-dom";
+function SessionLeftGroup({appUser}){
+    const [group, setGroup]= useState({});
+    const [loading, setLoading] =useState(true);
+    const {id} = useParams(); 
+    useEffect(()=>{
+        if(!loading) setLoading(true);
+        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
+            setGroup(res.data);
+        }).finally(()=>{
+            setLoading(false);
+        })
+    },[])
+    if(loading){
+        <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
+            <Spinner animation="border" />
+        </div>
+    }
     return (<div className="d-flex flex-column h-100 " style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)", position: "fixed", top:"0px",paddingTop: "80px",width:"inherit"}}>
         <Row >
             <Col xl={3} className="ms-auto ps-2">
