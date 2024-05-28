@@ -11,7 +11,8 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
 
-function Profile ({appUser}){
+function Profile (){
+    const appUser = useSelector(selectCurrentUser);
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('posts');

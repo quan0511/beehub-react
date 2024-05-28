@@ -6,7 +6,10 @@ import PeopleCard from "../components/PeopleCard"
 import { Search } from "react-bootstrap-icons"
 import APIService from "../auth/APIService"
 import axios from "axios"
-function PeoplePage({appUser}){
+import { useSelector } from "react-redux"
+import { selectCurrentUser } from "../auth/authSlice"
+function PeoplePage(){
+    const appUser = useSelector(selectCurrentUser);
     const [select, setSelect]=useState('suggestions');
     const [loading, setLoading] = useState(true);
     const [people, setPeople] = useState();

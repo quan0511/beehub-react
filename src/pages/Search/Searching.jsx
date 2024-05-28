@@ -11,8 +11,10 @@ import { useDispatch, useSelector } from "react-redux"
 import SessionLeft from "../../components/SessionLeft"
 import NavigatorBar from "../../components/NavigatorBar"
 import { useSearchParams } from "react-router-dom"
+import { selectCurrentUser } from "../../auth/authSlice"
 
-function Searching({appUser}){
+function Searching(){
+    const appUser = useSelector(selectCurrentUser);
     const [searchStr, setSearchStr] = useSearchParams();
     const [loading,setLoading] = useState();
     const dispatch = useDispatch();

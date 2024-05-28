@@ -9,8 +9,8 @@ import axios from "axios";
 import APIService from "../../auth/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
-import { GroupError } from "./GroupError";
-function Group ({appUser}){
+function Group (){
+    const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
     const [group, setGroup]= useState({});
     const [posts,setPosts] = useState([]);

@@ -4,7 +4,10 @@ import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "rea
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../auth/APIService";
-function NavigatorBar({user}){
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
+function NavigatorBar(){
+    const user = useSelector(selectCurrentUser);
     const location = useLocation();
     const navigate = useNavigate();
     const [show,setShow] = useState(false);

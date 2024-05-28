@@ -1,28 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Col, Container,  Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import AcitivityPage from './ActivityPage';
 import SessionLeft from '../components/SessionLeft';
 import NavigatorBar from '../components/NavigatorBar';
 import APIService from '../auth/APIService';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../auth/authSlice';
 
-function Homepage ({appUser}){
-    
-    const [posts,setPosts] = useState([]);
-    const [friends, setFriends]= useState([]);
-    const [loading, setLoading] = useState(true);
-    useEffect(()=> {
-        axios.get(`${APIService.URL_REST_API}/homepage/${appUser.id}`).then((res)=>{
-            setPosts(res.data);
-            setLoading(true);
-        }).finally(()=>{ 
+
+function Homepage() {
+    const appUser = useSelector(selectCurrentUser);
+    const [state, setState] = useState({
+        posts: [],
+        friends: [],
+        loading: false
+    })
+
+    useEffect(() => {
+        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res) => {
+            setState({
+                posts: res.data,
+                loading: true
+            });
+        }).finally(() => {
             setTimeout(() => {
-                setLoading(false);
+                setState({ loading: false })
             }, 1200);
-            window.scrollTo({top:0,behavior: "smooth"});
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
-        axios.get(`${APIService.URL_REST_API}/friends/${appUser.id}`).then((res)=>{
-            setFriends(res.data);
+        axios.get(`${APIService.URL_REST_API}/friends/1`).then((res) => {
+            setState({
+                friends: res.data
+            });
         });
     },[])
 
