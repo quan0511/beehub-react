@@ -1,6 +1,6 @@
 import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
-function NotificationListGroup(){
+function NotificationListGroup({requirements,reports}){
     return (
         <Card style={{ width: '20rem',borderColor: "#383a45", padding: 0 }} bg="dark">
             <ListGroup >

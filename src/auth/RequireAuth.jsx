@@ -10,7 +10,7 @@ function RequireAuth() {
 
     useEffect(() => {
         if (token !== null) return
-        if (localStorage.getItem('token') !== null) dispatch(setCredentials({ ...userData }))
+        // if (localStorage.getItem('token') !== null) dispatch(setCredentials({ ...userData }))
     })
 
     return ( 

@@ -1,41 +1,13 @@
 import React, { useEffect, useState } from "react";
-import SessionLeftGroup from "../../components/SessionLeftGroup";
-import {Col, Container, Image, Button, Row, Nav, Spinner} from "react-bootstrap";
-import { Dot, GlobeAmericas, LockFill, ThreeDots } from "react-bootstrap-icons";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import NavigatorBar from "../../components/NavigatorBar";
+import SessionLeftGroup from "../../components/SessionLeftGroup";
+import { Dot, GlobeAmericas, LockFill, ThreeDots } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
-import GroupMedia from "./GroupMedia";
-import GroupPeople from "./GroupPeople";
-import GroupDiscussion from "./GroupDiscussion";
-import axios from "axios";
-import APIService from "../../auth/APIService";
-import { Link, useParams } from "react-router-dom";
-import { GroupAbout } from "./GroupAbout";
-function Group (){
-    const appUser = useSelector(selectCurrentUser);
-    const {id} = useParams(); 
-    const [group, setGroup]= useState({});
-    const [posts,setPosts] = useState([]);
-    const [tab, setTab] = useState('discussion');
-    const [loading, setLoading] =useState(true);
-    const handelSelectTab = (selectKey)=>{
-        setTab(selectKey);
-    }
-    const tabSession = ()=>{
-        switch(tab){
-            case "about":
-                return <GroupAbout group={group} />;
-            case "discussion":
-                
-                return <GroupDiscussion appUser={appUser} posts={posts} description={group.description} toListMedia={()=>setTab("media")} toAbout={()=>setTab("about")} list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} isPublic={group.public_group} isActive={group.active} />;
-            case "people":
-                return <GroupPeople appUser={appUser} members={group.group_members} />;
-            case "media":
-                return <GroupMedia group_medias={group.group_medias}/>; 
-            default:
-                return <GroupDiscussion/>;
-        }
-    }
+export const GroupManagementPage=({appUser})=>{
+    const [loading, setLoading]=useState(true);
+    const [group, setGroup] = useState();
     useEffect(()=>{
         if(!loading) setLoading(true);
         axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
@@ -43,9 +15,6 @@ function Group (){
             if(!res.data.public_group && res.data.member_role==null){
                 setTab("about");
             }
-        })
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/group/${id}/posts`).then((res)=>{
-            setPosts(res.data);
         }).finally(()=>{
             if(group!=null){
                 setTimeout(() => {
@@ -54,18 +23,13 @@ function Group (){
             }
         })
     },[])
-    if(loading ){
-        return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
-            <Spinner animation="border" />
-        </div>
-    }
     return (
         <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
             <NavigatorBar />
-            <Col xl={2} className="p-0 position-relative" >
+            <Col xl={4} className="p-0 position-relative" >
              <SessionLeftGroup group={group}/>
             </Col>
-            <Col xl={10} className="mx-auto">
+            <Col xl={8} className="mx-auto">
                 <Container fluid>
                     <Row>
                         <Col xl={12} className="p-0" style={{height: "350px",width: "100vw",position: "relative"}}>
@@ -114,28 +78,13 @@ function Group (){
                                         </div>
                                         
                                     </div>
-                                    <Nav justify  variant="tabs" defaultActiveKey={tab} className="fs-5 w-50" onSelect={handelSelectTab}>
-                                        <Nav.Item>
-                                            <Nav.Link eventKey="about" className="text-dark">About</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item >
-                                            <Nav.Link eventKey="discussion" className="text-dark" >Discussion</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link eventKey="people" className="text-dark">People</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link eventKey="media" className="text-dark">Media</Nav.Link>
-                                        </Nav.Item>
-                                    </Nav>
                                 </div>
                             </div>
-                            {tabSession()}
                         </Col>
                     </Row>
                 </Container>
             </Col>
         </Row>
+       
     );
 }
-export default Group;
