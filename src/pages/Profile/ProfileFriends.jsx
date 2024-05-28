@@ -1,7 +1,7 @@
 import React from "react";
 import {Col, Row,Card, Form, InputGroup, Button, Image, Spinner, Dropdown } from "react-bootstrap";
 import { Search, ThreeDots, } from "react-bootstrap-icons";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function ProfileFriends({friends}){
     return (
         <Row className="mb-5">
@@ -34,7 +34,7 @@ function ProfileFriends({friends}){
                     <Row xl={2}>
                         {friends?
                             friends.map((friend,index)=>{
-                                let urlImage = friend.image!=null?friend.image: (friend.gender =='female'? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
+                                let urlImage = friend.image!=null?friend.image: (friend.gender =='female'? APIService.URL_REST_API+"/user/files/user_female.png": APIService.URL_REST_API+"/user/files/user_male.png");
                                 return (<Col>
                                             <Card className="p-1 mb-2 text-start">
                                                 <Row className="g-0" >

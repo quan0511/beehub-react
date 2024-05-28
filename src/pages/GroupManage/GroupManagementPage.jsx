@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {  Col, Row, Spinner } from "react-bootstrap";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { GeneralSetting } from "./GeneralSetting";
 import { ListMember } from "./ListMember";
 import { ListGroupManagers } from "./ListGroupManagers";
@@ -17,7 +17,7 @@ export const GroupManagementPage=()=>{
     const [checkMember ,setCheckMember] =useState(false);
     
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
             setGroup(res.data); 
             console.log(res.data);
             if(res.data.member_role==null || res.data.member_role=="MEMBER"){

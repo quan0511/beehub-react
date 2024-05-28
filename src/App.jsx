@@ -19,11 +19,11 @@ import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
 function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
         {/* public routes */}
         <Route path='login' element={<LoginPage />} />
         <Route path='register' element={<RegisterPage />} />
 
+      <Route element={<Layout />}>
         {/* protected routes */}
         <Route element={<RequireAuth />}>
           <Route index element={<Homepage />} />

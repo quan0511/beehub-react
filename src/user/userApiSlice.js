@@ -1,17 +1,19 @@
+import { useSelector } from "react-redux";
 import { apiSlice } from "../api/apiSlice";
+import { setCredentials } from '../auth/authSlice'
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         homepage: builder.query({
             query: data => ({
-                url: '/homepage/1',
+                url: '/homepage/'+user.id,
                 data
             })
         }),
 
         friends: builder.query({
             query: data => ({
-                url: '/friends/1',
+                url: '/friends/'+user.id,
                 data
             })
         })

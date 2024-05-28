@@ -3,7 +3,7 @@ import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } fro
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 function NavigatorBar(){
@@ -19,6 +19,9 @@ function NavigatorBar(){
         setSearchParams({ search: searchQuery });
         navigate(`/search?search=${encodeURIComponent(searchQuery)}`);
     };
+    if(user==null){
+        return <></>;
+    }
     return (
          <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
             <Container fluid >
@@ -71,8 +74,8 @@ function NavigatorBar(){
                                     <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 :(
                                     user.gender=="female"?
-                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 )
                             }
                             {user.fullname}

@@ -1,12 +1,12 @@
 import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 function NotificationListGroup({requirements}){
     return (
         <Card className="p-0">
             <ListGroup >
                 {requirements.map((req,index)=>{
-                    let urlImage= req.sender.image!=null?req.sender.image: (req.sender.gender=='female'?APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
+                    let urlImage= req.sender.image!=null?req.sender.image: (req.sender.gender=='female'?APIService.URL_REST_API+"/user/files/user_female.png":APIService.URL_REST_API+"/user/files/user_male.png");
                     return (
                         <ListGroup.Item key={index} style={{borderColor: "#383a45"}}>
                             <Row>

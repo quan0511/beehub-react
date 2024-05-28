@@ -6,7 +6,7 @@ import SearchPeople from "./SearchPeople"
 import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
-import APIService from "../../auth/APIService"
+import APIService from "../../features/APIService"
 import { useDispatch, useSelector } from "react-redux"
 import SessionLeft from "../../components/SessionLeft"
 import NavigatorBar from "../../components/NavigatorBar"
@@ -43,7 +43,7 @@ function Searching(){
     }
     useEffect(()=>{
         setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
             setResultOfSearch(res.data);
         }).finally(()=> setLoading(false));
     },[searchStr])

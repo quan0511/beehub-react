@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "react-bootstrap";
 import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
@@ -44,8 +44,8 @@ function GroupPeople({members}){
                         <div>
                             {appUser.image!=null?
                              <Image src={appUser.image} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />
-                            :(appUser.gender=='female'? <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />:
-                            <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />)
+                            :(appUser.gender=='female'? <Image src={APIService.URL_REST_API+"/user/files/user_female.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />:
+                            <Image src={APIService.URL_REST_API+"/user/files/user_male.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />)
                             }
                             <b>{appUser.fullname}</b>
                         </div>
@@ -56,7 +56,7 @@ function GroupPeople({members}){
                     <div className="mb-3">
                         <p><b>Group managers · {members.filter((manager)=>manager.role=='GROUP_CREATOR' || manager.role=="GROUP_MANAGER").length} </b></p>
                         {members.filter((manager)=>manager.role=='GROUP_CREATOR' || manager.role=="GROUP_MANAGER").map((user,index)=>{
-                            let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/files/user_female.png`:`${APIService.URL_REST_API}/files/user_male.png`);
+                            let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/user/files/user_female.png`:`${APIService.URL_REST_API}/user/files/user_male.png`);
                             return <Row key={index} className="mb-3">
                                 <Col xl={2}>
                                     <Image src={urlImg} style={{width:"60px",height: "60px",marginRight: "20px"}}roundedCircle />
@@ -78,7 +78,7 @@ function GroupPeople({members}){
                         <p><b>Members </b>· {members.filter((user)=>user.role=="MEMBER").length} </p>
                         {
                             members.filter((user)=>user.role=='MEMBER').map((user,index)=>{
-                                let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/files/user_female.png`:`${APIService.URL_REST_API}/files/user_male.png`);
+                                let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/user/files/user_female.png`:`${APIService.URL_REST_API}/user/files/user_male.png`);
                                 return <div className="mb-3 d-flex flex-row  justify-content-between align-items-center">
                                 <div>
                                     <Image src={urlImg} style={{width:"60px",height: "60px",marginRight: "20px"}}roundedCircle />

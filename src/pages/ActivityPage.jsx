@@ -1,17 +1,41 @@
-import React from 'react';
-import SessionRight from '../components/SessionRight';
+import React, { useEffect, useState } from 'react';
 import Post from '../components/Post';
 import { Button, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import APIService from '../auth/APIService';
-import { useFriendsQuery, useHomepageQuery } from '../user/userApiSlice';
+import APIService from '../features/APIService';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../auth/authSlice';
+import SessionRight from '../components/SessionRight';
 const AcitivityPage = ()=>{
-    const {data: posts, isLoading} = useHomepageQuery()
-    // const {data: friends, isFetching, isLoading} = useFriendsQuery()
-    
+    // const {data: posts, isLoading} = useHomepageQuery()
+    const user = useSelector(selectCurrentUser);
+    const [posts,setPosts] = useState([]);
+    const [friends, setFriends]= useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const handleScrollToTop=()=>{
-        window.scrollTo({top:0,behavior: "smooth"})
+        axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
+            setPosts(res.data);
+            setIsLoading(true);
+        }).finally(()=>{
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 1200);
+        window.scrollTo({top:0,behavior: "smooth"});})
     }
+    useEffect(()=> {
+        axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
+                setPosts(res.data);
+                setIsLoading(true);
+        }).finally(()=>{ 
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 1200);
+            window.scrollTo({top:0,behavior: "smooth"});
+        });
+        axios.get(`${APIService.URL_REST_API}/user/friends/${user.id}`).then((res)=>{
+            setFriends(res.data);
+        });
+    },[])
     return (
     <Row>
         <Col lg={8} >
@@ -19,13 +43,13 @@ const AcitivityPage = ()=>{
                 <Form method="post" className="row pe-4">
                     <label className="col-1 mx-auto mb-3 col-form-label">
                         {
-                            // user.image?
-                            //     <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
-                            // :(
-                            //     user.gender=='female'?
-                            //     <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                            //     :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                            // )
+                            user.image?
+                                <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
+                            :(
+                                user.gender=='female'?
+                                <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                            )
                         }
                     </label>
                     <div className='col-9 d-flex flex-row justify-content-center align-items-center'>
@@ -53,7 +77,7 @@ const AcitivityPage = ()=>{
             }
         </Col>
         <Col lg={4}>
-            {/* <SessionRight friends={friends}/> */}
+            <SessionRight friends={friends}/>
         </Col>
     </Row>
     );

@@ -6,7 +6,7 @@ import GroupMedia from "./GroupMedia";
 import GroupPeople from "./GroupPeople";
 import GroupDiscussion from "./GroupDiscussion";
 import axios from "axios";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
 import { useSelector } from "react-redux";
@@ -46,11 +46,11 @@ function Group (){
     }
     useEffect(()=>{
         if(!loading) setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
             setGroup(res.data);
             console.log(res.data);
         })
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/group/${id}/posts`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/group/${id}/posts`).then((res)=>{
             setPosts(res.data);
         }).finally(()=>{
             if(group!=null){
@@ -80,7 +80,7 @@ function Group (){
                         {group.image_group!=null?
                             <Image src={group.image_group}  className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
                             :
-                            <Image src={APIService.URL_REST_API+"/files/group_image.png"} className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
+                            <Image src={APIService.URL_REST_API+"/user/files/group_image.png"} className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
                         }
                         <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>
                             <h2 style={{fontWeight: "900"}}>{group.groupname}</h2>
@@ -102,7 +102,7 @@ function Group (){
                                 {
                                     group.public_group || group.member_role!=null?
                                     group.group_members.map((member,index)=>{
-                                        let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
+                                        let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService.URL_REST_API+"/user/files/user_female.png":APIService.URL_REST_API+"/user/files/user_male.png");
                                         return <Image key={index} src={urlImg} width={40} roundedCircle />
                                     })
                                     :

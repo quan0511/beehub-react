@@ -2,7 +2,7 @@ import React from "react";
 import { Row,Col,Image, Spinner } from "react-bootstrap";
 import { Dot, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import NotificationListGroup from "./NotificationListGroup";
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 
 function SessionLeftGroup({requirements}){
     

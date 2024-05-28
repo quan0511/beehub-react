@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 function ListFriend ({friends}){
     const dispatch = useDispatch();
@@ -9,7 +9,7 @@ function ListFriend ({friends}){
     return (
         <ListGroup className=" w-100" >
             {friends.map((e,index)=>{
-                let imageSrc = e.image !=null? e.image:(e.gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
+                let imageSrc = e.image !=null? e.image:(e.gender=='female'? APIService.URL_REST_API+"/user/files/user_female.png":APIService.URL_REST_API+"/user/files/user_male.png");
                 return <ListGroup.Item key={index} className='text-start p-2 border-bottom-1 border-start-0 border-end-0 border-top-0' >
                     <Link style={{
                         textDecoration: "none",

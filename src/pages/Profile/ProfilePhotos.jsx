@@ -1,6 +1,6 @@
 import React from "react";
 import {Col, Image, Row } from "react-bootstrap";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function ProfilePhotos({galleries}){
     console.log(galleries);
     return (
@@ -9,7 +9,7 @@ function ProfilePhotos({galleries}){
                 <Row >
                     {galleries !=null && galleries.length>0?
                     galleries.map((gallery,index)=>{
-                       return <Col key={index} xl={3}> <Image src={APIService.URL_REST_API+"/files/"+gallery.media} fluid /></Col>
+                       return <Col key={index} xl={3}> <Image src={APIService.URL_REST_API+"/user/files/"+gallery.media} fluid /></Col>
                     })
                     :<Col xl={12} className="text-center"><p className="text-black-50" style={{fontSize: "30px"}}>No Image Found</p></Col>
                     }

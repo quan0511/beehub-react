@@ -9,7 +9,7 @@ import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
 
@@ -42,7 +42,7 @@ function Profile (){
     }
     useEffect(() => {
         if(username!=null){
-            axios.get(`${APIService.URL_REST_API}/profile/${username}`).then((res)=>{
+            axios.get(`${APIService.URL_REST_API}/user/profile/${username}`).then((res)=>{
                 setUser(res.data);
             }).finally(()=>{
                 setTimeout(() => {
@@ -63,7 +63,7 @@ function Profile (){
                 <Row className="p-0" style={{height: "350px",position: "relative"}}>
                     {
                         user.background!=null?
-                        <Image src={`${APIService.URL_REST_API}/files/`+user.background} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
+                        <Image src={`${APIService.URL_REST_API}/user/files/`+user.background} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
                         :
                         <div className="d-flex justify-content-center align-items-center bg-secondary">
                             <Button variant="link">
@@ -75,12 +75,12 @@ function Profile (){
                         <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow p-2">
                             {
                                 user.image!=null?
-                                <Image src={`${APIService.URL_REST_API}/files/`+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                <Image src={`${APIService.URL_REST_API}/user/files/`+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 :
                                 (user.gender=='female'?
-                                <Image src={`${APIService.URL_REST_API}/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 :
-                                <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
+                                <Image src={`${APIService.URL_REST_API}/user/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 )
                             }
                             <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>

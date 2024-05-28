@@ -2,7 +2,7 @@ import React from "react";
 import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
 function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
@@ -18,8 +18,8 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                                     {appUser.image!=null?
                                     <Image src={appUser.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                     :(appUser.gender=='female'?
-                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}}roundedCircle />
-                                    :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}}roundedCircle />
+                                    <Image src={APIService.URL_REST_API+"/user/files/user_female.png"} style={{width:"50px",height: "50px"}}roundedCircle />
+                                    :<Image src={APIService.URL_REST_API+"/user/files/user_male.png"} style={{width:"50px",height: "50px"}}roundedCircle />
                                     )
                                     }
                                 </label>
@@ -104,7 +104,7 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                     <Row className=" mb-3">
                         {list_media!=null&&list_media.length>0? 
                         list_media.map((media,index)=> {
-                            let urlImg = APIService.URL_REST_API+"/files/"+media.media;
+                            let urlImg = APIService.URL_REST_API+"/user/files/"+media.media;
                             return <Col key={index} xl={6} className="mb-2">
                                 <Image src={urlImg} fluid/>
                             </Col>
