@@ -11,7 +11,8 @@ import axios from "axios";
 import APIService from "../../auth/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
-function Group ({appUser}){
+function Group (){
+    const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
     const [group, setGroup]= useState({});
     const [posts,setPosts] = useState([]);
@@ -60,7 +61,7 @@ function Group ({appUser}){
     }
     return (
         <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
-            <NavigatorBar user={appUser}/>
+            <NavigatorBar />
             <Col xl={2} className="p-0 position-relative" >
              <SessionLeftGroup group={group}/>
             </Col>

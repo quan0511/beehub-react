@@ -1,59 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Col, Container,  Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import AcitivityPage from './ActivityPage';
 import SessionLeft from '../components/SessionLeft';
 import NavigatorBar from '../components/NavigatorBar';
 import APIService from '../auth/APIService';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../auth/authSlice';
 
-class Homepage extends React.Component{
-    constructor(props) {
-        super(props)
-        this.state = {
-            posts: [],
-            friends: [],
-            loading: true,
-        }
-    }
-    componentDidUpdate(prevProps, prevState, snapshot){
-        if(window.innerHeight + document.documentElement.scrollTop === document.scrollingElement.scrollHeight){
-            console.log("Bottom");
-        }
-    }
-    componentDidMount(){
-        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
-            this.setState({
-                posts:res.data,
+
+function Homepage() {
+    const appUser = useSelector(selectCurrentUser);
+    const [state, setState] = useState({
+        posts: [],
+        friends: [],
+        loading: false
+    })
+
+    useEffect(() => {
+        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res) => {
+            setState({
+                posts: res.data,
                 loading: true
             });
-        }).finally(()=>{ 
+        }).finally(() => {
             setTimeout(() => {
-                this.setState({loading: false})
+                setState({ loading: false })
             }, 1200);
-            window.scrollTo({top:0,behavior: "smooth"});
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
-        axios.get(`${APIService.URL_REST_API}/friends/1`).then((res)=>{
-            this.setState({
+        axios.get(`${APIService.URL_REST_API}/friends/1`).then((res) => {
+            setState({
                 friends: res.data
             });
         });
-    }
-    render(){
-        return (
-            <Row>
-                <Col xl={3} className='p-0 ' >
-                  <SessionLeft user={this.props.appUser}/>
-                </Col>
-                <Col xl={9} className='p-0'>
-                  <div className='d-flex flex-column'>
-                    <NavigatorBar user={this.props.appUser}/>
-                    <Container fluid className='ps-4' style={{marginTop: "60px"}}>
-                        <AcitivityPage user={this.props.appUser} friends={this.state.friends} posts={this.state.posts} setPosts={(newposts)=>this.setState({posts: newposts})} loading={this.state.loading} setLoading={(newVal)=> this.setState({loading: newVal})}/>
+    })
+
+    useEffect(() => {
+        if (window.innerHeight + document.documentElement.scrollTop === document.scrollingElement.scrollHeight) {
+            console.log("Bottom");
+        }
+    }, [])
+
+    return (
+        <Row>
+            <Col xl={3} className='p-0 ' >
+                <SessionLeft user={appUser} />
+            </Col>
+            <Col xl={9} className='p-0'>
+                <div className='d-flex flex-column'>
+                    <NavigatorBar user={appUser} />
+                    <Container fluid className='ps-4' style={{ marginTop: "60px" }}>
+                        <AcitivityPage user={appUser} friends={state.friends} posts={state.posts} setPosts={(newposts) => setState({ posts: newposts })} loading={state.loading} setLoading={(newVal) => setState({ loading: newVal })} />
                     </Container>
-                  </div>
-                </Col>
-            </Row>
-        );
-    }
+                </div>
+            </Col>
+        </Row>
+    );
 }
+
 export default Homepage;

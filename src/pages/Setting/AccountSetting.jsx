@@ -34,7 +34,7 @@ export function AccountSetting({appUser}){
         <div className="d-flex flex-row m-0 ">
             <Panel />
             <div className='d-flex flex-column w-100'>
-            <NavigatorBar user={appUser}/>
+            <NavigatorBar />
                 <Container >
                     <Row style={{marginTop: "100px", marginBottom: "100px"}} className="bg-white  py-5">
                         <Col xl={10} className="mx-auto" >

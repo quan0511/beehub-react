@@ -11,8 +11,10 @@ import { useDispatch, useSelector } from "react-redux"
 import SessionLeft from "../../components/SessionLeft"
 import NavigatorBar from "../../components/NavigatorBar"
 import { useSearchParams } from "react-router-dom"
+import { selectCurrentUser } from "../../auth/authSlice"
 
-function Searching({appUser}){
+function Searching(){
+    const appUser = useSelector(selectCurrentUser);
     const [searchStr, setSearchStr] = useSearchParams();
     const [loading,setLoading] = useState();
     const dispatch = useDispatch();
@@ -72,7 +74,7 @@ function Searching({appUser}){
             </Col>
             <Col xl={9} className='p-0'>
                 <div className='d-flex flex-column'>
-                <NavigatorBar user={appUser}/>
+                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col xl={10} md={12} className="mt-2">

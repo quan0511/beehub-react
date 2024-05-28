@@ -70,7 +70,7 @@ const ListGroupPage =({appUser})=>{
             </Col>
             <Col xl={9} className='p-0'>
               <div className='d-flex flex-column'>
-                <NavigatorBar user={appUser}/>
+                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         {loading ?

@@ -25,7 +25,7 @@ export const GroupManagementPage=({appUser})=>{
     },[])
     return (
         <Row style={{minHeight: "800px",overflowX: "hidden",margin:0}}>
-            <NavigatorBar user={appUser}/>
+            <NavigatorBar />
             <Col xl={4} className="p-0 position-relative" >
              <SessionLeftGroup group={group}/>
             </Col>
