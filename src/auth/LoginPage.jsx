@@ -17,8 +17,8 @@ function LoginPage() {
     const [errMsg, setErrMsg] = useState('')
     const navigate = useNavigate()
 
-    const [login, { isLoading }] = useLoginMutation()
-    const [logout, someObj] = useLogoutMutation()
+    const [login, { isLoginLoading }] = useLoginMutation()
+    const [logout, { isLogoutLoading }] = useLogoutMutation()
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -113,7 +113,6 @@ function LoginPage() {
                                         type="password"
                                         placeholder="Password"
                                         autoComplete='password'
-                                        disabled={isLoading}
                                     />
                                 </div>
                                 <div className="d-flex justify-content-between mb-2">

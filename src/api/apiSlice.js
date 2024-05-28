@@ -3,7 +3,7 @@ import { setCredentials, logOut } from '../auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
     baseUrl: 'http://localhost:8080/api',
-    // credentials: 'include',
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token
         if (token) {
@@ -15,7 +15,7 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions)
-    if (result?.error?.originalStatus === '403') {
+    if (result?.error?.originalStatus === '403' && localStorage.getItem('refreshToken') != null) {
         console.log('sending refresh token')
         // send refresh token to get new access token
         const refreshResult = await baseQuery('/refresh', api, extraOptions)

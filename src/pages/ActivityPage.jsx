@@ -4,19 +4,13 @@ import Post from '../components/Post';
 import { Button, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import APIService from '../auth/APIService';
-import { selectCurrentUser } from '../auth/authSlice';
-import { useSelector } from 'react-redux';
-const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
-    const user =  useSelector(selectCurrentUser);
+import { useFriendsQuery, useHomepageQuery } from '../user/userApiSlice';
+const AcitivityPage = ()=>{
+    const {data: posts, isLoading} = useHomepageQuery()
+    // const {data: friends, isFetching, isLoading} = useFriendsQuery()
+    
     const handleScrollToTop=()=>{
-        axios.get(`${APIService.URL_REST_API}/homepage/${user.id}`).then((res)=>{
-            setPosts(res.data);
-            setLoading(true);
-        }).finally(()=>{
-        setTimeout(() => {
-            setLoading(false)
-        }, 1200);
-        window.scrollTo({top:0,behavior: "smooth"});})
+        window.scrollTo({top:0,behavior: "smooth"})
     }
     return (
     <Row>
@@ -25,13 +19,13 @@ const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
                 <Form method="post" className="row pe-4">
                     <label className="col-1 mx-auto mb-3 col-form-label">
                         {
-                            user.image?
-                                <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
-                            :(
-                                user.gender=='female'?
-                                <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                                :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                            )
+                            // user.image?
+                            //     <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
+                            // :(
+                            //     user.gender=='female'?
+                            //     <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                            //     :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                            // )
                         }
                     </label>
                     <div className='col-9 d-flex flex-row justify-content-center align-items-center'>
@@ -41,7 +35,7 @@ const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
                 
                 </Form>
             </div>
-            {loading? <div className='mt-5'>
+            {isLoading? <div className='mt-5'>
                 <Spinner animation="border"  role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner></div>
@@ -51,7 +45,7 @@ const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
                 })    
             }
             {
-            !loading?
+            !isLoading?
             <div className='mt-4 mb-3'>
                 <Button variant='secondary' onClick={handleScrollToTop}>Reload</Button>
             </div>:
@@ -59,7 +53,7 @@ const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
             }
         </Col>
         <Col lg={4}>
-            <SessionRight friends={friends}/>
+            {/* <SessionRight friends={friends}/> */}
         </Col>
     </Row>
     );
