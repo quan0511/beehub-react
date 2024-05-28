@@ -21,7 +21,7 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         {/* public routes */}
-        <Route path='login' element={<LoginPage />} />SSSSSSS
+        <Route path='login' element={<LoginPage />} />
         <Route path='register' element={<RegisterPage />} />
 
         {/* protected routes */}
