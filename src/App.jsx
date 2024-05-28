@@ -25,7 +25,7 @@ import { GroupManagementPage } from './pages/GroupManage/GroupManagementPage'
 function App() {
   const [user, setUser] = useState();
   useLayoutEffect(() => {
-    axios.get(`${APIService.URL_REST_API}/user/1`).then((res)=>{
+    axios.get(`${APIService.URL_REST_API}/user/6`).then((res)=>{
       setUser(res.data);
     });
   },[]);

@@ -54,7 +54,7 @@ const ListGroupPage =({appUser})=>{
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/listgroup_page/1`).then((res)=> {
+        axios.get(`${APIService.URL_REST_API}/listgroup_page/${appUser.id}`).then((res)=> {
             setJoinedGroups(res.data["joined_groups"]);
             setOwnGroups(res.data["own_group"]);
         }).finally(()=>{

@@ -3,27 +3,31 @@ import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../auth/APIService";
-function GroupDiscussion({appUser, posts, description, toAbout, toListMedia, list_media, isActive, isPublic }){
+function GroupDiscussion({appUser, posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
+    console.log(list_media);
     return <Container>
-        <Row style={{paddingBottom: "100px"}}>
+        <Row style={{paddingBottom: "100px",paddingTop: "220px"}}>
             <Col xl={7} className="mx-auto" >
-                <div className="border-1 rounded-2 border pe-2 text-start" style={{paddingTop:"10px", paddingLeft: "1px",marginTop: "120px", boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
-                    <Form className="row" style={{padding: "10px 20px "}}>
-                        <label className="col-1 ms-2 me-1 col-form-label">
-                            {appUser.image!=null?
-                            <Image src={appUser.image} style={{width:"50px",height: "50px"}}roundedCircle />
-                            :(appUser.gender=='female'?
-                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}}roundedCircle />
-                            :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}}roundedCircle />
-                            )
-                            }
-                        </label>
-                        <div className='col-10 d-flex flex-row justify-content-center align-items-center'>
-                            <input type="text" className="mx-auto form-control " style={{borderRadius: "30px", height:"35px"}} placeholder="Write something..."/>
-                        </div>
-                        <div className='col-1'></div>
-                    </Form>
-                </div>
+                {
+                    joined?
+                        <div className="border-1 rounded-2 border pe-2 text-start" style={{paddingTop:"10px", paddingLeft: "1px",boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
+                            <Form className="row" style={{padding: "10px 20px "}}>
+                                <label className="col-1 ms-2 me-1 col-form-label">
+                                    {appUser.image!=null?
+                                    <Image src={appUser.image} style={{width:"50px",height: "50px"}}roundedCircle />
+                                    :(appUser.gender=='female'?
+                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}}roundedCircle />
+                                    :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}}roundedCircle />
+                                    )
+                                    }
+                                </label>
+                                <div className='col-10 d-flex flex-row justify-content-center align-items-center'>
+                                    <input type="text" className="mx-auto form-control " style={{borderRadius: "30px", height:"35px"}} placeholder="Write something..."/>
+                                </div>
+                                <div className='col-1'></div>
+                            </Form>
+                        </div>:<></>
+                }
                 {
                     posts!=null && posts.length>0?
                     posts.map((post,index)=>{
@@ -96,9 +100,11 @@ function GroupDiscussion({appUser, posts, description, toAbout, toListMedia, lis
                         <span className="fw-bold">Recent media</span><br/>
                     </p>
                     <Row className=" mb-3">
-                        {list_media!=null&&list_media.length>0? list_media.map((media,index)=> {
-                            return <Col xl={6}>
-                                <Image src={media} fluid/>
+                        {list_media!=null&&list_media.length>0? 
+                        list_media.map((media,index)=> {
+                            let urlImg = APIService.URL_REST_API+"/files/"+media.media;
+                            return <Col key={index} xl={6} className="mb-2">
+                                <Image src={urlImg} fluid/>
                             </Col>
                         })
                         :<></>

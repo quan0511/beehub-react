@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import SessionLeftGroup from "../../components/SessionLeftGroup";
 import {Col, Container, Image, Button, Row, Nav, Spinner} from "react-bootstrap";
 import { Dot, GlobeAmericas, LockFill, ThreeDots } from "react-bootstrap-icons";
-import NavigatorBar from "../../components/NavigatorBar";
 
 import GroupMedia from "./GroupMedia";
 import GroupPeople from "./GroupPeople";
@@ -11,6 +9,7 @@ import axios from "axios";
 import APIService from "../../auth/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
+import { GroupError } from "./GroupError";
 function Group ({appUser}){
     const {id} = useParams(); 
     const [group, setGroup]= useState({});
@@ -25,28 +24,37 @@ function Group ({appUser}){
             case "about":
                 return <GroupAbout group={group} />;
             case "discussion":
-                
-                return <GroupDiscussion appUser={appUser} posts={posts} description={group.description} toListMedia={()=>setTab("media")} toAbout={()=>setTab("about")} list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} isPublic={group.public_group} isActive={group.active} />;
+                if(  group.active && (group.public_group || group.joined)){
+                    return <GroupDiscussion appUser={appUser} posts={posts} joined={group.joined} description={group.description} toListMedia={()=>setTab("media")} toAbout={()=>setTab("about")} list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} isPublic={group.public_group} isActive={group.active} />;
+                }
+                return <GroupError/>
             case "people":
-                return <GroupPeople appUser={appUser} members={group.group_members} />;
+                if(  group.active && (group.public_group || group.joined)){
+                    return <GroupPeople appUser={appUser} members={group.group_members} />;
+                }
+                return <GroupError/>
             case "media":
-                return <GroupMedia group_medias={group.group_medias}/>; 
+                if(  group.active && (group.public_group || group.joined)){
+                    return <GroupMedia group_medias={group.group_medias}/>; 
+                }
+                return <GroupError/>
             default:
-                return <GroupDiscussion/>;
+                return <GroupError/>;
         }
     }
     useEffect(()=>{
         if(!loading) setLoading(true);
         axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
             setGroup(res.data);
-            if(!res.data.public_group && res.data.member_role==null){
-                setTab("about");
-            }
+            console.log(res.data);
         })
         axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/group/${id}/posts`).then((res)=>{
             setPosts(res.data);
         }).finally(()=>{
             if(group!=null){
+                if(!group.public_group && group.member_role==null){
+                    setTab("about");
+                }
                 setTimeout(() => {
                     setLoading(false);
                 }, 200);
@@ -81,16 +89,18 @@ function Group ({appUser}){
                                     :<span><LockFill/> Private group</span>
                                 }<Dot/> {group.member_count} members</p>
                                 {group.member_role ==null?
-                                <Button variant="primary" style={{width: "100px",fontWeight: "bold"}}>Join</Button>
-                                :
-                                <Button variant="outline-danger" style={{width: "200px"}}>Leave Group</Button>
+                                    <Button variant="primary" style={{width: "100px",fontWeight: "bold"}}>Join</Button>
+                                    :(group.member_role == "MEMBER"||group.member_role == "GROUP_MANAGER"?
+                                        <Button variant="outline-danger" style={{width: "200px"}}>Leave Group</Button>
+                                        : <Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link>   
+                                    )
                                 }
                             </div>
                             <div className="d-flex flex-row mb-2 flex-nowrap align-items-end" style={{overflowX: "hidden"}}>
                                 {
-                                    group.public_group?
+                                    group.public_group || group.member_role!=null?
                                     group.group_members.map((member,index)=>{
-                                        let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService+"/files/user_female.png":APIService+"/files/user_male.png");
+                                        let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
                                         return <Image key={index} src={urlImg} width={40} roundedCircle />
                                     })
                                     :

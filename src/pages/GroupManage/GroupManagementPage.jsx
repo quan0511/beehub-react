@@ -1,34 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container,  Form,  Row } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Button, Col, Container,  Form,  Row, Spinner } from "react-bootstrap";
+import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
 import { GeneralSetting } from "./GeneralSetting";
 import { ListMember } from "./ListMember";
 import { ListGroupManagers } from "./ListGroupManagers";
 import SessionLeftGroup from "../../components/SessionLeftGroup";
+import { ListGroupReports } from "./ListGroupReports";
 
 export const GroupManagementPage=({appUser})=>{
     const [loading, setLoading]=useState(true);
     const {id} =useParams();
     const [group, setGroup] = useState();
+    const [checkMember ,setCheckMember] =useState(false);
     
     useEffect(()=>{
-        if(!loading) setLoading(true);
         axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
-            setGroup(res.data);
+            setGroup(res.data); 
             console.log(res.data);
-            if(!res.data.public_group && res.data.member_role==null){
-                setTab("about");
+            if(res.data.member_role==null || res.data.member_role=="MEMBER"){
+                setCheckMember(true);
             }
-        }).finally(()=>{
-            setTimeout(() => {
-                setLoading(false);
-            }, 200);
         })
     },[])
-    if(loading){
-        return;
+    if(checkMember){
+        return <Navigate to={"/group/"+id} replace />
+    }
+    if(!group){
+        return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
+        <Spinner animation="border" />
+    </div>;
     }
     return (
             <Row>
@@ -54,7 +56,7 @@ export const GroupManagementPage=({appUser})=>{
                                 <ListGroupManagers managers={group.group_members.filter(e=>e.role!='MEMBER')}/>
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-report" role="tabpanel" aria-labelledby="v-tabs-report" tabIndex="0">
-                               <h3>List Reports</h3>
+                               <ListGroupReports reports={group.reports_of_group}/>
                             </div>
                         </Col>
                     </Row>

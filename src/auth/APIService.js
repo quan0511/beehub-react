@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class APIService {    
-    URL_REST_API = 'http://192.168.1.9:9001/api';
+    URL_REST_API = 'http://localhost:9001/api';
     fetchDataPeoplePage = (id) =>{
         axios.get(`${this.URL_REST_API}/peoplepage/${id}`).then((res)=>res.data);
         
