@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container,  Form,  Row, Spinner } from "react-bootstrap";
+import {  Col, Row, Spinner } from "react-bootstrap";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
@@ -8,9 +8,10 @@ import { ListMember } from "./ListMember";
 import { ListGroupManagers } from "./ListGroupManagers";
 import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
+import { useSelector } from "react-redux";
 
-export const GroupManagementPage=({appUser})=>{
-    const [loading, setLoading]=useState(true);
+export const GroupManagementPage=()=>{
+    const appUser = useSelector(selectCurrentUser);
     const {id} =useParams();
     const [group, setGroup] = useState();
     const [checkMember ,setCheckMember] =useState(false);

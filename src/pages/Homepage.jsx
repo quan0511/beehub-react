@@ -18,7 +18,7 @@ function Homepage() {
     })
 
     useEffect(() => {
-        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res) => {
+        axios.get(`${APIService.URL_REST_API}/homepage/${appUser.id}`).then((res) => {
             setState({
                 posts: res.data,
                 loading: true
@@ -29,7 +29,7 @@ function Homepage() {
             }, 1200);
             window.scrollTo({ top: 0, behavior: "smooth" });
         });
-        axios.get(`${APIService.URL_REST_API}/friends/1`).then((res) => {
+        axios.get(`${APIService.URL_REST_API}/friends/${appUser.id}`).then((res) => {
             setState({
                 friends: res.data
             });
@@ -38,7 +38,12 @@ function Homepage() {
 
     return (
         <Container fluid className='ps-4' style={{marginTop: "60px"}}>
-            <AcitivityPage user={appUser} friends={friends} posts={posts} setPosts={(newposts)=>setPosts(newposts)} loading={loading} setLoading={(newVal)=> setLoading(newVal)}/>
+            <AcitivityPage 
+                    friends={state.friends} 
+                    posts={state.posts} 
+                    setPosts={(newposts)=>setState({posts: newposts})} 
+                    loading={state.loading} 
+                    setLoading={(newVal)=> setState({loading: newVal})}/>
         </Container>
     );
 }

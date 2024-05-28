@@ -3,7 +3,10 @@ import {Image, ListGroup } from "react-bootstrap";
 import { Briefcase, CardImage, Cart3, ChatDots, Display,  JournalBookmark, Newspaper, People, Person, Play} from "react-bootstrap-icons";
 import { Link, useLocation } from "react-router-dom";
 import APIService from "../auth/APIService";
-function SessionLeft ({user}){
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
+function SessionLeft (){
+    const user = useSelector(selectCurrentUser);
     const location = useLocation();
     useEffect(()=>{
         let childitem = document.getElementsByClassName("link-item");

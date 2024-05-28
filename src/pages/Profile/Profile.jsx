@@ -10,6 +10,8 @@ import ProfilePhotos from "./ProfilePhotos";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../auth/APIService";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);

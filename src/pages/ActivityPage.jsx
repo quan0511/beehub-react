@@ -4,9 +4,12 @@ import Post from '../components/Post';
 import { Button, Col, Form, Image, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import APIService from '../auth/APIService';
-const AcitivityPage = ({user,posts,friends, loading, setPosts, setLoading})=>{
+import { selectCurrentUser } from '../auth/authSlice';
+import { useSelector } from 'react-redux';
+const AcitivityPage = ({posts,friends, loading, setPosts, setLoading})=>{
+    const user =  useSelector(selectCurrentUser);
     const handleScrollToTop=()=>{
-        axios.get(`${APIService.URL_REST_API}/homepage/1`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/homepage/${user.id}`).then((res)=>{
             setPosts(res.data);
             setLoading(true);
         }).finally(()=>{

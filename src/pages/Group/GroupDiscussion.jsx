@@ -3,8 +3,10 @@ import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../auth/APIService";
-function GroupDiscussion({appUser, posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
-    console.log(list_media);
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
+    const appUser = useSelector(selectCurrentUser);
     return <Container>
         <Row style={{paddingBottom: "100px",paddingTop: "220px"}}>
             <Col xl={7} className="mx-auto" >

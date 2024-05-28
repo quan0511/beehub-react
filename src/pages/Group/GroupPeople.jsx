@@ -3,8 +3,10 @@ import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "rea
 import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
 import APIService from "../../auth/APIService";
 import { Link } from "react-router-dom";
-function GroupPeople({appUser, members}){
-    console.log(members);
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+function GroupPeople({members}){
+    const appUser = useSelector(selectCurrentUser);
     const getButton = (mem)=>{
         if(mem.username == appUser.username){
             return <></>

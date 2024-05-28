@@ -3,10 +3,10 @@ import APIService from "../../auth/APIService";
 import axios from "axios";
 import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "react-bootstrap";
 import GroupCard from "../../components/GroupCard";
-import SessionLeft from "../../components/SessionLeft";
-import NavigatorBar from "../../components/NavigatorBar";
-import { Search } from "react-bootstrap-icons";
-const ListGroupPage =({appUser})=>{
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+const ListGroupPage =()=>{
+    const appUser = useSelector(selectCurrentUser);
     const [select, setSelect]=useState('joined_groups');
     const [loading, setLoading]= useState(true);
     const [ joinedGroups, setJoinedGroups] = useState([]);

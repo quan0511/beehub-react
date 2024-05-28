@@ -5,10 +5,11 @@ import APIService from "../../auth/APIService";
 import { Link } from "react-router-dom";
 import { FormSettingProfile } from "./FormSettingProfile";
 import { FormSettingPassword } from "./FormSettingPassword";
-import Panel from "../../components/Panel";
 import axios from "axios";
-import NavigatorBar from "../../components/NavigatorBar";
-export function AccountSetting({appUser}){
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+export function AccountSetting(){
+    const appUser = useSelector(selectCurrentUser);
     const [ account, setAccount] = useState({});
     const [ blockedUsers, setBlockedUsers] = useState([]);
     const triggerTabList = document.querySelectorAll('#myTab button')

@@ -61,7 +61,7 @@ function PeoplePage(){
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/peoplepage/1`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
+        axios.get(`${APIService.URL_REST_API}/peoplepage/${appUser.id}`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
             setTimeout(()=>{
                 setLoading(false);
             },600);

@@ -9,6 +9,8 @@ import axios from "axios";
 import APIService from "../../auth/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
 function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
@@ -25,12 +27,12 @@ function Group (){
                 return <GroupAbout group={group} />;
             case "discussion":
                 if(  group.active && (group.public_group || group.joined)){
-                    return <GroupDiscussion appUser={appUser} posts={posts} joined={group.joined} description={group.description} toListMedia={()=>setTab("media")} toAbout={()=>setTab("about")} list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} isPublic={group.public_group} isActive={group.active} />;
+                    return <GroupDiscussion posts={posts} joined={group.joined} description={group.description} toListMedia={()=>setTab("media")} toAbout={()=>setTab("about")} list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} isPublic={group.public_group} isActive={group.active} />;
                 }
                 return <GroupError/>
             case "people":
                 if(  group.active && (group.public_group || group.joined)){
-                    return <GroupPeople appUser={appUser} members={group.group_members} />;
+                    return <GroupPeople members={group.group_members} />;
                 }
                 return <GroupError/>
             case "media":
