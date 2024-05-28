@@ -25,20 +25,24 @@ function App() {
         <Route path='register' element={<RegisterPage />} />
 
         {/* protected routes */}
-        {/* <Route element={<RequireAuth />}> */}
+        <Route element={<RequireAuth />}>
           <Route index element={<Homepage />} />
           <Route path='people' element={<PeoplePage />} />
           <Route path='search' element={<Searching />} />
           <Route path='listgroup' element={ <ListGroupPage/>}/>
-        {/* </Route> */}
+        </Route>
       </Route>
       <Route path='/member' element={<Layout2/>}>
-        <Route path='profile/:username' element={<Profile/>}/>
-        <Route path='account-setting' element={ <AccountSetting />}/>
+        <Route element={<RequireAuth />}>
+          <Route path='profile/:username' element={<Profile/>}/>
+          <Route path='account-setting' element={ <AccountSetting />}/>
+        </Route>
       </Route>
       <Route  path='/group' element={<Layout2 />}>
-        <Route path=':id' element={<Group />}/>
-        <Route path='manage/:id' element={<GroupManagementPage /> } />
+        <Route element={<RequireAuth />}>
+          <Route path=':id' element={<Group />}/>
+          <Route path='manage/:id' element={<GroupManagementPage /> } />
+        </Route>
       </Route>
     </Routes>
   )
