@@ -16,11 +16,11 @@ function Homepage() {
     //     const [friends, setFriends]= useState([]);
     //     const [isLoading, setIsLoading] = useState(true);
     //     const [loadMore, setLoadMore] = useState(false); 
-    //     const handleScrollToTop=()=>{
-    //         setIsLoading(true);
-    //         setLoadMore(!loadMore);
-    //         window.scrollTo({top:0,behavior: "smooth"});
-    //     }
+        const handleScrollToTop=()=>{
+            // setIsLoading(true);
+            // setLoadMore(!loadMore);
+            window.scrollTo({top:0,behavior: "smooth"});
+        }
     // useEffect(()=> {
     //     axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
         //             setPosts(res.data);
@@ -58,7 +58,7 @@ function Homepage() {
                         
                         </Form>
                     </div>
-                    {isLoading? <div className='mt-5'>
+                    {isLoading && posts==null? <div className='mt-5'>
                         <Spinner animation="border"  role="status">
                             <span className="visually-hidden">Loading...</span>
                         </Spinner></div>
