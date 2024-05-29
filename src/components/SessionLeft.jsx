@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {Image, ListGroup } from "react-bootstrap";
+import {Image, ListGroup, Spinner } from "react-bootstrap";
 import { Briefcase, CardImage, Cart3, ChatDots, Display,  JournalBookmark, Newspaper, People, Person, Play} from "react-bootstrap-icons";
-import { Link, useLocation } from "react-router-dom";
-import APIService from "../auth/APIService";
-function SessionLeft ({user}){
+import { Link, Navigate, useLocation } from "react-router-dom";
+import APIService from "../features/APIService";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
+import axios from "axios";
+import { useUserQuery } from "../user/userApiSlice";
+function SessionLeft ({appUser}){
     const location = useLocation();
+    const {data: user, isLoading }= useUserQuery({id: appUser!=null? appUser.id: 1});
+
     useEffect(()=>{
         let childitem = document.getElementsByClassName("link-item");
         for (let index = 0; index < childitem.length; index++) {
@@ -13,7 +19,12 @@ function SessionLeft ({user}){
                 element.parentNode.classList.add("active");
             }
         }
-    },[])    
+    },[])
+    if(user==null || isLoading){
+        return <div className="d-flex flex-column ">
+            <Spinner animation="grow" style={{marginTop: "100px"}}/>
+        </div>
+    }    
     return (
         <div className="d-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
             <div style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", display: "block",textAlign:"center"}}>

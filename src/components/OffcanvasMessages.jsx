@@ -4,16 +4,20 @@ import { ChatRightHeartFill, XLg } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
 import ListGroups from "./ListGroups";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchApiUserFriendsGroups } from "../features/apiSlice";
+import { fetchApiUserFriendsGroups } from "../features/userSlice";
+import { selectCurrentUser } from "../auth/authSlice";
 
 function OffcanvasMessages({show,handleClose}){
+    const userApp = useSelector(selectCurrentUser);
     const [typeSearch, setTypeSearch]=useState("Friends");
     const seachFiends= () => setTypeSearch("Friends");
     const seachGroups=()=>setTypeSearch("Groups");
     const dispatch = useDispatch();
-    const data = useSelector(state=> state.apiSlice);
+    const data = useSelector(state=> state.userSlice);
+
+    //  useFriendsQuery();
     useEffect(()=>{
-        dispatch(fetchApiUserFriendsGroups());
+        dispatch(fetchApiUserFriendsGroups(userApp.id));
     },[])
     return (
         <Offcanvas show={show} placement="end">

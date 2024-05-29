@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Card, Col, Image, Row } from "react-bootstrap";
 import { Dot } from "react-bootstrap-icons";
 import GroupCard from "../../components/GroupCard";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function SearchGroups({groups}){
     console.log(groups);
     return (

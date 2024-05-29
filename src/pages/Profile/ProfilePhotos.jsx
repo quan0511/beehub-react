@@ -1,6 +1,6 @@
 import React from "react";
 import {Col, Image, Row } from "react-bootstrap";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function ProfilePhotos({galleries}){
     console.log(galleries);
     return (

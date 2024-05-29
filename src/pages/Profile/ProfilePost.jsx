@@ -1,7 +1,7 @@
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function ProfilePost ({user}){
     console.log(user);
     return<Row>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import axios from "axios";
 import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "react-bootstrap";
 import GroupCard from "../../components/GroupCard";
-import SessionLeft from "../../components/SessionLeft";
-import NavigatorBar from "../../components/NavigatorBar";
-import { Search } from "react-bootstrap-icons";
-const ListGroupPage =({appUser})=>{
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+const ListGroupPage =()=>{
+    const appUser = useSelector(selectCurrentUser);
     const [select, setSelect]=useState('joined_groups');
     const [loading, setLoading]= useState(true);
     const [ joinedGroups, setJoinedGroups] = useState([]);
@@ -54,7 +54,7 @@ const ListGroupPage =({appUser})=>{
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/listgroup_page/1`).then((res)=> {
+        axios.get(`${APIService.URL_REST_API}/listgroup_page/${appUser.id}`).then((res)=> {
             setJoinedGroups(res.data["joined_groups"]);
             setOwnGroups(res.data["own_group"]);
         }).finally(()=>{
@@ -64,13 +64,6 @@ const ListGroupPage =({appUser})=>{
         });
     },[])
     return (
-        <Row>
-            <Col xl={3} className='p-0 ' >
-              <SessionLeft user={appUser}/>
-            </Col>
-            <Col xl={9} className='p-0'>
-              <div className='d-flex flex-column'>
-                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         {loading ?
@@ -112,9 +105,6 @@ const ListGroupPage =({appUser})=>{
                         }
                     </Row>
                 </Container>
-              </div>
-            </Col>
-        </Row>
     );
 }
 export default ListGroupPage;

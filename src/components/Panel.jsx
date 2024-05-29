@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, ListGroup } from "react-bootstrap";
-import { Briefcase, CardImage, Cart3, ChatDots, Display, JournalBookmark, Newspaper, People, Person, Play } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import {Cart3, JournalBookmark, People, Person, PersonCircle, Play } from "react-bootstrap-icons";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import Tooltip from 'react-bootstrap/Tooltip'; 
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
+
 function Panel(){
-    
+    const userApp = useSelector(selectCurrentUser);
+    let location = useLocation();
+    if(userApp==null){
+        return <Navigate to="/login" state={{ from: location }} replace/>
+    }
     return (
         <div className="d-flex flex-column top-0 left-0 shadow " style={{width: "80px",height:"auto"}}>
             <div className="bg-dark" style={{height: "80px",padding: "1rem"}}>
@@ -14,7 +21,19 @@ function Panel(){
                 </Link>
             </div>
             <div className="bg-light position-sticky" style={{padding: "1rem",top:0}}>
-            <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-center">
+            <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-center active">
+                    <ListGroup.Item  className="border-0 py-3">
+                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
+                        overlay={(props) => ( 
+                            <Tooltip {...props}> 
+                               Profile 
+                            </Tooltip> 
+                        )} 
+                        placement="right"
+                    >
+                        <Link to={"/member/profile/"+userApp.username} ><PersonCircle size={20}/></Link>
+                        </OverlayTrigger> 
+                    </ListGroup.Item>
                     <ListGroup.Item className="border-0 pb-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
@@ -24,43 +43,21 @@ function Panel(){
                         )} 
                         placement="right"
                     >
-                        <a href="" ><JournalBookmark size={20}/></a>
+                        <Link to="/" ><JournalBookmark size={20}/></Link>
                     </OverlayTrigger>
 
                     </ListGroup.Item>
+                    
                     <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
                             <Tooltip {...props}> 
-                               Photos 
+                               People 
                             </Tooltip> 
                         )} 
                         placement="right"
                     >
-                        <a href="" ><CardImage size={20}/></a>
-                    </OverlayTrigger>
-                    </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Watch 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <a href="" ><Play size={20}/></a></OverlayTrigger>
-                    </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3 active">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Profile 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <a href="" ><Person size={20}/></a>
+                        <Link to={"/people"} ><Person size={20}/></Link>
                     </OverlayTrigger>
                     </ListGroup.Item>
                     <ListGroup.Item  className="border-0 py-3">
@@ -72,21 +69,10 @@ function Panel(){
                         )} 
                         placement="right"
                     >
-                        <a href="" ><People size={20}/></a>
+                        <Link to="/listgroup" ><People size={20}/></Link>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Adverts 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <a href="" ><Display size={20}/></a>
-                        </OverlayTrigger>
-                    </ListGroup.Item>
+                    
                     <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
@@ -99,7 +85,7 @@ function Panel(){
                         <a href="" ><Cart3 size={20}/></a>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3">
+                    {/* <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
                             <Tooltip {...props}> 
@@ -111,18 +97,7 @@ function Panel(){
                         <a href="" ><Briefcase size={20}/></a>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Forums 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <a href="" ><ChatDots size={20}/></a>
-                        </OverlayTrigger>
-                    </ListGroup.Item>
+                    
                     <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
@@ -134,7 +109,7 @@ function Panel(){
                     >
                         <a href="" ><Newspaper size={20}/></a>
                     </OverlayTrigger>
-                    </ListGroup.Item>
+                    </ListGroup.Item> */}
                 </ListGroup>
             </div>
         </div>

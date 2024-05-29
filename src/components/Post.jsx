@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Image, Row } from "react-bootstrap";
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 import { Link } from "react-router-dom";
 
 function Post ({post, page}){
@@ -81,9 +81,11 @@ function Post ({post, page}){
                 <Col xl={12} className="text-start">
                     <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>
                     <div className="mb-2">
-                        { post.media!=null && post.media.length >0?
-                            post.media.map((media, index)=> <Image src={APIService.URL_REST_API+"/files/"+media.media} key={media.id} fluid />)
-                            :<></>
+                        { post.media!=null?
+                            <Image src={APIService.URL_REST_API+"/files/"+post.media.media}  fluid />
+                            : (post.group_media !=null ?
+                                <Image src={APIService.URL_REST_API+"/files/"+post.group_media.media} fluid />
+                                :<></>)
                         }
                     </div>
                 </Col>

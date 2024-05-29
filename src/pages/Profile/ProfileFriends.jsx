@@ -1,7 +1,7 @@
 import React from "react";
 import {Col, Row,Card, Form, InputGroup, Button, Image, Spinner, Dropdown } from "react-bootstrap";
 import { Search, ThreeDots, } from "react-bootstrap-icons";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function ProfileFriends({friends}){
     return (
         <Row className="mb-5">

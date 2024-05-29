@@ -1,14 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import APIService from '../auth/APIService';
-
-
-export const fetchApiUserFriendsGroups= createAsyncThunk("fetchData",async ()=>{
-    const response = await axios.get(`${APIService.URL_REST_API}/groups_friends/1`);
+import APIService from './APIService';
+export const fetchApiUserFriendsGroups= createAsyncThunk("fetchData",async (id)=>{
+    const response = await axios.get(`${APIService.URL_REST_API}/groups_friends/${id}`);
     return response.data;
 });
-export const apiSlice = createSlice({
-    name: "apiSlice",
+export const userSlice = createSlice({
+    name: "userSlice",
     initialState: {
         loading: false,
         groups_friends: null,
@@ -29,4 +27,4 @@ export const apiSlice = createSlice({
     }
 })
 
-export default apiSlice.reducer
+export default userSlice.reducer

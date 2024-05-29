@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import APIService from "../auth/APIService";
+import APIService from "../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 function ListFriend ({friends}){
     const dispatch = useDispatch();

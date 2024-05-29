@@ -1,23 +1,34 @@
 import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
-function NotificationListGroup({requirements,reports}){
+import APIService from "../features/APIService";
+function NotificationListGroup({requirements}){
     return (
-        <Card style={{ width: '20rem',borderColor: "#383a45", padding: 0 }} bg="dark">
+        <Card className="p-0">
             <ListGroup >
-                <ListGroup.Item style={{backgroundColor:"#444654",borderColor: "#383a45"}}>
-                    <Row>
-                        <Col xl={2}>
-                            <Image src="assets/images/user/fuxuan1.png" width={50} className="border bg-light p-1" roundedCircle/>
-                        </Col>
-                        <Col xl={9} className="ms-3">
-                            <p className="text-light text-start lh-sm"><b>Fu Xuan </b> 
-                            add new post <br/>
-                            <span className="text-primary">12 minutes ago</span>
-                            </p>
-                        </Col>
-                    </Row>
-                </ListGroup.Item>
-                <ListGroup.Item   style={{backgroundColor:"#444654",borderColor: "#383a45"}}>
+                {requirements.map((req,index)=>{
+                    let urlImage= req.sender.image!=null?req.sender.image: (req.sender.gender=='female'?APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
+                    return (
+                        <ListGroup.Item key={index} style={{borderColor: "#383a45"}}>
+                            <Row>
+                                <Col xl={2}>
+                                    <Image src={urlImage} width={50} className="border bg-light p-1" roundedCircle/>
+                                </Col>
+                                <Col xl={9} className="ms-3">
+                                    <p className="text-black text-start lh-sm"><b>{req.sender.fullname}</b> &nbsp;
+                                    want to joined group <br/>
+                                    <span className="text-black-50">12 minutes ago</span>
+                                    </p>
+                                    <div >
+                                        <Button variant="outline-primary">Accept</Button>
+                                        <Button variant="outline-danger ms-3">Reject</Button>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                    )
+                })}
+                
+                {/* <ListGroup.Item   style={{backgroundColor:"#444654",borderColor: "#383a45"}}>
                     <Row>
                         <Col xl={2}>
                             <Image src="assets/images/user/Acheron_3.png" width={50} className="border bg-light p-1" roundedCircle/>
@@ -46,7 +57,7 @@ function NotificationListGroup({requirements,reports}){
                             <Button variant="outline-danger" className="me-2">More Detail</Button>
                         </Col>
                     </Row>
-                </ListGroup.Item>
+                </ListGroup.Item> */}
             </ListGroup>
         </Card>
     );

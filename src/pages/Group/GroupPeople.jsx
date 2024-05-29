@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "react-bootstrap";
 import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
-function GroupPeople({appUser, members}){
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
+function GroupPeople({members}){
+    const appUser = useSelector(selectCurrentUser);
     const getButton = (mem)=>{
+        if(mem.username == appUser.username){
+            return <></>
+        }
         switch(mem.relationship){
             case "FRIEND":
                 return <Link to={"/member/profile/"+mem.username} role="button" className="btn btn-outline-primary" >
@@ -51,7 +57,7 @@ function GroupPeople({appUser, members}){
                         <p><b>Group managers · {members.filter((manager)=>manager.role=='GROUP_CREATOR' || manager.role=="GROUP_MANAGER").length} </b></p>
                         {members.filter((manager)=>manager.role=='GROUP_CREATOR' || manager.role=="GROUP_MANAGER").map((user,index)=>{
                             let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/files/user_female.png`:`${APIService.URL_REST_API}/files/user_male.png`);
-                            return <Row className="mb-3">
+                            return <Row key={index} className="mb-3">
                                 <Col xl={2}>
                                     <Image src={urlImg} style={{width:"60px",height: "60px",marginRight: "20px"}}roundedCircle />
                                 </Col>
@@ -67,9 +73,6 @@ function GroupPeople({appUser, members}){
                                 </Col>
                             </Row>
                         })}
-                        {/* <Button variant="secondary" style={{width: "100%"}} >
-                            See All
-                        </Button> */}
                     </div>
                     <div className="mb-3" style={{borderTop: "2px solid grey"}}>
                         <p><b>Members </b>· {members.filter((user)=>user.role=="MEMBER").length} </p>
@@ -86,9 +89,6 @@ function GroupPeople({appUser, members}){
                             })
                         }
                         
-                        <Button variant="secondary" style={{width: "100%"}} >
-                            See All
-                        </Button>
                     </div>
                 </div>
             </Col>

@@ -1,7 +1,7 @@
 import React from "react";
 import {Col, Row } from "react-bootstrap";
 import PeopleCard from "../../components/PeopleCard"
-import APIService from "../../auth/APIService";
+import APIService from "../../features/APIService";
 function SearchPeople ({people}) {
     return (
         <Row xl={3} md={2}>

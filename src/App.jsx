@@ -11,22 +11,37 @@ import Group from './pages/Group/Group'
 import LoginPage from './auth/LoginPage'
 import RequireAuth from './auth/RequireAuth'
 import RegisterPage from './auth/RegisterPage'
+import ListGroupPage from "./pages/Group/ListGroupPage"
+import Layout2 from "./layouts/Layout2"
+import { AccountSetting } from "./pages/Setting/AccountSetting"
+import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
 
 function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
         {/* public routes */}
         <Route path='login' element={<LoginPage />} />
         <Route path='register' element={<RegisterPage />} />
 
+      <Route element={<Layout />}>
         {/* protected routes */}
         <Route element={<RequireAuth />}>
           <Route index element={<Homepage />} />
-          <Route path='member/profile' element={<Profile />} />
           <Route path='people' element={<PeoplePage />} />
           <Route path='search' element={<Searching />} />
-          <Route path='group' element={<Group />} />
+          <Route path='listgroup' element={ <ListGroupPage/>}/>
+        </Route>
+      </Route>
+      <Route path='/member' element={<Layout2/>}>
+        <Route element={<RequireAuth />}>
+          <Route path='profile/:username' element={<Profile/>}/>
+          <Route path='account-setting' element={ <AccountSetting />}/>
+        </Route>
+      </Route>
+      <Route  path='/group' element={<Layout2 />}>
+        <Route element={<RequireAuth />}>
+          <Route path=':id' element={<Group />}/>
+          <Route path='manage/:id' element={<GroupManagementPage /> } />
         </Route>
       </Route>
     </Routes>

@@ -4,7 +4,7 @@ import SessionLeft from "../components/SessionLeft"
 import NavigatorBar from "../components/NavigatorBar"
 import PeopleCard from "../components/PeopleCard"
 import { Search } from "react-bootstrap-icons"
-import APIService from "../auth/APIService"
+import APIService from "../features/APIService"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../auth/authSlice"
@@ -61,21 +61,13 @@ function PeoplePage(){
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/peoplepage/1`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
+        axios.get(`${APIService.URL_REST_API}/peoplepage/${appUser.id}`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
             setTimeout(()=>{
                 setLoading(false);
             },600);
         });
     },[])
-    return (
-        <Row>
-            <Col xl={3} className='p-0 ' >
-              <SessionLeft user={appUser}/>
-            </Col>
-            <Col xl={9} className='p-0'>
-              <div className='d-flex flex-column'>
-                <NavigatorBar />
-                <Container fluid className='ps-4' style={{marginTop: "60px"}}>
+    return (<Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         {loading ?
                         <Col>
@@ -120,9 +112,6 @@ function PeoplePage(){
                         }
                     </Row>
                 </Container>
-              </div>
-            </Col>
-        </Row>
     );
 }
 export default PeoplePage;

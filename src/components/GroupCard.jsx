@@ -16,11 +16,11 @@ const GroupCard =({group,image})=>{
                         <Link role="button" className="btn btn-outline-primary w-50" to={"/group/"+group.id} >Visit</Link></Col>);
                 case "GROUP_CREATOR":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                        <Link role="button" className="btn btn-danger w-50">Manage Group</Link>
+                        <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger w-50">Manage Group</Link>
                         </Col>);
                 case "GROUP_MANAGER":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                            <Link role="button"  className="btn btn-danger w-50" >Manage Group</Link>
+                            <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger w-50" >Manage Group</Link>
                         </Col>);
                 default:
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">

@@ -6,7 +6,7 @@ import SearchPeople from "./SearchPeople"
 import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
-import APIService from "../../auth/APIService"
+import APIService from "../../features/APIService"
 import { useDispatch, useSelector } from "react-redux"
 import SessionLeft from "../../components/SessionLeft"
 import NavigatorBar from "../../components/NavigatorBar"
@@ -68,13 +68,6 @@ function Searching(){
     }
     
     return (
-        <Row>
-            <Col xl={3} className='p-0 ' >
-                <SessionLeft user={appUser}/>
-            </Col>
-            <Col xl={9} className='p-0'>
-                <div className='d-flex flex-column'>
-                <NavigatorBar />
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         <Col xl={10} md={12} className="mt-2">
@@ -103,9 +96,6 @@ function Searching(){
                         </Col>
                     </Row>
                 </Container>
-                </div>
-            </Col>
-        </Row>
     );
 }
 
