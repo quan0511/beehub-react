@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Accordion, Button, Card, Col, Container, Form, Image, Row} from "react-bootstrap";
+import {Accordion, Button, Card, Col, Container, Form, Image, Row, Spinner} from "react-bootstrap";
 import * as bootstrap from 'bootstrap';
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import { selectCurrentUser } from "../../auth/authSlice";
 export function AccountSetting(){
     const appUser = useSelector(selectCurrentUser);
     const [ account, setAccount] = useState({});
+    const [ isLoading, setIsLoading] = useState(true);
     const [ blockedUsers, setBlockedUsers] = useState([]);
     const triggerTabList = document.querySelectorAll('#myTab button')
         triggerTabList.forEach(triggerEl => {
@@ -22,14 +23,21 @@ export function AccountSetting(){
         })
     })
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/user/profile/${appUser.username}`).then((res)=>{
-            setAccount(res.data);
-            console.log(res.data);
-            if(res.data.relationships!=null){
-                let blockedList= res.data.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED');
-                setBlockedUsers(blockedList);
-            }
-        });
+        if(appUser!=null){
+            axios.get(`${APIService.URL_REST_API}/user/profile/${appUser.username}`).then((res)=>{
+                setAccount(res.data);
+                setIsLoading(true);
+                if(res.data.relationships!=null){
+                    let blockedList= res.data.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED');
+                    setBlockedUsers(blockedList);
+                }
+            }).finally(()=>{
+                console.log(account);
+                setTimeout(()=>{
+                    setIsLoading(false);
+                },800)
+            });
+        }
     },[])
     return (
         <Container >
@@ -44,6 +52,10 @@ export function AccountSetting(){
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-account-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-account" type="button" role="tab" aria-controls="v-tabs-account" aria-selected="false">Account Settings</button>
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-blocklist-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-blocklist" type="button" role="tab" aria-controls="v-tabs-blocklist" aria-selected="false">Block List</button>
                         </div>
+                        {isLoading ? 
+                             <div className="tab-content " id="myTabContent" style={{width: "800px"}}>
+                            <Spinner animation="border" /></div>
+                        :
                         <div className="tab-content " id="myTabContent" style={{width: "800px"}}>
                             <div className="tab-pane fade show active text-start px-5" id="v-tabs-profile" role="tabpanel" aria-labelledby="v-tabs-profile" tabIndex="0">
                                 <FormSettingProfile user={account}/>
@@ -157,6 +169,7 @@ export function AccountSetting(){
                                 </div>
                             </div>
                         </div>
+                        }
                     </div>
                 </Col>
             </Row>

@@ -43,6 +43,7 @@ function Profile (){
     useEffect(() => {
         if(username!=null){
             axios.get(`${APIService.URL_REST_API}/user/profile/${username}`).then((res)=>{
+                setLoading(true);
                 setUser(res.data);
             }).finally(()=>{
                 setTimeout(() => {
@@ -53,19 +54,27 @@ function Profile (){
         }
      }, [username]);
     if(loading){
-        return (<Spinner animation="border"  role="status">
-            <span className="visually-hidden">Loading...</span>
-        </Spinner>);
+        return (
+            <Container style={{marginTop: "50px"}}>
+                <Row>
+                    <Col xl={2} className="mx-auto pt-5">
+                    <Spinner animation="border"  role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                    </Col>
+                </Row>
+            </Container>
+        );
     }
     
     return (
             <Container style={{marginTop: "50px"}}>
-                <Row className="p-0" style={{height: "350px",position: "relative"}}>
+                <Row className="p-0" style={{position: "relative"}}>
                     {
                         user.background!=null?
-                        <Image src={`${APIService.URL_REST_API}/user/files/`+user.background} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%"}}/>
+                        <Image src={`${APIService.URL_REST_API}/user/files/`+user.background} className="object-fit-cover" style={{height: "350px",objectPosition: "center",width: "100%"}}/>
                         :
-                        <div className="d-flex justify-content-center align-items-center bg-secondary">
+                        <div className="d-flex justify-content-center align-items-center bg-secondary" style={{height: "350px"}}>
                             <Button variant="link">
                                 <PlusCircle size={30} color="black" />
                             </Button>

@@ -9,6 +9,7 @@ import { ListGroupManagers } from "./ListGroupManagers";
 import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
 import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
 
 export const GroupManagementPage=()=>{
     const appUser = useSelector(selectCurrentUser);
@@ -17,13 +18,15 @@ export const GroupManagementPage=()=>{
     const [checkMember ,setCheckMember] =useState(false);
     
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
-            setGroup(res.data); 
-            console.log(res.data);
-            if(res.data.member_role==null || res.data.member_role=="MEMBER"){
-                setCheckMember(true);
-            }
-        })
+        if(appUser!=null){
+            axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
+                setGroup(res.data); 
+                console.log(res.data);
+                if(res.data.member_role==null || res.data.member_role=="MEMBER"){
+                    setCheckMember(true);
+                }
+            })
+        }
     },[])
     if(checkMember){
         return <Navigate to={"/group/"+id} replace />

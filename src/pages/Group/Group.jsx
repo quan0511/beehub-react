@@ -46,22 +46,24 @@ function Group (){
     }
     useEffect(()=>{
         if(!loading) setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
-            setGroup(res.data);
-            console.log(res.data);
-        })
-        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/group/${id}/posts`).then((res)=>{
-            setPosts(res.data);
-        }).finally(()=>{
-            if(group!=null){
-                if(!group.public_group && group.member_role==null){
-                    setTab("about");
+        if(appUser!=null){
+            axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
+                setGroup(res.data);
+                console.log(res.data);
+            })
+            axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/group/${id}/posts`).then((res)=>{
+                setPosts(res.data);
+            }).finally(()=>{
+                if(group!=null){
+                    if(!group.public_group && group.member_role==null){
+                        setTab("about");
+                    }
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 200);
                 }
-                setTimeout(() => {
-                    setLoading(false);
-                }, 200);
-            }
-        })
+            })
+        }
     },[])
     if(loading ){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
@@ -70,10 +72,10 @@ function Group (){
     }
     return (
         <Row>
-            <Col xl={12} className="p-0" style={{height: "350px",width: "100vw",position: "relative"}}>
+            <Col xl={12} className="p-0" style={{width: "100vw",position: "relative"}}>
                 {group.background_group !=null? 
-                    <Image src={group.background_group} className="object-fit-cover" style={{height: "inherit",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px"}}/>
-                    : <div style={{height: "inherit",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px",backgroundColor: "rgb(57,59,70,0.5)",}}></div>
+                    <Image src={group.background_group} className="object-fit-cover" style={{height: "350px",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px"}}/>
+                    : <div style={{height: "350px",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px",backgroundColor: "rgb(57,59,70,0.5)",}}></div>
                 }
                 <div className="position-absolute"style={{top: "250px",left: "1rem",width: "90%"}} >
                     <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow px-2 pt-3">

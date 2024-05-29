@@ -6,7 +6,6 @@ import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-
 import { Provider } from 'react-redux'
 import { store } from './store.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';

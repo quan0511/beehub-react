@@ -14,7 +14,7 @@ function ListGroups({groups}){
                             color: "#31363F",
                             fontSize: "17px",
                             fontWeight: "500"
-                        }} to="" className="">
+                        }} to={"/group/"+group.id} className="">
                         {group.image_group!=null?
                             <Image src={image_group} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                             :

@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import SessionRight from '../components/SessionRight';
 const AcitivityPage = ()=>{
-    // const {data: posts, isLoading} = useHomepageQuery()
     const user = useSelector(selectCurrentUser);
     const [posts,setPosts] = useState([]);
     const [friends, setFriends]= useState([]);
