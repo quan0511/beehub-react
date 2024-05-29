@@ -4,21 +4,19 @@ import { ChatRightHeartFill, XLg } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
 import ListGroups from "./ListGroups";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchApiUserFriendsGroups } from "../features/userSlice";
 import { selectCurrentUser } from "../auth/authSlice";
+import { useGetFriendsAndGroupQuery } from "../user/userApiSlice";
 
 function OffcanvasMessages({show,handleClose}){
     const userApp = useSelector(selectCurrentUser);
     const [typeSearch, setTypeSearch]=useState("Friends");
     const seachFiends= () => setTypeSearch("Friends");
     const seachGroups=()=>setTypeSearch("Groups");
-    const dispatch = useDispatch();
-    const data = useSelector(state=> state.userSlice);
-
-    //  useFriendsQuery();
-    useEffect(()=>{
-        dispatch(fetchApiUserFriendsGroups(userApp.id));
-    },[])
+    
+    const {data: data,isLoading,isSuccess} = useGetFriendsAndGroupQuery({id: userApp.id});
+    if(isLoading || !isSuccess){
+        return <></>
+    }
     return (
         <Offcanvas show={show} placement="end">
             <Offcanvas.Header className="pb-0">
@@ -46,14 +44,14 @@ function OffcanvasMessages({show,handleClose}){
                 <Form  className="my-3">
                     <Form.Control type="text" placeholder={"Find "+typeSearch} className="rounded-pill" />
                 </Form>
-                {!data.groups_friends? <div className='mt-5 d-flex flex-row justify-content-center align-items-center'>
+                {data==null? <div className='mt-5 d-flex flex-row justify-content-center align-items-center'>
                                 <Spinner animation="grow" size="sm"  />&ensp;
                                 <Spinner animation="grow" size="sm"  />&ensp;
                                 <Spinner animation="grow" size="sm"  />&ensp;
                                 <Spinner animation="grow" size="sm" />&ensp;
                                 <Spinner animation="grow" size="sm" />        
                             </div> 
-                        : typeSearch === "Friends"?<ListFriend friends={data.groups_friends["friends"]} />:<ListGroups groups={data.groups_friends['groups']} />}
+                        : typeSearch === "Friends"?<ListFriend friends={data["friends"]} />:<ListGroups groups={data['groups']} />}
             </Offcanvas.Body>
             
         </Offcanvas>

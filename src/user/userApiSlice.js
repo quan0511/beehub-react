@@ -41,8 +41,28 @@ export const userApiSlice = apiSlice.injectEndpoints({
             })
         }),
         profile: builder.query({
-            query: ({username}) => ({
-                url: `/profile/${username}`
+            query: ({id,username}) => ({
+                url: `/user/${id}/profile/${username}`
+            })
+        }),
+        checkUsername: builder.query({
+            query: ({username})=>({
+                url: `/check-user?username=${username}`
+            })
+        }),
+        checkSetUpPosts: builder.query({
+            query: ({id})=>({
+                url: `/check-setting/post/${id}`
+            })
+        }),
+        getSettingItems: builder.query({
+            query: ({id}) => ({
+                url: `/get-setting/item/${id}`
+            })
+        }),
+        getFriendsAndGroup: builder.query({
+            query: ({id})=>({
+                url: `/groups_friends/${id}`
             })
         })
     })
@@ -56,5 +76,9 @@ export const {
     useListgroupQuery,
     useGroupInfoQuery,
     useGroupPostsQuery,
-    useProfileQuery
+    useProfileQuery,
+    useCheckUsernameQuery,
+    useCheckSetUpPostsQuery,
+    useGetSettingItemsQuery,
+    useGetFriendsAndGroupQuery
 } = userApiSlice

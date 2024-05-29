@@ -16,9 +16,9 @@ import { useProfileQuery } from "../../user/userApiSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
-    const {data: user, isLoading, isSuccess} = useProfileQuery({username: appUser.username});
-    const [tab, setTab] = useState('posts');
     const { username } = useParams();
+    const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username});
+    const [tab, setTab] = useState('posts');
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -27,7 +27,6 @@ function Profile (){
             case "posts": 
                 return <ProfilePost user={user}/>;
             case "friends":
-                console.log(user);
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
                 return <ProfileFriends friends={listsfriend} />;
             case "about":
@@ -40,7 +39,23 @@ function Profile (){
                 return  <ProfilePost  user={user}/>;
         }
     }
-    
+    const getButton = ()=>{
+        if(user!=null){
+            switch(user.relationship_with_user){
+                case "BLOCKED":
+                   return <Button variant="danger">Unblock</Button>
+                case "FRIEND": 
+                    return <Button variant="outline-danger" >Unfriend</Button>
+                case "SENT_REQUEST":
+                    return <Button variant="outline-warning">Cancel Request</Button>
+                case "NOT_ACCEPT":
+                    return <Button variant="primary">Accept</Button>
+                default:
+                    return <Button variant="outline-primary">Add Friend</Button>
+            }
+        }
+    }
+
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -80,9 +95,14 @@ function Profile (){
                                 <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 )
                             }
-                            <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>
-                                <h2>{user.fullname}</h2>
-                                <span className="d-block text-black-50">@{user.username}</span>
+                            <div className="d-flex flex-row justify-content-between align-items-center pe-5" style={{marginLeft: "240px",marginBottom: "50px"}}>
+                                <div >
+                                    <h2>{user.fullname}</h2>
+                                    <span className="d-block text-black-50">@{user.username}</span>
+                                </div>
+                                <div>
+                                    {getButton()}
+                                </div>
                             </div>
                             <Container >
                                 <Row>

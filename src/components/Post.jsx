@@ -26,7 +26,7 @@ function Post ({post, page}){
         }
     }
     const getTimeOfPost = ()=>{
-        let datePost = new Date(post.create_at[0],post.create_at[1],post.create_at[2], post.create_at[3], post.create_at[4], post.create_at[5]);
+        let datePost = new Date(post.create_at);
         let diffDay = Math.round(Math.abs(new Date() - datePost)/ 86400000);
         if(diffDay<1){
             let diffHour =Math.round(Math.abs(new Date() - datePost)/ 3600000);
@@ -63,8 +63,8 @@ function Post ({post, page}){
                 {
                     post.group_id!=null && page!="group"?
                     <div className="col-9 d-flex flex-column">
-                        <p className="h5 text-black text-capitalize text-start mb-1">{post.group_name}</p>
-                        <p className="text-start ">{post.user_fullname} &emsp;<Dot/> {getTimeOfPost()}</p>
+                        <Link to={"/group/"+post.group_id} className="h5 text-black text-capitalize  text-decoration-none text-start mb-1">{post.group_name}</Link>
+                        <div className="text-start "><Link to={"/member/profile/"+post.user_username} className="text-dark text-decoration-none">{post.user_fullname}</Link> &emsp;<Dot/> {getTimeOfPost()}</div>
                     </div>
                     :
                     <div className="col-9 d-flex flex-column">
