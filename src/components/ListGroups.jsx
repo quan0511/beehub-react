@@ -18,7 +18,7 @@ function ListGroups({groups}){
                         {group.image_group!=null?
                             <Image src={image_group} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                             :
-                            <Image src={APIService.URL_REST_API+"/user/files/group_image.png"} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
+                            <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
                         }
                         {group.groupname}                                                                                      
                         {/* <Badge bg="primary" style={{float: "right",marginTop: "8px"}}>2 Newest Post</Badge> */}

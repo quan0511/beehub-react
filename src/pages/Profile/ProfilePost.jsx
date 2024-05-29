@@ -13,7 +13,7 @@ function ProfilePost ({user}){
                         <hr/>
                         <Row className="g-1">
                             {user.galleries!=null && user.galleries.length>0? user.galleries.map((gallery, index)=>{
-                                let imageUrl = APIService.URL_REST_API+"/user/files/"+gallery.media;
+                                let imageUrl = APIService.URL_REST_API+"/files/"+gallery.media;
                                 return (<Col key={index}>
                                     <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
                                     </Col>);
@@ -28,8 +28,8 @@ function ProfilePost ({user}){
                                     {user.image!=null?
                                         <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                         : (user.gender=='female'?
-                                        <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                                        :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                                         )
                                     }
                                 </label>

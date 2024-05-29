@@ -5,15 +5,21 @@ import { setCredentials } from '../auth/authSlice'
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         homepage: builder.query({
-            query: data => ({
-                url: '/homepage/'+user.id,
+            query: ({id}) => ({
+                url: '/homepage/'+id,
                 data
             })
         }),
 
         friends: builder.query({
-            query: data => ({
-                url: '/friends/'+user.id,
+            query: ({id}) => ({
+                url: '/friends/'+id,
+                data
+            })
+        }),
+        user : builder.query({
+            query: ({id}) => ({
+                url: '/user/'+id,
                 data
             })
         })
@@ -22,5 +28,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useHomepageQuery,
-    useFriendsQuery
+    useFriendsQuery,
+    useUserQuery
 } = userApiSlice

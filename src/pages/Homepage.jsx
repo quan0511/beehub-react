@@ -6,30 +6,33 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
+import { useHomepageQuery } from '../user/userApiSlice';
 function Homepage() {
     const user = useSelector(selectCurrentUser);
-        const [posts,setPosts] = useState([]);
-        const [friends, setFriends]= useState([]);
-        const [isLoading, setIsLoading] = useState(true);
-        const [loadMore, setLoadMore] = useState(false); 
-        const handleScrollToTop=()=>{
-            setIsLoading(true);
-            setLoadMore(!loadMore);
-            window.scrollTo({top:0,behavior: "smooth"});
-        }
-    useEffect(()=> {
-        axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
-                setPosts(res.data);
-                setIsLoading(true);
-        }).finally(()=>{ 
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1200);
-        });
-        axios.get(`${APIService.URL_REST_API}/user/friends/${user.id}`).then((res)=>{
-            setFriends(res.data);
-        });
-    },[loadMore]);
+    const {data: posts, isLoading} = useHomepageQuery({id: user.id});
+    console.log(posts);
+    //     const [posts,setPosts] = useState([]);
+    //     const [friends, setFriends]= useState([]);
+    //     const [isLoading, setIsLoading] = useState(true);
+    //     const [loadMore, setLoadMore] = useState(false); 
+    //     const handleScrollToTop=()=>{
+    //         setIsLoading(true);
+    //         setLoadMore(!loadMore);
+    //         window.scrollTo({top:0,behavior: "smooth"});
+    //     }
+    // useEffect(()=> {
+    //     axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
+    //             setPosts(res.data);
+    //             setIsLoading(true);
+    //     }).finally(()=>{ 
+    //         setTimeout(() => {
+    //             setIsLoading(false);
+    //         }, 1200);
+    //     });
+    //     axios.get(`${APIService.URL_REST_API}/user/friends/${user.id}`).then((res)=>{
+    //         setFriends(res.data);
+    //     });
+    // },[loadMore]);
     return (
         <Container fluid className='ps-4' style={{marginTop: "60px"}}>
             <Row>
@@ -42,8 +45,8 @@ function Homepage() {
                                         <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                     :(
                                         user.gender=='female'?
-                                        <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                                        :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                        :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                                     )
                                 }
                             </label>
@@ -72,7 +75,7 @@ function Homepage() {
                     }
                 </Col>
                 <Col lg={4}>
-                    <SessionRight friends={friends}/>
+                    <SessionRight />
                 </Col>
             </Row>
         </Container>

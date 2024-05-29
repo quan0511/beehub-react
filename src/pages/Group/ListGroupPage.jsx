@@ -34,7 +34,7 @@ const ListGroupPage =()=>{
              return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     {joinedGroups.map((group, index)=>{
-                        let urlImage =  group.image_group!=null ? group.image: APIService.URL_REST_API+"/user/files/group_image.png";
+                        let urlImage =  group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
                         return <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>
@@ -44,7 +44,7 @@ const ListGroupPage =()=>{
                 return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     {ownGroups.map((group, index)=>{
-                        let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/user/files/group_image.png";
+                        let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
                         return  <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>);
@@ -54,7 +54,7 @@ const ListGroupPage =()=>{
         }
     }
     useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/user/listgroup_page/${appUser.id}`).then((res)=> {
+        axios.get(`${APIService.URL_REST_API}/listgroup_page/${appUser.id}`).then((res)=> {
             setJoinedGroups(res.data["joined_groups"]);
             setOwnGroups(res.data["own_group"]);
         }).finally(()=>{

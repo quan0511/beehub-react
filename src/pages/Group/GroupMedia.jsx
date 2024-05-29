@@ -11,7 +11,7 @@ function GroupMedia({group_medias}){
                         <Row xl={5}>
                             {group_medias.map((group_media,index)=>{
                                 return (<Col key={index} className="p-1">
-                                    <Image src={APIService.URL_REST_API+"/user/files/"+group_media.media} fluid  />
+                                    <Image src={APIService.URL_REST_API+"/files/"+group_media.media} fluid  />
                                 </Col>);
                             })}
                         </Row>

@@ -41,7 +41,7 @@ export const ListGroupReports =({reports})=>{
                                             <p className="h6 mx-5 mb-3 text-dark ms-2">{report.target_post.text}</p>
                                             {report.target_post.group_media!=null?
                                             <div>
-                                                <Image src={APIService.URL_REST_API+"/user/files/"+report.target_post.group_media.media} height="120px" style={{objectFit: "contain"}} fluid />
+                                                <Image src={APIService.URL_REST_API+"/files/"+report.target_post.group_media.media} height="120px" style={{objectFit: "contain"}} fluid />
                                             </div>
                                             :<></>
                                             }

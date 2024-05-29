@@ -44,7 +44,7 @@ function Post ({post, page}){
                         post.group_id!=null && page!='group'?(
                             post.group_image!=null?
                                 <Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle />
-                                : <Image src={APIService.URL_REST_API+"/user/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
+                                : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
                         )
                         :(
                             post.user_image!=null?
@@ -54,8 +54,8 @@ function Post ({post, page}){
                                 : (
                                     post.user_gender=='female'?
                                     <Link to={"/member/profile/"+post.user_username}>
-                                    <Image src={APIService.URL_REST_API+"/user/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
-                                    :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/user/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                    :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
                                 )
                         ) 
                     }
@@ -82,9 +82,9 @@ function Post ({post, page}){
                     <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>
                     <div className="mb-2">
                         { post.media!=null?
-                            <Image src={APIService.URL_REST_API+"/user/files/"+post.media.media}  fluid />
+                            <Image src={APIService.URL_REST_API+"/files/"+post.media.media}  fluid />
                             : (post.group_media !=null ?
-                                <Image src={APIService.URL_REST_API+"/user/files/"+post.group_media.media} fluid />
+                                <Image src={APIService.URL_REST_API+"/files/"+post.group_media.media} fluid />
                                 :<></>)
                         }
                     </div>

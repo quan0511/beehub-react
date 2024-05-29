@@ -43,7 +43,7 @@ function Searching(){
     }
     useEffect(()=>{
         setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
             setResultOfSearch(res.data);
         }).finally(()=> setLoading(false));
     },[searchStr])

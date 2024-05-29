@@ -10,7 +10,7 @@ function SearchGroups({groups}){
             <Col lg={10} md={12} className="mx-auto">
                 <div className="d-flex flex-column text-start">
                     {groups.map((group, index)=>{
-                        let urlImage = group.image_group !=null? group.image_group: APIService.URL_REST_API+"/user/files/group_image.png";
+                        let urlImage = group.image_group !=null? group.image_group: APIService.URL_REST_API+"/files/group_image.png";
                         return <GroupCard key={index} image={urlImage} group={group}/>
                     })}
                 </div>

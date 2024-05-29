@@ -24,7 +24,7 @@ export function AccountSetting(){
     })
     useEffect(()=>{
         if(appUser!=null){
-            axios.get(`${APIService.URL_REST_API}/user/profile/${appUser.username}`).then((res)=>{
+            axios.get(`${APIService.URL_REST_API}/profile/${appUser.username}`).then((res)=>{
                 setAccount(res.data);
                 setIsLoading(true);
                 if(res.data.relationships!=null){
@@ -153,7 +153,7 @@ export function AccountSetting(){
                                 <div className="mt-3 d-flex flex-column">
                                     {blockedUsers.length>0?
                                         blockedUsers.map((block, index)=>{
-                                            let image = block.image!=null?block.image:(block.gender=='female'? APIService.URL_REST_API+"/user/files/user_female.png":APIService.URL_REST_API+"/user/files/user_male.png");
+                                            let image = block.image!=null?block.image:(block.gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
                                             return (<Card key={index} className="mb-2 p-1">
                                             <Card.Body className="d-flex flex-row justify-content-between align-items-center" >
                                                 <div className="d-flex flex-row justify-content-between align-items-center">

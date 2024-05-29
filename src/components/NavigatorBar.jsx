@@ -74,8 +74,8 @@ function NavigatorBar(){
                                     <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 :(
                                     user.gender=="female"?
-                                    <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                    :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
+                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
                                 )
                             }
                             {user.fullname}

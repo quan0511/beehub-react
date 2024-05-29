@@ -12,7 +12,7 @@ const AcitivityPage = ()=>{
     const [friends, setFriends]= useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const handleScrollToTop=()=>{
-        axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/homepage/${user.id}`).then((res)=>{
             setPosts(res.data);
             setIsLoading(true);
         }).finally(()=>{
@@ -22,7 +22,7 @@ const AcitivityPage = ()=>{
         window.scrollTo({top:0,behavior: "smooth"});})
     }
     useEffect(()=> {
-        axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/homepage/${user.id}`).then((res)=>{
                 setPosts(res.data);
                 setIsLoading(true);
         }).finally(()=>{ 
@@ -31,7 +31,7 @@ const AcitivityPage = ()=>{
             }, 1200);
             window.scrollTo({top:0,behavior: "smooth"});
         });
-        axios.get(`${APIService.URL_REST_API}/user/friends/${user.id}`).then((res)=>{
+        axios.get(`${APIService.URL_REST_API}/friends/${user.id}`).then((res)=>{
             setFriends(res.data);
         });
     },[])
@@ -46,8 +46,8 @@ const AcitivityPage = ()=>{
                                 <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                             :(
                                 user.gender=='female'?
-                                <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
-                                :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
+                                :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                             )
                         }
                     </label>

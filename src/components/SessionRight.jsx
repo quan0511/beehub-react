@@ -2,7 +2,15 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { Search, ThreeDots } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
-function SessionRight({friends}){
+import { useFriendsQuery } from "../user/userApiSlice";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
+function SessionRight(){
+    const user = useSelector(selectCurrentUser);
+    const {data: friends, isLoading} = useFriendsQuery({id: user!=null? user.id:1});
+    console.log(friends);
+    console.log(isLoading);
+    console.log(user);
     return (
         <div className="d-flex flex-column justify-content-start align-items-start mt-5"  style={{overflowY: "scroll", overflowX: "hidden",height: "100vh", position: "fixed", width: "inherit"}}>
             <Row className="mb-2 w-100 pb-2 bg-white" style={{zIndex: "4"}}>

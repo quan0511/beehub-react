@@ -19,7 +19,7 @@ export const GroupManagementPage=()=>{
     
     useEffect(()=>{
         if(appUser!=null){
-            axios.get(`${APIService.URL_REST_API}/user/user/${appUser.id}/get-group/${id}`).then((res)=>{
+            axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
                 setGroup(res.data); 
                 console.log(res.data);
                 if(res.data.member_role==null || res.data.member_role=="MEMBER"){

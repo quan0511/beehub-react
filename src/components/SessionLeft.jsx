@@ -6,21 +6,18 @@ import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import axios from "axios";
+import { useUserQuery } from "../user/userApiSlice";
 function SessionLeft (){
     const userApp = useSelector(selectCurrentUser);
     const location = useLocation();
-    const [user, setUser] = useState({});
+    const {data: user} = useUserQuery({id: userApp!=null?userApp.id:1});
+    
     useEffect(()=>{
-        if(userApp!=null){
-            axios.get(`${APIService.URL_REST_API}/user/user/${userApp.id}`).then((res)=>{
-                setUser(res.data);
-            });
-            let childitem = document.getElementsByClassName("link-item");
-            for (let index = 0; index < childitem.length; index++) {
-                const element = childitem[index];
-                if(element.getAttribute("href") == location.pathname){
-                    element.parentNode.classList.add("active");
-                }
+        let childitem = document.getElementsByClassName("link-item");
+        for (let index = 0; index < childitem.length; index++) {
+            const element = childitem[index];
+            if(element.getAttribute("href") == location.pathname){
+                element.parentNode.classList.add("active");
             }
         }
     },[])
@@ -40,8 +37,8 @@ function SessionLeft (){
                                 :
                                 (
                                     user.gender == 'female'? 
-                                    <Image src={`${APIService.URL_REST_API}/user/files/user_female.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
-                                    :<Image src={`${APIService.URL_REST_API}/user/files/user_male.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
                                 )
                             }
                         <p className="h6 mt-2 text-black" style={{fontSize: "17px"}}>{user.fullname}</p></Link>
