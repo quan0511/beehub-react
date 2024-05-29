@@ -21,8 +21,8 @@ function SessionLeft ({appUser}){
         }
     },[])
     if(user==null || isLoading){
-        return <div className="d-flex flex-column ">
-            <Spinner animation="grow" style={{marginTop: "100px"}}/>
+        return <div className="d-flex flex-column justify-content-center align-items-center" style={{height: "300px"}}>
+            <Spinner animation="grow" />
         </div>
     }    
     return (

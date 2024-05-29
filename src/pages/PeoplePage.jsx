@@ -8,11 +8,11 @@ import APIService from "../features/APIService"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../auth/authSlice"
+import { usePeoplepageQuery } from "../user/userApiSlice"
 function PeoplePage(){
     const appUser = useSelector(selectCurrentUser);
+    const {data : people, isLoading, isSuccess } = usePeoplepageQuery({id: appUser!=null?appUser.id:1});
     const [select, setSelect]=useState('suggestions');
-    const [loading, setLoading] = useState(true);
-    const [people, setPeople] = useState();
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);
     };
@@ -60,19 +60,11 @@ function PeoplePage(){
                 return <></>;
         }
     }
-    useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/peoplepage/${appUser.id}`).then((res)=> {console.log(res);setPeople(res.data);}).finally(()=>{
-            setTimeout(()=>{
-                setLoading(false);
-            },600);
-        });
-    },[])
     return (<Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
-                        {loading ?
+                        {isLoading || !isSuccess ?
                         <Col>
                         <Spinner animation="border">
-
                         </Spinner>
                         </Col>
                         :

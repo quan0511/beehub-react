@@ -10,26 +10,21 @@ import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
+import { useGroupInfoQuery } from "../../user/userApiSlice";
 
 export const GroupManagementPage=()=>{
     const appUser = useSelector(selectCurrentUser);
     const {id} =useParams();
-    const [group, setGroup] = useState();
+    const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id});
     const [checkMember ,setCheckMember] =useState(false);
-    
+    console.log(group);
     useEffect(()=>{
-        if(appUser!=null){
-            axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/get-group/${id}`).then((res)=>{
-                setGroup(res.data); 
-                console.log(res.data);
-                if(res.data.member_role==null || res.data.member_role=="MEMBER"){
-                    setCheckMember(true);
-                }
-            })
+        if(group !=null&& (group.member_role==null || group.member_role=="MEMBER")){
+            setCheckMember(true);
         }
     },[])
     if(checkMember){
-        return <Navigate to={"/group/"+id} replace />
+        this.context.router.goBack()
     }
     if(!group){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 

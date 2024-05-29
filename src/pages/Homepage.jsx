@@ -10,7 +10,6 @@ import { useHomepageQuery } from '../user/userApiSlice';
 function Homepage() {
     const user = useSelector(selectCurrentUser);
     const {data: posts, isLoading} = useHomepageQuery({id: user!=null? user.id:1});
-    console.log(posts);
 
     //     const [posts,setPosts] = useState([]);
     //     const [friends, setFriends]= useState([]);

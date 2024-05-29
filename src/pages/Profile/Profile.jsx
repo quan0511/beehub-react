@@ -12,11 +12,11 @@ import axios from "axios";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
+import { useProfileQuery } from "../../user/userApiSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
-    const [user, setUser] = useState();
-    const [loading, setLoading] = useState(true);
+    const {data: user, isLoading, isSuccess} = useProfileQuery({username: appUser.username});
     const [tab, setTab] = useState('posts');
     const { username } = useParams();
     const handelSelectTab = (selectKey)=>{
@@ -40,22 +40,10 @@ function Profile (){
                 return  <ProfilePost  user={user}/>;
         }
     }
-    useEffect(() => {
-        if(username!=null){
-            axios.get(`${APIService.URL_REST_API}/profile/${username}`).then((res)=>{
-                setLoading(true);
-                setUser(res.data);
-            }).finally(()=>{
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1500);
-                window.scrollTo({top:0,behavior: "smooth"});
-            });
-        }
-     }, [username]);
-    if(loading){
+    
+    if(isLoading || !isSuccess){
         return (
-            <Container style={{marginTop: "50px"}}>
+            <Container style={{marginTop: "150px"}}>
                 <Row>
                     <Col xl={2} className="mx-auto pt-5">
                     <Spinner animation="border"  role="status">

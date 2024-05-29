@@ -11,13 +11,13 @@ import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
+import { useGroupInfoQuery, useGroupPostsQuery } from "../../user/userApiSlice";
 function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
-    const [group, setGroup]= useState({});
-    const [posts,setPosts] = useState([]);
+    const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id});
+    const {data: posts} =useGroupPostsQuery({id_user: appUser.id, id_group: id});
     const [tab, setTab] = useState('discussion');
-    const [loading, setLoading] =useState(true);
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -45,27 +45,13 @@ function Group (){
         }
     }
     useEffect(()=>{
-        if(!loading) setLoading(true);
-        if(appUser!=null){
-            axios.get(`${APIService.URL_REST_API}/${appUser.id}/get-group/${id}`).then((res)=>{
-                setGroup(res.data);
-                console.log(res.data);
-            })
-            axios.get(`${APIService.URL_REST_API}/${appUser.id}/group/${id}/posts`).then((res)=>{
-                setPosts(res.data);
-            }).finally(()=>{
-                if(group!=null){
-                    if(!group.public_group && group.member_role==null){
-                        setTab("about");
-                    }
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, 200);
-                }
-            })
+        if(group!=null){
+            if(!group.public_group && group.member_role==null){
+                setTab("about");
+            }
         }
     },[])
-    if(loading ){
+    if(isLoading || !isSuccess ){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
             <Spinner animation="border" />
         </div>
