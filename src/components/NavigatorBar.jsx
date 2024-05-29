@@ -6,8 +6,7 @@ import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
-function NavigatorBar(){
-    const user = useSelector(selectCurrentUser);
+function NavigatorBar({user}){
     const location = useLocation();
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
