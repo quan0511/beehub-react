@@ -6,6 +6,7 @@ import GroupCard from "../../components/GroupCard";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
 import { useListgroupQuery } from "../../user/userApiSlice";
+import BeehubSpinner from "../../components/BeehubSpinner";
 const ListGroupPage =()=>{
     const appUser = useSelector(selectCurrentUser);
     const {data: data, isLoading, isSuccess} = useListgroupQuery({id: appUser!=null? appUser.id: 1});
@@ -54,33 +55,32 @@ const ListGroupPage =()=>{
     }
     // return <></>
     return (
-                <Container fluid className='ps-4' style={{marginTop: "60px"}}>
-                    <Row>
-                        {isLoading ||!isSuccess ?
-                        <Col>
-                            <Spinner animation="border">
-                            </Spinner>
-                        </Col>
-                        :
-                        <Col xl={12} className="mt-2">
-                            <Nav justify  variant="tabs" defaultActiveKey="joined_groups" onSelect={handleSelectTab}>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="joined_groups" onClick={handelClick}>All Groups <Badge bg="primary"></Badge></Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey="own_groups" onClick={handelClick}>Ownership Groups <Badge bg="secondary"></Badge></Nav.Link>
-                                </Nav.Item>
-                            </Nav>
-                            <hr/>
-                            <Container fluid>
-                                <Row xl={4}>
-                                    {handleSelect()}
-                                </Row>
-                            </Container>
-                        </Col>
-                        }
-                    </Row>
-                </Container>
+        <Container fluid className='ps-4' style={{marginTop: "60px"}}>
+            <Row>
+                {isLoading ||!isSuccess ?
+                <Col xl={4} className="mx-auto" style={{marginTop:"300px"}}>
+                    {BeehubSpinner()}
+                </Col>
+                :
+                <Col xl={12} className="mt-2">
+                    <Nav justify  variant="tabs" defaultActiveKey="joined_groups" onSelect={handleSelectTab}>
+                        <Nav.Item>
+                            <Nav.Link eventKey="joined_groups" onClick={handelClick}>All Groups <Badge bg="primary"></Badge></Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="own_groups" onClick={handelClick}>Ownership Groups <Badge bg="secondary"></Badge></Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                    <hr/>
+                    <Container fluid>
+                        <Row xl={4}>
+                            {handleSelect()}
+                        </Row>
+                    </Container>
+                </Col>
+                }
+            </Row>
+        </Container>
     );
 }
 export default ListGroupPage;

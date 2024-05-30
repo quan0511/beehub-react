@@ -1,14 +1,15 @@
 import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
 import APIService from "../features/APIService";
-function NotificationListGroup({requirements}){
+function NotificationListGroup({requirements,handleButton}){
+    console.log(requirements);
     return (
         <Card className="p-0">
             <ListGroup >
                 {requirements.map((req,index)=>{
                     let urlImage= req.sender.image!=null?req.sender.image: (req.sender.gender=='female'?APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
                     return (
-                        <ListGroup.Item key={index} style={{borderColor: "#383a45"}}>
+                        <ListGroup.Item key={index} >
                             <Row>
                                 <Col xl={2}>
                                     <Image src={urlImage} width={50} className="border bg-light p-1" roundedCircle/>
@@ -19,8 +20,8 @@ function NotificationListGroup({requirements}){
                                     <span className="text-black-50">12 minutes ago</span>
                                     </p>
                                     <div >
-                                        <Button variant="outline-primary">Accept</Button>
-                                        <Button variant="outline-danger ms-3">Reject</Button>
+                                        <Button variant="outline-primary" onClick={()=>{handleButton("ACCEPT_MEMBER",req.sender.id)}}>Accept</Button>
+                                        <Button variant="outline-danger ms-3" onClick={()=>{handleButton("REJECT",req.sender.id)}}>Reject</Button>
                                     </div>
                                 </Col>
                             </Row>

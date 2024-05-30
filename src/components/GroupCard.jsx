@@ -1,31 +1,55 @@
 import React from "react";
-import { Button, Card, Col, Image,  Row } from "react-bootstrap";
+import { Button, Card, Col, Form, Image,  Row } from "react-bootstrap";
 import { Dot } from "react-bootstrap-icons";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
+import APIService from "../features/APIService";
 const GroupCard =({group,image})=>{
+    const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
+    const handleButton= async(typeClick)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
+        console.log(resp);
+        // window.location.reload();
+    }
+    console.log(group);
     const setButton = ()=>{
-
-        if(!group.joined){
+        if(group.joined==null){
             return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                <Button variant="primary" className="w-50" >Join</Button>
+                <Button variant="primary" onClick={()=>{handleButton("JOIN")}} >Join</Button>
                 </Col>);
+        }else if(group.joined =='send request'){
+            return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
+                    <Button variant="warning"  onClick={()=>{handleButton("CANCEL_JOIN")}} >Cancel Request</Button>
+                    </Col>);
         }else{
             switch(group.member_role){
                 case "MEMBER":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
                         <Link role="button" className="btn btn-outline-primary w-50" to={"/group/"+group.id} >Visit</Link></Col>);
                 case "GROUP_CREATOR":
+                    if(!group.active){
+                        return (
+                            <Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
+                                <Form.Select aria-label="Setting Phone number"  onChange={()=>{handleButton("TOGGLE_ACTIVE_GROUP",appUser.id)}} >
+                                    <option value="true">Active</option>
+                                    <option value="false">Deactive</option>
+                                </Form.Select>
+                            </Col>
+                        );
+                    }
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                        <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger w-50">Manage Group</Link>
+                        <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger">Manage Group</Link>
                         </Col>);
                 case "GROUP_MANAGER":
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                            <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger w-50" >Manage Group</Link>
+                            <Link role="button" to={"/group/manage/"+group.id}  className="btn btn-danger" >Manage Group</Link>
                         </Col>);
                 default:
                     return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">
-                        <Button variant="outline-secondary" className="me-2" style={{width: "85px"}}>Joined</Button>
-                        <Link role="button" className="btn btn-outline-primary"  style={{width: "85px"}}>Visit</Link>
+                            <Button variant="outline-secondary" className="me-2" style={{width: "85px"}} onClick={()=>{handleButton("OUT_GROUP")}}>Joined</Button>
+                            <Link role="button" className="btn btn-outline-primary" to={"/group/"+group.id} style={{width: "85px"}}>Visit</Link>
                         </Col>);
             }
         } 

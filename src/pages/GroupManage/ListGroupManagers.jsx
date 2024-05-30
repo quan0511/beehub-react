@@ -3,7 +3,9 @@ import { Badge, Button, Form, Image, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
-export const ListGroupManagers = ({managers})=>{
+export const ListGroupManagers = ({managers,handleButton, user_id})=>{
+    console.log(managers);
+    console.log(user_id);
     return (
         <div className="d-flex flex-column">
             <h3>List members in groups</h3>
@@ -30,8 +32,10 @@ export const ListGroupManagers = ({managers})=>{
                                 }
                             </div>
                             {
-                                user.role !='GROUP_CREATOR'?
-                                <Button variant="outline-danger" >Remove from the group managers</Button>
+                                user.role !='GROUP_CREATOR'&& user.user_id != user_id ?
+                                <Button variant="outline-danger" onClick={()=>{handleButton("REMOVE_MANAGER", user.user_id)}} >Remove from the group managers</Button>
+                                :user.role !='GROUP_CREATOR'&& user.user_id == user_id?
+                                <Button variant="outline-danger" onClick={()=>{handleButton("REMOVE_MANAGER", user.user_id)}} >Retire</Button>
                                 :<></>
                             }
                         </div>

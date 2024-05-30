@@ -9,10 +9,10 @@ function Layout(){
     const user = useSelector(selectCurrentUser);
     
     return (
-        <Container className="p-0" fluid>
-            <Row className="overflow-x-hidden ">
+        <Container className="p-0 overflow-x-hidden" fluid>
+            <Row >
                 <Col xl={3} className='p-0 ' >
-                    <SessionLeft user={user}/>
+                    <SessionLeft appUser={user}/>
                 </Col>
                 <Col xl={9} className='p-0'>
                     <div className='d-flex flex-column'>
