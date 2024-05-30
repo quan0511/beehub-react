@@ -59,7 +59,7 @@ function SessionLeft ({appUser}){
                 </div>
                 
             </div>
-            <div className="d-flex flex-row justify-content-center align-items-center w-100 " style={{minHeight: "300px", padding: "90px 16px 10px 16px",marginTop: "120px"}}>
+            <div className="d-flex flex-row justify-content-center align-items-center w-100 " style={{minHeight: "300px"}}>
                 <div style={{width: "250px"}}>
                 <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-center ">
                     <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}} className="border-0">
