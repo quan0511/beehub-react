@@ -16,7 +16,7 @@ function RequireAuth() {
         if (!token) {
             tryRefreshToken()
         }
-    }, [])
+    })
 
     const tryRefreshToken = async () => {
         try {
@@ -24,7 +24,6 @@ function RequireAuth() {
             dispatch(setCredentials(response?.data))
             setToken(response?.data?.token)
         } catch(e) {
-            console.error(e)
             navigate('/login', { replace: true })
         }
     }
