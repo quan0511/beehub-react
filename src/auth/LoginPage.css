@@ -2,6 +2,11 @@
     min-height: 100vh;
 }
 
+.w-325 {
+    min-width: 325px;
+    max-width: 325px;
+}
+
 body {
     background-color: unset;
 }
@@ -48,13 +53,6 @@ body {
     .custom-container {
         max-width: 1024px;
     }
-}
-
-.login-form {
-    margin: auto;
-}
-.login-form .form-control {
-    min-width: 100%;
 }
 
 .label-icon {
