@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { selectCurrentToken } from "../auth/authSlice";
 import axios from "axios";
 
+import axios from "axios";
+
 class APIService {    
     URL_REST_API = 'http://localhost:8080/api';
     
