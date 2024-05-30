@@ -2,6 +2,7 @@ import axios from "axios";
 
 class APIService {    
     URL_REST_API = 'http://localhost:8080/api';
+
     axios = axios.create({
         baseURL: this.URL_REST_API,
         headers: {
@@ -9,6 +10,7 @@ class APIService {
         },
         withCredentials: true
     })
+    
     createRequirement = async (id, data, token) => {
         let isSuccess;
         try {
