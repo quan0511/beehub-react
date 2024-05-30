@@ -7,55 +7,57 @@ import { useNavigate } from 'react-router-dom';
 import { useLoginMutation, useLogoutMutation } from './authApiSlice';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from './authSlice';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [emailMsg, setEmailMsg] = useState('')
+    const [pwdMsg, setPwdMsg] = useState('')
+    const [errMsg, setErrMsg] = useState('')
 
     const emailRef = useRef()
+    const emailErrorRef = useRef()
+    const passwordErrorRef = useRef()
     const errRef = useRef()
-    const [errMsg, setErrMsg] = useState('')
+    const formRef = useRef()
     const navigate = useNavigate()
 
     const [login, { isLoginLoading }] = useLoginMutation()
     const [logout, { isLogoutLoading }] = useLogoutMutation()
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        emailRef.current.focus()
-    }, [])
+    // useEffect(() => {
+    //     emailRef.current.focus()
+    // }, [])
 
     useEffect(() => {
         setErrMsg('')
     }, [email, password])
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const handleSubmit = async (values, { setSubmitting }) => {
 
         try {
-            const userData = await login({ email, password }).unwrap()
+            const userData = await login(values).unwrap()
             dispatch(setCredentials({ ...userData }))
-
             setEmail('')
             setPassword('')
-            console.log(userData)
             navigate('/')
         } catch (err) {
-            if (!err?.response) {
+            console.log(err)
+            if (!err.data) {
                 setErrMsg('No Server Response')
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Email or Password');
-            } else if (err.response?.status === 401) {
+            } else if (err.status === 400) {
+                setEmailMsg(err.data?.email)
+                setPwdMsg(err.data?.password)
+            } else if (err.status === 401) {
                 setErrMsg('Unauthorized');
             } else {
                 setErrMsg('Login Failed');
             }
-            errRef.current.focus();
+            errRef.current?.focus();
         }
     }
-
-    const handleEmailInput = (e) => setEmail(e.target.value)
-    const handlePasswordInput = (e) => setPassword(e.target.value)
 
     const handleLogout = async (e) => {
         e.preventDefault()
@@ -88,52 +90,70 @@ function LoginPage() {
                             </div>
                             <h2 className="mb-2 fw-bold">Welcome</h2>
                             <small className="mb-4">Join gazillions of people online</small>
-                            <form className="login-form">
-                                <div className="form-group position-relative mb-2">
-                                    <label htmlFor="username" className="label-icon">
-                                        <BiUser />
-                                    </label>
-                                    <input ref={emailRef}
-                                        value={email}
-                                        onChange={handleEmailInput}
-                                        id="username"
-                                        className="form-control rounded-5 ps-5 bg-info-subtle"
-                                        type="text" placeholder="Email or username"
-                                    />
-                                </div>
-                                <div className="form-group position-relative mb-2">
-                                    <label htmlFor="password" className="label-icon position-absolute">
-                                        <BiKey />
-                                    </label>
-                                    <input
-                                        value={password}
-                                        onChange={handlePasswordInput}
-                                        id="password"
-                                        className="form-control rounded-5 ps-5 bg-info-subtle"
-                                        type="password"
-                                        placeholder="Password"
-                                        autoComplete='password'
-                                    />
-                                </div>
-                                <div className="d-flex justify-content-between mb-2">
-                                    <div className="form-check d-flex">
-                                        <input className='form-check-input' id="remember" type="checkbox" />
-                                        <label className='ms-1' role="button" htmlFor="remember">Remember</label>
-                                    </div>
-                                    <div>
-                                        <a href="#">Lost Password?</a>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={handleSubmit}
-                                    type='button'
-                                    className="primary-button rounded-5 fw-normal mb-2"
-                                >Log into your account</button>
+                            <Formik
+                                initialValues={{ email: '', password: '' }}
+                                validate={values => {
+                                    const errors = {};
+                                    if (!values.email) {
+                                    errors.email = 'required';
+                                    } else if (
+                                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                                    ) {
+                                    errors.email = 'Invalid email address';
+                                    }
+                                    if (!values.password) {
+                                    errors.password = 'required';
+                                    } else if (
+                                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                                    ) {
+                                    errors.email = 'Invalid email address';
+                                    }
+                                    return errors;
+                                }}
+                                onSubmit={handleSubmit}
+                                validateOnChange={false}
+                                validateOnBlur={true}
+                            >
+                            {({ isSubmitting }) => (
+                                !isSubmitting ? 
 
-                                <p className="text-center"><a className='small' href='#'>Sign up</a></p>
+                                <Form className='login-form'>
+                                    <div className="form-group position-relative mb-2">
+                                        <label htmlFor="username" className="label-icon">
+                                            <BiUser />
+                                        </label>
+                                        <Field className="form-control rounded-5 ps-5 bg-info-subtle" type="email" name="email" placeholder="Email address" />
+                                        <ErrorMessage name="email" component="div" className="mb-0 text-danger small" />
+                                    </div>
+                                    <div className="form-group position-relative mb-2">
+                                        <label htmlFor="password" className="label-icon position-absolute">
+                                            <BiKey />
+                                        </label>
+                                        <Field type="password" name="password" className="form-control rounded-5 ps-5 bg-info-subtle" placeholder="Password" autoComplete="password" />
+                                        <ErrorMessage name="password" component="div" className="mb-0 text-danger small" />
+                                    </div>
+                                    <div className="d-flex justify-content-between mb-2">
+                                        <div className="form-check d-flex">
+                                            <input className='form-check-input' id="remember" type="checkbox" />
+                                            <label className='ms-1' role="button" htmlFor="remember">Remember</label>
+                                        </div>
+                                        <div>
+                                            <a href="#">Lost Password?</a>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type='submit'
+                                        className="primary-button rounded-5 fw-normal mb-2"
+                                    >Log into your account</button>
 
-                                <button onClick={handleLogout} type='button' className='btn btn-danger'>Logout</button>
-                            </form>
+                                    <p className="text-center"><a className='small' href='#'>Sign up</a></p>
+
+                                    <button onClick={handleLogout} disabled={isSubmitting} type='button' className='btn btn-danger'>Logout</button>
+                                </Form>
+                                :
+                                <p className='small'>signin...</p>
+                            )}
+                            </Formik>
                         </div>
                     </div>
 
