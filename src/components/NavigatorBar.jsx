@@ -1,27 +1,46 @@
 import React, { useState } from "react";
-import { Button, Col, Container, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { Button, Col, Container, Dropdown, DropdownButton, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
+import { useLogoutMutation } from "../auth/authApiSlice";
+import { logOut } from "../auth/authSlice";
+import BeehubSpinner from "./BeehubSpinner";
+
 function NavigatorBar(){
     const user = useSelector(selectCurrentUser);
-    const location = useLocation();
+    const [logout, {isLoading}] = useLogoutMutation()
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+
     const handleSubmit = (event) => {
         event.preventDefault();
         setSearchParams({ search: searchQuery });
         navigate(`/search?search=${encodeURIComponent(searchQuery)}`);
     };
-    if(user==null){
-        return <></>;
+    const handleLogout = async (e) => {
+        e.preventDefault()
+        await logout()
+        dispatch(logOut())
+        navigate("/login", {replace: true})
     }
+    const hero = () => {
+        if (isLoading) { return <BeehubSpinner/> }
+        else if (user?.image) { return <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
+        else if (user?.gender === "female") { return <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
+        else { return <Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
+    }
+
+    if(!user) return
+
     return (
          <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
             <Container fluid >
@@ -68,25 +87,21 @@ function NavigatorBar(){
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item >
-                            <Nav.Link href={`/member/profile/`+user.username} className="text-nowrap">
-                            {
-                                user.image!=null? 
-                                    <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                :(
-                                    user.gender=="female"?
-                                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle />
-                                )
-                            }
-                            {user.fullname}
-                            </Nav.Link>
+                            <DropdownButton 
+                                variant="info"
+                                drop="down-centered"
+                                title={<span className="">{hero()}</span>}
+                            >
+                                <Dropdown.Item href={`/member/profile/`+user.username}>Profile</Dropdown.Item>
+                                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                            </DropdownButton>
                         </Nav.Item>
-                        {location.pathname!="/"?<Nav.Item>
+                        <Nav.Item>
                             <Button onClick={() => setShow(!show)} className="me-2" variant="link" >
                                 <ChatRightHeartFill fill="#8224e3" size={24}/>
                             </Button>
                             <OffcanvasMessages show={show} handleClose={handleClose}/>
-                        </Nav.Item>:""}
+                        </Nav.Item>
                     </Nav>
                     </Col>
                 </Row>

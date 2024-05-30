@@ -15,6 +15,7 @@ import ListGroupPage from "./pages/Group/ListGroupPage"
 import Layout2 from "./layouts/Layout2"
 import { AccountSetting } from "./pages/Setting/AccountSetting"
 import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
+import Shop from "./pages/Shop/Shop"
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
         <Route path='/group' element={<Layout2 />}>
           <Route path=':id' element={<Group />} />
           <Route path='manage/:id' element={<GroupManagementPage />} />
+        </Route>
+
+        <Route path='/shop' element={<Layout />} >
+          <Route index element={<Shop />} />
         </Route>
       </Route>
     </Routes>

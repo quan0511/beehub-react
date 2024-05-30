@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import { Col, Container, Row, Form, Image, Spinner, Button  } from 'react-bootstrap';
-import axios from 'axios';
-import APIService from '../features/APIService';
+import { useHomepageQuery } from '../user/userApiSlice';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
+import APIService from '../features/APIService';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
-import { useHomepageQuery } from '../user/userApiSlice';
+
 function Homepage() {
     const user = useSelector(selectCurrentUser);
     const {data: posts, isLoading} = useHomepageQuery({id: user!=null? user.id:1});
@@ -22,10 +21,10 @@ function Homepage() {
                         <Form method="post" className="row pe-4">
                             <label className="col-1 mx-auto mb-3 col-form-label">
                                 {
-                                    user.image?
+                                    user?.image?
                                         <Image src={user.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                     :(
-                                        user.gender=='female'?
+                                        user?.gender=='female'?
                                         <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                                         :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"50px",height: "50px"}}roundedCircle />
                                     )
