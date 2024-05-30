@@ -6,27 +6,21 @@ import SearchPeople from "./SearchPeople"
 import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
-import APIService from "../../features/APIService"
-import { useDispatch, useSelector } from "react-redux"
-import SessionLeft from "../../components/SessionLeft"
-import NavigatorBar from "../../components/NavigatorBar"
+import { useSelector } from "react-redux"
 import { useSearchParams } from "react-router-dom"
 import { selectCurrentUser } from "../../auth/authSlice"
+import { useSearchingQuery } from "../../user/userApiSlice"
 
 function Searching(){
     const appUser = useSelector(selectCurrentUser);
     const [searchStr, setSearchStr] = useSearchParams();
-    const [loading,setLoading] = useState();
-    const dispatch = useDispatch();
+    let {data: resultSearch,isLoading,isSuccess} = searchStr.get("search")!=null ? useSearchingQuery({id: appUser.id, search: searchStr.get("search")}): {data: {}, isLoading:true};
+    console.log(resultSearch);
     const [tab,setTab]=useState('post');
+    const [changeRelationship, setChangeRelationship] = useState(false);
     const handleSelectTab = (selectedKey) => {
       setTab(selectedKey);
     };
-    const [resultOfSearch, setResultOfSearch]= useState({
-        posts: [],
-        people: [],
-        groups: []
-    });
     const handelClick=(e)=>{
         const badge= e.target.querySelector(".badge");
         const otherbadge =document.querySelectorAll('.badge');
@@ -41,26 +35,20 @@ function Searching(){
             badge.classList.toggle('bg-primary');
         }
     }
-    useEffect(()=>{
-        setLoading(true);
-        axios.get(`${APIService.URL_REST_API}/user/${appUser.id}/search_all?search=${searchStr.get("search")}`).then((res)=>{
-            setResultOfSearch(res.data);
-        }).finally(()=> setLoading(false));
-    },[searchStr])
     const section = ()=>{
         let res = <></>;
         switch (tab){
             case "post":
-                res = <SearchPosts posts={resultOfSearch.posts}/>
+                res = <SearchPosts posts={resultSearch["posts"]}/>
                 break;
             case "friend":
-                res = <SearchPeople people={resultOfSearch.people} />
+                res = <SearchPeople people={resultSearch["people"]} />
                 break;
             case "group":
-                 res = <SearchGroups groups={resultOfSearch.groups}/>;
+                 res = <SearchGroups groups={resultSearch["groups"]}/>;
                 break;
             default:
-                res = <SearchPosts posts={resultOfSearch.posts}/>
+                res = <SearchPosts posts={resultSearch["posts"]}/>
                 break;
         }
         
@@ -73,18 +61,18 @@ function Searching(){
                         <Col xl={10} md={12} className="mt-2">
                             <Nav justify  variant="tabs" defaultActiveKey="post" onSelect={handleSelectTab}>
                             <Nav.Item>
-                                    <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.posts.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["posts"].length}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="friend" onClick={handelClick}>Friends <Badge bg="primary">{loading? <ThreeDots />:resultOfSearch.people.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="friend" onClick={handelClick}>People <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["people"].length}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{loading? <ThreeDots />:resultOfSearch.groups.length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{isLoading? <ThreeDots />:resultSearch['groups'].length}</Badge></Nav.Link>
                                 </Nav.Item>
                             </Nav>
                             <hr/>
                             <Container fluid>
-                                {loading? 
+                                {isLoading? 
                                     <div className='d-flex flex-column justify-content-center align-items-center'>
                                     <Spinner animation="border"  role="status">
                                         <span className="visually-hidden">Loading...</span>

@@ -64,7 +64,9 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
                     // Perform actions after successfully handling the request here
                     setMessageToast(true);
                     props.setErrors({})
-
+                    setTimeout(()=>{
+                        window.location.reload();
+                    },1200)
                 } else {
                     console.error('An error occurred while submitting the form.');
                 }

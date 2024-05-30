@@ -9,7 +9,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 url: '/homepage/'+arg.id
             })
         }),
-
         friends: builder.query({
             query: ({id}) => ({
                 url: '/friends/'+id
@@ -64,6 +63,11 @@ export const userApiSlice = apiSlice.injectEndpoints({
             query: ({id})=>({
                 url: `/groups_friends/${id}`
             })
+        }),
+        searching: builder.query({
+            query: ({id,search})=>({
+                url: `/user/${id}/search_all?search=${search}`
+            })
         })
     })
 })
@@ -80,5 +84,6 @@ export const {
     useCheckUsernameQuery,
     useCheckSetUpPostsQuery,
     useGetSettingItemsQuery,
-    useGetFriendsAndGroupQuery
+    useGetFriendsAndGroupQuery,
+    useSearchingQuery
 } = userApiSlice

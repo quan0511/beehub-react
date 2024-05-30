@@ -67,14 +67,6 @@ function SessionLeft ({appUser}){
                         <span>Acitivity</span></Link>
                     </ListGroup.Item>
                     <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="/photos" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><CardImage size={20}/>
-                        <span>Photos</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="/watch"  className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Play size={20}/>
-                        <span>Watch</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
                         <Link to="/people" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item">
                             <Person size={20}/>
                         <span>People</span></Link>
@@ -84,24 +76,8 @@ function SessionLeft ({appUser}){
                         <span>Groups</span></Link>
                     </ListGroup.Item>
                     <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="/adverts" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Display size={20}/>
-                        <span>Adverts</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
                         <Link to="/shop" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Cart3 size={20}/>
                         <span>Shop</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="jobs" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Briefcase size={20}/>
-                        <span>Jobs</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="/forum" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><ChatDots size={20}/>
-                        <span>Forums</span></Link>
-                    </ListGroup.Item>
-                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
-                        <Link to="/blog" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Newspaper size={20}/>
-                        <span>Blog</span></Link>
                     </ListGroup.Item>
                 </ListGroup>
                 </div>

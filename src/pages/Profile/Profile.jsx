@@ -11,24 +11,26 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery } from "../../user/userApiSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
     const { username } = useParams();
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username});
     const [tab, setTab] = useState('posts');
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
+    
     const tabSession = ()=>{
         switch(tab){
             case "posts": 
                 return <ProfilePost user={user}/>;
             case "friends":
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
-                return <ProfileFriends friends={listsfriend} />;
+                return <ProfileFriends appUser={appUser} friends={listsfriend} />;
             case "about":
                 return <ProfileAbout user={user} />;
             case "photos":
@@ -39,19 +41,23 @@ function Profile (){
                 return  <ProfilePost  user={user}/>;
         }
     }
+    const handleClick= async (typeClick)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: user.id, type: typeClick },token);
+        window.location.reload();
+    }
     const getButton = ()=>{
-        if(user!=null){
+        if(user!=null && user.id!=appUser.id){
             switch(user.relationship_with_user){
                 case "BLOCKED":
-                   return <Button variant="danger">Unblock</Button>
+                   return <Button variant="danger" onClick={()=>{ handleClick("UN_BLOCK")}}>Unblock</Button>
                 case "FRIEND": 
-                    return <Button variant="outline-danger" >Unfriend</Button>
+                    return <Button variant="outline-danger" onClick={()=>{  handleClick("UN_FRIEND")}}>Unfriend</Button>
                 case "SENT_REQUEST":
-                    return <Button variant="outline-warning">Cancel Request</Button>
+                    return <Button variant="outline-warning" onClick={()=>{ handleClick("CANCEL_REQUEST")}}>Cancel Request</Button>
                 case "NOT_ACCEPT":
-                    return <Button variant="primary">Accept</Button>
+                    return <Button variant="outline-success"  onClick={()=>{ handleClick("ACCEPT")}}>Accept</Button>
                 default:
-                    return <Button variant="outline-primary">Add Friend</Button>
+                    return <Button variant="primary"  onClick={()=>{ handleClick("ADD_FRIEND")}}>Add Friend</Button>
             }
         }
     }

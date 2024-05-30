@@ -36,7 +36,7 @@ export function AccountSetting(){
     return (
         <Container >
             <Row  className="bg-white">
-                <Col xl={12} className="position-relative" style={{height: "90px"}}>
+                <Col xl={12} className="position-relative" style={{height: "90px", marginTop:"50px"}}>
                     <ToastContainer
                         className="p-3"
                         position="top-center"
