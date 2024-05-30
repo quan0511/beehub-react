@@ -11,25 +11,26 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
+import { useProfileQuery } from "../../user/userApiSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
-    const [user, setUser] = useState();
-    const [loading, setLoading] = useState(true);
-    const [tab, setTab] = useState('posts');
+    const token = useSelector(selectCurrentToken);
     const { username } = useParams();
+    const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username});
+    const [tab, setTab] = useState('posts');
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
+    
     const tabSession = ()=>{
         switch(tab){
             case "posts": 
                 return <ProfilePost user={user}/>;
             case "friends":
-                console.log(user);
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
-                return <ProfileFriends friends={listsfriend} />;
+                return <ProfileFriends appUser={appUser} friends={listsfriend} />;
             case "about":
                 return <ProfileAbout user={user} />;
             case "photos":
@@ -40,22 +41,30 @@ function Profile (){
                 return  <ProfilePost  user={user}/>;
         }
     }
-    useEffect(() => {
-        if(username!=null){
-            axios.get(`${APIService.URL_REST_API}/profile/${username}`).then((res)=>{
-                setLoading(true);
-                setUser(res.data);
-            }).finally(()=>{
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1500);
-                window.scrollTo({top:0,behavior: "smooth"});
-            });
+    const handleClick= async (typeClick)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: user.id, type: typeClick },token);
+        window.location.reload();
+    }
+    const getButton = ()=>{
+        if(user!=null && user.id!=appUser.id){
+            switch(user.relationship_with_user){
+                case "BLOCKED":
+                   return <Button variant="danger" onClick={()=>{ handleClick("UN_BLOCK")}}>Unblock</Button>
+                case "FRIEND": 
+                    return <Button variant="outline-danger" onClick={()=>{  handleClick("UN_FRIEND")}}>Unfriend</Button>
+                case "SENT_REQUEST":
+                    return <Button variant="outline-warning" onClick={()=>{ handleClick("CANCEL_REQUEST")}}>Cancel Request</Button>
+                case "NOT_ACCEPT":
+                    return <Button variant="outline-success"  onClick={()=>{ handleClick("ACCEPT")}}>Accept</Button>
+                default:
+                    return <Button variant="primary"  onClick={()=>{ handleClick("ADD_FRIEND")}}>Add Friend</Button>
+            }
         }
-     }, [username]);
-    if(loading){
+    }
+
+    if(isLoading || !isSuccess){
         return (
-            <Container style={{marginTop: "50px"}}>
+            <Container style={{marginTop: "150px"}}>
                 <Row>
                     <Col xl={2} className="mx-auto pt-5">
                     <Spinner animation="border"  role="status">
@@ -92,9 +101,14 @@ function Profile (){
                                 <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 )
                             }
-                            <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>
-                                <h2>{user.fullname}</h2>
-                                <span className="d-block text-black-50">@{user.username}</span>
+                            <div className="d-flex flex-row justify-content-between align-items-center pe-5" style={{marginLeft: "240px",marginBottom: "50px"}}>
+                                <div >
+                                    <h2>{user.fullname}</h2>
+                                    <span className="d-block text-black-50">@{user.username}</span>
+                                </div>
+                                <div>
+                                    {getButton()}
+                                </div>
                             </div>
                             <Container >
                                 <Row>

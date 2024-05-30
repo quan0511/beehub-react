@@ -19,8 +19,12 @@ function GroupPeople({members}){
             case "BLOCKED": 
                 return <Button variant="secondary" disabled ><Ban/> Blocked</Button>
             default:
-                return <Button variant="primary" ><Plus/> Add Friend</Button>
+                return <Button variant="primary" onClick={()=> handleClick("ADD_FRIEND",mem.id)} ><Plus/> Add Friend</Button>
         }
+    }
+    const handleClick= async (typeClick,receiver_id)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: receiver_id, type: typeClick },token);
+        window.location.reload();
     }
     return <Container>
         <Row style={{paddingBottom: "80px"}}>
@@ -79,7 +83,7 @@ function GroupPeople({members}){
                         {
                             members.filter((user)=>user.role=='MEMBER').map((user,index)=>{
                                 let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/files/user_female.png`:`${APIService.URL_REST_API}/files/user_male.png`);
-                                return <div className="mb-3 d-flex flex-row  justify-content-between align-items-center">
+                                return <div key={index} className="mb-3 d-flex flex-row  justify-content-between align-items-center">
                                 <div>
                                     <Image src={urlImg} style={{width:"60px",height: "60px",marginRight: "20px"}}roundedCircle />
                                     <b>{user.user_fullname}</b>

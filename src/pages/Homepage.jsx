@@ -10,30 +10,10 @@ import { useHomepageQuery } from '../user/userApiSlice';
 function Homepage() {
     const user = useSelector(selectCurrentUser);
     const {data: posts, isLoading} = useHomepageQuery({id: user!=null? user.id:1});
-    console.log(posts);
+    const handleScrollToTop=()=>{
+        window.scrollTo({top:0,behavior: "smooth"});
+    }
 
-    //     const [posts,setPosts] = useState([]);
-    //     const [friends, setFriends]= useState([]);
-    //     const [isLoading, setIsLoading] = useState(true);
-    //     const [loadMore, setLoadMore] = useState(false); 
-        const handleScrollToTop=()=>{
-            // setIsLoading(true);
-            // setLoadMore(!loadMore);
-            window.scrollTo({top:0,behavior: "smooth"});
-        }
-    // useEffect(()=> {
-    //     axios.get(`${APIService.URL_REST_API}/user/homepage/${user.id}`).then((res)=>{
-        //             setPosts(res.data);
-        //             setIsLoading(true);
-        //     }).finally(()=>{ 
-            //         setTimeout(() => {
-                //             setIsLoading(false);
-                //         }, 1200);
-                //     });
-                //     axios.get(`${APIService.URL_REST_API}/user/friends/${user.id}`).then((res)=>{
-                    //         setFriends(res.data);
-                    //     });
-                    // },[loadMore]);
     return (
         <Container fluid className='ps-4' style={{marginTop: "60px"}}>
             <Row>

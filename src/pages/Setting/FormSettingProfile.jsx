@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap";
 import * as Yup from 'yup';
-import { Formik } from 'formik'
-export const FormSettingProfile = ({user})=>{
+import { Formik } from 'formik';
+import axios from "axios";
+import APIService from "../../features/APIService";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../auth/authSlice";
+
+
+export const FormSettingProfile = ({user,setMessageToast})=>{
+    const token = useSelector(selectCurrentToken);
     const [validated, setValidated] = useState(false);
+
     const schema = Yup.object({
         fullname: Yup.string()
           .min(2, "Mininum 2 characters")
@@ -20,19 +28,57 @@ export const FormSettingProfile = ({user})=>{
             .required("Required Phone number")
             .matches(
                 /^(84|0[35789])+([0-9]{8})$/,
-                // "Password must contain at least 8 characters, one uppercase, one number and one special case character"
                 "Phone number is invalid"
               ),
-        // password: Yup.string()
-        //   .min(8, "Minimum 8 characters")
-        //   .required("Required!"),
-        // confirm_password: Yup.string()
-        //   .oneOf([Yup.ref("password")], "Password's not match")
-        //   .required("Required!")
       });
-    console.log(user)
+
+    const handleSubmit = async (values, { ...props }) => {
+        let res1= await axios.get(APIService.URL_REST_API+"/check-user?username="+values.username,{
+            headers: {
+              Authorization: 'Bearer ' + token 
+            }
+        });
+        let res2 = await axios.get(APIService.URL_REST_API+"/check-email?email="+values.email,{
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+        let checkUsername = res1.data;
+        let checkEmail = res2.data;
+        if(checkUsername && values.username!=user.username){
+            props.setErrors({username : "Username exists! Try another"})
+        }
+        if(checkEmail && values.email!=user.email){
+            props.setErrors({email : "Email exists! Try another"})
+        }
+            try {
+                const response = await axios.post(`${APIService.URL_REST_API}/update/profile/${user.id}`,JSON.stringify(values),{
+                    headers: {
+                        Authorization: 'Bearer ' + token,
+                        "Content-Type": 'application/json',
+                        withCredentials: true
+                    },
+                })
+                if (response.status == '200') {
+                    console.log('Form submitted:', values);
+                    // Perform actions after successfully handling the request here
+                    setMessageToast(true);
+                    props.setErrors({})
+                    setTimeout(()=>{
+                        window.location.reload();
+                    },1200)
+                } else {
+                    console.error('An error occurred while submitting the form.');
+                }
+            } catch (error) {
+            console.error('An error occurred while submitting the form.', error);
+            }
+        
+            // Set isSubmitting to false when the form submission is complete
+            props.setSubmitting(false);
+        }
     if(!user){
-        <Spinner animation="border" ></Spinner>
+        return <Spinner animation="border" ></Spinner>
     }
     return (
         <Formik
@@ -45,33 +91,31 @@ export const FormSettingProfile = ({user})=>{
                     birthday: user.birthday,
                     gender: user.gender
                 }}
-                onSubmit={async (values) => {
-                    await new Promise((r) => setTimeout(r, 500));
-                    alert(JSON.stringify(values, null, 2));
-                }}
+                onSubmit={handleSubmit}
             > {({ handleSubmit, handleChange, values, touched, errors }) => (
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Row className="mt-4">
-                <Form.Group as={Col} controlId="formName" className="mb-3">
+                <Form.Group as={Col}  className="mb-3">
                     <Form.Label>Fullname</Form.Label>
                     <Form.Control type="text" name="fullname" 
                             value={values.fullname} 
                             onChange={handleChange} 
                             isValid={touched.fullname && !errors.fullname} 
                             placeholder="Enter Fullname" />
-                    {errors.fullname && touched.fullname && (
+                        {errors.fullname && touched.fullname && (
                         <span className="text-danger">{errors.fullname}</span>
                     )}
                 </Form.Group>
                 <Form.Group as={Col} >
                     <Form.Label>Username</Form.Label>
-                    <InputGroup controlId="formUsername">
+                    <InputGroup hasValidation>
                         <InputGroup.Text>@</InputGroup.Text>
                         <Form.Control
                             type="text" 
                             name="username"
                             placeholder="Enter Username"
                             onChange={handleChange}
+                            isInvalid={!!errors.username}
                             value={values.username} 
                         />
                     </InputGroup>
@@ -79,34 +123,42 @@ export const FormSettingProfile = ({user})=>{
                         <span className="text-danger">{errors.username}</span>
                     )}
                 </Form.Group>
-                <Form.Group controlId="formEmail" className="mb-3">
+
+                <Form.Group  className="mb-3">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" name="email" placeholder="Enter Email"  onChange={handleChange} value={values.email}/>
+                    <Form.Control type="email" name="email" placeholder="Enter Email"  
+                        onChange={handleChange} 
+                        value={values.email}
+                        isInvalid={!!errors.email}
+                        />
                     {errors.email && touched.email && (
                         <span className="text-danger">{errors.email}</span>
                     )}
                 </Form.Group>
-                <Form.Group controlId="formPhone" className="mb-3">
+                <Form.Group  className="mb-3">
                     <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" name="phone" placeholder="Enter Phone" onChange={handleChange} value={values.phone} required/>
+                    <Form.Control type="text" name="phone" placeholder="Enter Phone"
+                                 onChange={handleChange} 
+                                 value={values.phone} required
+                                 isValid={touched.phone && !errors.phone}/>
                     {errors.phone && touched.phone && (
                         <span className="text-danger">{errors.phone}</span>
                     )}
                 </Form.Group>
-                <Form.Group controlId="formBirthday" className="mb-3">
+                <Form.Group  className="mb-3">
                     <Form.Label>Birthday</Form.Label>
-                    <Form.Control type="date" name="birthday" value={values.birthday}  />
+                    <Form.Control type="date" name="birthday" value={values.birthday} onChange={handleChange}  />
                 </Form.Group>
-                <Form.Group controlId="formGender"  className="mb-3">
+                <Form.Group  className="mb-3">
                     <Form.Label>Gender</Form.Label>
-                    <Form.Select name="gender" value={values.gender}>
+                    <Form.Select name="gender" onChange={handleChange} value={values.gender}>
                         <option value="female" >Female</option>
                         <option value="male" >Male</option>
                     </Form.Select>
                         
                 </Form.Group>
                 <Col xl={4}>
-                    <Button variant="outline-primary" type="submit" className="button-save">
+                    <Button variant="outline-primary" type="submit" id="buttonSaveProfile" >
                         Save changes
                     </Button>
                 </Col>

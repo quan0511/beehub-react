@@ -5,12 +5,11 @@ import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "reac
 import GroupCard from "../../components/GroupCard";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
+import { useListgroupQuery } from "../../user/userApiSlice";
 const ListGroupPage =()=>{
     const appUser = useSelector(selectCurrentUser);
+    const {data: data, isLoading, isSuccess} = useListgroupQuery({id: appUser!=null? appUser.id: 1});
     const [select, setSelect]=useState('joined_groups');
-    const [loading, setLoading]= useState(true);
-    const [ joinedGroups, setJoinedGroups] = useState([]);
-    const [ ownGroups, setOwnGroups ] =useState([]);
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);
     };
@@ -33,7 +32,7 @@ const ListGroupPage =()=>{
             case "joined_groups": 
              return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
-                    {joinedGroups.map((group, index)=>{
+                    {data["joined_groups"].map((group, index)=>{
                         let urlImage =  group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
                         return <GroupCard key={index} group={group} image={urlImage}/>
                     })}
@@ -43,7 +42,7 @@ const ListGroupPage =()=>{
             case "own_groups":
                 return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
-                    {ownGroups.map((group, index)=>{
+                    {data["own_group"].map((group, index)=>{
                         let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
                         return  <GroupCard key={index} group={group} image={urlImage}/>
                     })}
@@ -53,20 +52,11 @@ const ListGroupPage =()=>{
                 return <></>;
         }
     }
-    useEffect(()=>{
-        axios.get(`${APIService.URL_REST_API}/listgroup_page/${appUser.id}`).then((res)=> {
-            setJoinedGroups(res.data["joined_groups"]);
-            setOwnGroups(res.data["own_group"]);
-        }).finally(()=>{
-            setTimeout(()=>{
-                setLoading(false);
-            },600);
-        });
-    },[])
+    // return <></>
     return (
                 <Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
-                        {loading ?
+                        {isLoading ||!isSuccess ?
                         <Col>
                             <Spinner animation="border">
                             </Spinner>
@@ -84,21 +74,7 @@ const ListGroupPage =()=>{
                             <hr/>
                             <Container fluid>
                                 <Row xl={4}>
-                                    {/* <Col xl={12} className="mb-3">
-                                    <Form >
-                                        <InputGroup >
-                                            <InputGroup.Text  style={{borderRight: 0,backgroundColor: "#ffffff"}}>
-                                                <Search />
-                                            </InputGroup.Text>
-                                            <Form.Control style={{borderLeft: 0}} 
-                                                placeholder="Search"
-                                                aria-describedby="basic-addon2"
-                                            />
-                                        </InputGroup>
-                                    </Form>
-                                    </Col> */}
                                     {handleSelect()}
-                                    
                                 </Row>
                             </Container>
                         </Col>

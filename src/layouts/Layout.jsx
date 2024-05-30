@@ -10,7 +10,7 @@ function Layout(){
     
     return (
         <Container className="p-0" fluid>
-            <Row>
+            <Row className="overflow-x-hidden ">
                 <Col xl={3} className='p-0 ' >
                     <SessionLeft user={user}/>
                 </Col>

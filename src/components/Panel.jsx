@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Image, ListGroup } from "react-bootstrap";
-import {Cart3, JournalBookmark, People, Person, PersonCircle, Play } from "react-bootstrap-icons";
+import {Cart3, GearFill, JournalBookmark, People, Person, PersonCircle, Play } from "react-bootstrap-icons";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import Tooltip from 'react-bootstrap/Tooltip'; 
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -85,19 +85,19 @@ function Panel(){
                         <a href="" ><Cart3 size={20}/></a>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    {/* <ListGroup.Item  className="border-0 py-3">
+                    <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
                             <Tooltip {...props}> 
-                               Jobs 
+                               Setting 
                             </Tooltip> 
                         )} 
                         placement="right"
                     >
-                        <a href="" ><Briefcase size={20}/></a>
+                        <Link to="/member/account-setting" ><GearFill size={20}/></Link>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    
+                    {/* 
                     <ListGroup.Item  className="border-0 py-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
                         overlay={(props) => ( 
