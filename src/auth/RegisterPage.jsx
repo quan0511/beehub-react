@@ -85,7 +85,7 @@ function RegisterPage() {
     }
 
     const waitForSmoothTransition = () => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _) => {
           setTimeout(() => {
               setIsSuccess(true)
               resolve()
@@ -184,7 +184,7 @@ function RegisterPage() {
                             <p className='small'>signing you up...</p>
                         }
                         {isSuccess ?
-                            <p className="text-center text-success small">Sign up successfully, click here to <Link to='/register'>Sign in</Link></p>
+                            <p className="text-center text-success small">Sign up successfully, click here to <Link to='/login'>Sign in</Link></p>
                             :
                             <p className="text-center small">Already have an account? <Link to='/login'>Sign in</Link></p>
                         }
