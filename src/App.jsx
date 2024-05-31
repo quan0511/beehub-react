@@ -1,7 +1,5 @@
 import { Route, Routes } from "react-router-dom"
 
-import './App.css'
-
 import Homepage from './pages/Homepage'
 import Layout from './layouts/Layout'
 import Profile from './pages/Profile/Profile'
@@ -16,6 +14,14 @@ import Layout2 from "./layouts/Layout2"
 import { AccountSetting } from "./pages/Setting/AccountSetting"
 import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
 import Shop from "./pages/Shop/Shop"
+import RequireAdmin from "./administrator/RequireAdmin"
+import AdminLayout from "./administrator/AdminLayout"
+import Dashboard from "./administrator/pages/Dashboard"
+import Reports from "./administrator/pages/Reports"
+import Users from "./administrator/pages/Users"
+import Posts from "./administrator/pages/Posts"
+import ShopManagement from "./administrator/pages/ShopManagement"
+import Logout from "./auth/Logout"
 
 function App() {
   return (
@@ -26,7 +32,9 @@ function App() {
 
       {/* protected routes */}
       <Route element={<RequireAuth />}>
-        <Route element={<Layout />}>
+        <Route path='logout' element={<Logout />} />
+
+        <Route path='/' element={<Layout />}>
           <Route index element={<Homepage />} />
           <Route path='people' element={<PeoplePage />} />
           <Route path='search' element={<Searching />} />
@@ -46,7 +54,19 @@ function App() {
         <Route path='/shop' element={<Layout />} >
           <Route index element={<Shop />} />
         </Route>
+      
+        <Route element={<RequireAdmin/>}>
+          <Route path='admin' element={<AdminLayout/>}>
+            <Route index element={<Dashboard />} />
+            <Route path='reports' element={<Reports />} />
+            <Route path='users' element={<Users />} />
+            <Route path='posts' element={<Posts />} />
+            <Route path='shop' element={<ShopManagement />} />
+          </Route>
+        </Route>
+
       </Route>
+
     </Routes>
   )
 }
