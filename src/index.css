@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+#root {
+  margin: 0 auto;
+}
+
+a {
+  cursor: pointer;
+}
 
 body {
   margin: 0;
@@ -5,21 +14,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
 .list-group-item.active{
-background-color: #FFFFFF !important;
-
-}
-.list-group-item.active a{
-  color: #8224E3 !important;
-}
-.list-group-item a{
-  color: #838daa !important;
-}
+  background-color: #FFFFFF !important;
+  
+  }
+  .list-group-item.active a{
+    color: #8224E3 !important;
+  }
+  .list-group-item a{
+    color: #838daa !important;
+  }
 ::-webkit-scrollbar {
   width: 3px;
 }
