@@ -1,0 +1,21 @@
+.hero {
+    min-width: 250px;
+}
+.hero-header {
+    min-height: 175px;
+    padding: 10px;
+    text-align: center;
+    background-color: #646cffaa!important;
+}
+.hero-actions {
+    display: flex;
+}
+
+.hero-actions div {
+    cursor: pointer;
+}
+
+.hero-actions > *:hover {
+    background-color: #f0f0f0;
+    transition: all .2s;
+}

@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Button, Col, Container, Dropdown, DropdownButton, Form, Image, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Nav, Navbar, Row } from "react-bootstrap";
 import { Bag, Bell,ChatRightHeartFill,EnvelopeOpen, PersonAdd, Search} from "react-bootstrap-icons";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
-import { useLogoutMutation } from "../auth/authApiSlice";
-import { logOut } from "../auth/authSlice";
-import BeehubSpinner from "./BeehubSpinner";
+import Hero from "./Hero";
 
 function NavigatorBar(){
     const user = useSelector(selectCurrentUser);
-    const [logout, {isLoading}] = useLogoutMutation()
-    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -26,17 +21,10 @@ function NavigatorBar(){
         setSearchParams({ search: searchQuery });
         navigate(`/search?search=${encodeURIComponent(searchQuery)}`);
     };
-    const handleLogout = async (e) => {
-        e.preventDefault()
-        await logout()
-        dispatch(logOut())
-        navigate("/login", {replace: true})
-    }
-    const hero = () => {
-        if (isLoading) { return <BeehubSpinner/> }
-        else if (user?.image) { return <Image src={user.image} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
-        else if (user?.gender === "female") { return <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
-        else { return <Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"25px",height: "25px",marginRight: "5px"}} roundedCircle /> }
+    const heroImage = () => {
+        if (user?.image) return user.image
+        else if (user?.gender === "female") return `${APIService.URL_REST_API}/files/user_female.png`
+        else return `${APIService.URL_REST_API}/files/user_male.png`
     }
 
     if(!user) return
@@ -87,15 +75,14 @@ function NavigatorBar(){
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item >
-                            <DropdownButton 
-                                variant="info"
-                                drop="down-centered"
-                                title={<span className="">{hero()}</span>}
-                            >
-                                <Dropdown.Item href={`/member/profile/`+user.username}>Profile</Dropdown.Item>
-                                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                            </DropdownButton>
+                            <Hero
+                                img={heroImage()}
+                                title={user?.username}
+                                timestamp={'May, 2024'}
+                                linkTitle={'Profile'} linkUrl={`/member/profile/`+user.username}
+                            />
                         </Nav.Item>
+
                         <Nav.Item>
                             <Button onClick={() => setShow(!show)} className="me-2" variant="link" >
                                 <ChatRightHeartFill fill="#8224e3" size={24}/>
