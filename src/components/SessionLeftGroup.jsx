@@ -4,12 +4,12 @@ import { Dot, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import NotificationListGroup from "./NotificationListGroup";
 import APIService from "../features/APIService";
 
-function SessionLeftGroup({requirements}){
+function SessionLeftGroup({requirements,handleButton}){
     
     return (<div className="d-flex flex-column h-100 "style={{padding: "80px 2px 100px 10px"}}>
             <h4>{requirements.length} Notifications</h4>
             <div className="mt-4">
-                <NotificationListGroup requirements={requirements}  />
+                <NotificationListGroup requirements={requirements} handleButton={handleButton}  />
             </div>        
     </div>);
 }

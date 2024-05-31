@@ -61,24 +61,24 @@ function SessionLeft ({appUser}){
                 </div>
                 
             </div>
-            <div className="d-flex flex-row justify-content-center align-items-center w-100" style={{minHeight: "300px", padding: "90px 16px 10px 16px"}}>
+            <div className="d-flex flex-row justify-content-center align-items-center w-100 " style={{minHeight: "300px",marginTop: "40px"}}>
                 <div style={{width: "250px"}}>
-                <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-center flex-column">
-                    <ListGroup.Item style={{padding: "16px 4px"}} className="border-0">
-                        <Link to="/" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><JournalBookmark size={40}/>
+                <ListGroup horizontal="md" className="my-2 flex-wrap justify-content-center">
+                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}} className="border-0">
+                        <Link to="/" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><JournalBookmark size={30}/>
                         <span>Activities</span></Link>
                     </ListGroup.Item>
-                    <ListGroup.Item style={{padding: "16px 4px"}}  className="border-0">
+                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
                         <Link to="/people" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item">
-                            <Person size={40}/>
+                            <Person size={30}/>
                         <span>People</span></Link>
                     </ListGroup.Item>
-                    <ListGroup.Item style={{padding: "16px 4px"}}  className="border-0">
-                        <Link to="/listgroup" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><People size={40}/>
+                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
+                        <Link to="/listgroup" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><People size={30}/>
                         <span>Groups</span></Link>
                     </ListGroup.Item>
-                    <ListGroup.Item style={{padding: "16px 4px"}}  className="border-0">
-                        <Link to="/shop" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Cart3 size={40}/>
+                    <ListGroup.Item style={{width: "97px", height: "84px", padding: "16px 4px"}}  className="border-0">
+                        <Link to="/shop" className="d-flex flex-column align-items-center justify-content-center text-decoration-none link-item"><Cart3 size={30}/>
                         <span>Shop</span></Link>
                     </ListGroup.Item>
                 </ListGroup>

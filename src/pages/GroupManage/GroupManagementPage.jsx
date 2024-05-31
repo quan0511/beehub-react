@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {  Col, Row, Spinner } from "react-bootstrap";
+import {  Col, Form, Row, Spinner } from "react-bootstrap";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../features/APIService";
@@ -9,15 +9,21 @@ import { ListGroupManagers } from "./ListGroupManagers";
 import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useGroupInfoQuery } from "../../user/userApiSlice";
+import BeehubSpinner from "../../components/BeehubSpinner";
 
 export const GroupManagementPage=()=>{
     const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
     const {id} =useParams();
     const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id});
     const [checkMember ,setCheckMember] =useState(false);
-    console.log(group);
+    const handleButton= async(typeClick,user_id)=>{
+        let resp = await APIService.createRequirement(appUser.id, {receiver_id: user_id, group_id: group.id, type: typeClick },token);
+        console.log(resp);
+        // window.location.reload();
+    }
     useEffect(()=>{
         if(group !=null&& (group.member_role==null || group.member_role=="MEMBER")){
             setCheckMember(true);
@@ -28,13 +34,13 @@ export const GroupManagementPage=()=>{
     }
     if(!group){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
-        <Spinner animation="border" />
+        {BeehubSpinner()}
     </div>;
     }
     return (
             <Row>
-                <Col xl={9} className="p-5" style={{height: "350px",position: "relative"}}>
-                <Row style={{padding: "80px 10px 100px 10px"}}>
+                <Col xl={9} style={{position: "relative"}}>
+                <Row style={{padding: "80px 0px 100px 0"}}>
                         <Col xl={4} className="nav flex-column nav-underline me-3 border-end pe-4" id="myTab" role="tablist" aria-orientation="vertical">
                             <h4>Settings</h4>
                             <hr/>
@@ -42,6 +48,11 @@ export const GroupManagementPage=()=>{
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-members-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-members" type="button" role="tab" aria-controls="v-tabs-members" aria-selected="false">Manage Members</button>
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-admin-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-admin" type="button" role="tab" aria-controls="v-tabs-admin" aria-selected="false">Manage Administrators</button>
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-report-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-report" type="button" role="tab" aria-controls="v-tabs-report" aria-selected="false">List Reports</button>
+                            {
+                                group.member_role=="GROUP_CREATOR"?
+                                <button className="nav-link text-start text-black fs-5" id="v-tabs-sercurity-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-sercurity" type="button" role="tab" aria-controls="v-tabs-sercurity" aria-selected="false">Sercurity</button>
+                                :<></>
+                            }
                             <Link className="nav-link text-start text-black fs-5" to={"/group/"+id} >Go to Group Page</Link>
                         </Col>
                         <Col className="tab-content " id="myTabContent" >
@@ -49,19 +60,49 @@ export const GroupManagementPage=()=>{
                                 <GeneralSetting group={group}/>
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-members" role="tabpanel" aria-labelledby="v-tabs-members" tabIndex="0">
-                                <ListMember members={group.group_members.filter(e=> e.role == 'MEMBER')}/>
+                                <ListMember handleButton={handleButton} members={group.group_members.filter(e=> e.role == 'MEMBER')} user_id={appUser.id}/>
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-admin" role="tabpanel" aria-labelledby="v-tabs-admin" tabIndex="0">
-                                <ListGroupManagers managers={group.group_members.filter(e=>e.role!='MEMBER')}/>
+                                <ListGroupManagers handleButton={handleButton}  managers={group.group_members.filter(e=>e.role!='MEMBER')} user_id={appUser.id}/>
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-report" role="tabpanel" aria-labelledby="v-tabs-report" tabIndex="0">
                                <ListGroupReports reports={group.reports_of_group}/>
                             </div>
+                            {
+                                group.member_role=="GROUP_CREATOR"?
+                                <div className="tab-pane fade text-start px-5" id="v-tabs-sercurity" role="tabpanel" aria-labelledby="v-tabs-sercurity" tabIndex="0">
+                                    <div className="d-flex flex-column">
+                                        <h3>Sercurity groups</h3>
+                                        <hr/>
+                                        <Row xl={2}>
+                                            <Col className="mb-3">
+                                                <p>Setting Public / Private for group</p>
+                                            </Col>
+                                            <Col className="mb-3">
+                                                <Form.Select onChange={()=>{handleButton("TOGGLE_PUBLIC_GROUP",appUser.id)}} >
+                                                    <option value="true">Public</option>
+                                                    <option value="false">Private</option>
+                                                </Form.Select>
+                                            </Col>
+                                            <Col className="mb-3">
+                                                <p>Setting Deactive / Active for group</p>
+                                            </Col>
+                                            <Col className="mb-3">
+                                                <Form.Select onChange={()=>{handleButton("TOGGLE_ACTIVE_GROUP",appUser.id)}} >
+                                                    <option value="true">Active</option>
+                                                    <option value="false">Deactive</option>
+                                                </Form.Select>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </div>
+                                :<></>
+                            }
                         </Col>
                     </Row>
                 </Col>
                 <Col xl={3} >
-                    <SessionLeftGroup requirements={group.requirements} />
+                    <SessionLeftGroup requirements={group.requirements} handleButton={handleButton}/>
                 </Col>
             </Row>
     );
