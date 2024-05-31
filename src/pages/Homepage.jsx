@@ -5,14 +5,29 @@ import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
+import { useEffect, useState } from 'react';
 
 function Homepage() {
+    const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
-    const {data: posts, isLoading} = useHomepageQuery({id: user!=null? user.id:1});
+    const {data:posts, isLoading,isFetching} = useHomepageQuery({id: user.id, page: page});
     const handleScrollToTop=()=>{
         window.scrollTo({top:0,behavior: "smooth"});
     }
-
+    useEffect(() => {
+        const onScroll = () => {
+          const scrolledToBottom =
+            window.innerHeight + window.scrollY >= document.body.offsetHeight;
+          if (scrolledToBottom && !isFetching) {
+            console.log("Fetching more data...");
+            setPage(page + 1);
+          }
+        };
+        document.addEventListener("scroll", onScroll);
+        return function () {
+          document.removeEventListener("scroll", onScroll);
+        };
+      }, [page, isFetching]);
     return (
         <Container fluid className='ps-4' style={{marginTop: "60px"}}>
             <Row>
@@ -46,13 +61,13 @@ function Homepage() {
                             return <Post key={index} post={post} page="activity" />;
                         })    
                     }
-                    {
+                    {/* {
                     !isLoading?
                     <div className='mt-4 mb-3'>
                         <Button variant='secondary' onClick={handleScrollToTop}>Reload</Button>
                     </div>:
                     <div></div>
-                    }
+                    } */}
                 </Col>
                 <Col lg={4}>
                     <SessionRight />

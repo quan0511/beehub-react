@@ -6,8 +6,19 @@ export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         homepage: builder.query({
             query: arg => ({
-                url: '/homepage/'+arg.id
-            })
+                url: '/homepage/'+arg.id+"?page="+arg.page+"&limit="+5
+            }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems) => {
+            currentCache.push(...newItems)
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+            return currentArg !== previousArg
+            },
         }),
         friends: builder.query({
             query: ({id}) => ({
