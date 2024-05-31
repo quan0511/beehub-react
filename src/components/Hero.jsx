@@ -1,7 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import './Hero.css'
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../auth/authSlice";
 
 function Hero({ img, title, timestamp, linkTitle, linkUrl }) {
+    const user = useSelector(selectCurrentUser)
     const navigate = useNavigate()
 
     const handleLinkNavigate = async (e, to) => {
@@ -19,7 +22,7 @@ function Hero({ img, title, timestamp, linkTitle, linkUrl }) {
                     className="rounded-circle shadow me-2"
                     src={img}
                 />
-                <span className="d-none d-md-inline align-middle">Admin</span>
+                <span className="d-none d-md-inline align-middle">{user?.username}</span>
             </a>
             <ul className="hero dropdown-menu p-0 dropdown-menu-lg dropdown-menu-end">
                 <li className="hero-header text-bg-primary">
