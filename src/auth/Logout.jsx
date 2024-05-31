@@ -6,7 +6,7 @@ import BeehubSpinner from "../components/BeehubSpinner";
 import { logOut } from "./authSlice";
 
 function Logout() {
-    const [logout, {isLoading}] = useLogoutMutation()
+    const [logout, { isLoading }] = useLogoutMutation()
     const dispatch = useDispatch();
 
     const handleLogout = async () => {
@@ -19,7 +19,11 @@ function Logout() {
         console.log('logout');
         handleLogout()
     })
-    return isLoading ? <BeehubSpinner/> : <Navigate to={'/login'} replace={true} />;
+    return isLoading ?
+        <div className="w-100 min-vh-100 d-flex justify-content-center align-items-center">
+            <BeehubSpinner />
+        </div>
+        : <Navigate to={'/login'} replace={true} />;
 }
 
 export default Logout;

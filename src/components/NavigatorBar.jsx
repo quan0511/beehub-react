@@ -7,6 +7,7 @@ import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import Hero from "./Hero";
+import { OffcanvasSectionLeft } from "./OffcanvasSectionLeft";
 
 function NavigatorBar(){
     const user = useSelector(selectCurrentUser);
@@ -15,7 +16,7 @@ function NavigatorBar(){
     const handleClose = () => setShow(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-
+    const [showLeft, setShowLeft] = useState(false);
     const handleSubmit = (event) => {
         event.preventDefault();
         setSearchParams({ search: searchQuery });
@@ -30,12 +31,19 @@ function NavigatorBar(){
     if(!user) return
 
     return (
-         <Navbar expand="lg" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-0 position-fixed">
+         <Navbar expand="xl" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-2 position-fixed">
             <Container fluid >
                 <Row style={{ width: "100%", marginTop: "3px"}}>
-                    <Col lg={6} md={4} xs={4}>
+                    <Col lg={6} md={7} sm={7} xs={4}>
                         <Row>
-                            <Col lg={6} md={4} xs={6} className="mx-auto">
+                            <Col>
+                            <Button className="navbar-toggler" onClick={()=>setShowLeft(true)} >
+                                <span className="navbar-toggler-icon"></span>
+                            </Button>
+                            <OffcanvasSectionLeft show={showLeft} handleClose={()=>setShowLeft(false)} />
+                            </Col>
+                            <Col lg={8} md={8} sm={8} xs={6} className="mx-auto">
+                            
                                 <Form onSubmit={handleSubmit} >
                                     <InputGroup >
                                         <InputGroup.Text id="basic-addon2" style={{borderRight: 0,backgroundColor: "#ffffff"}}>
@@ -52,7 +60,7 @@ function NavigatorBar(){
                         </Row>
                     </Col>
                     <Col ></Col>
-                    <Col lg={3} md={1} xs={2}>
+                    <Col lg={3} md={3} sm={3} xs={2}>
                     <Nav className="justify-content-end d-flex flex-row" variant="none" defaultActiveKey="/home">
                     <Nav.Item className="me-2">
                             <Nav.Link >

@@ -4,8 +4,7 @@ import { Search } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 export const ListGroupManagers = ({managers,handleButton, user_id})=>{
-    console.log(managers);
-    console.log(user_id);
+    
     return (
         <div className="d-flex flex-column">
             <h3>List members in groups</h3>

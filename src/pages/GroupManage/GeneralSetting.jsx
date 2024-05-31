@@ -2,11 +2,21 @@ import React from "react";
 import { Formik } from 'formik';
 import { Button, Col, Container,  Form,  Row } from "react-bootstrap";
 import * as Yup from 'yup';
-export const GeneralSetting = ({group})=>{
-    const schema = Yup.object().shape({
-        groupname: Yup.string().required(),
-      });
+import APIService from "../../features/APIService";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
+export const GeneralSetting = ({user_id,group})=>{
+    const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
     
+    const schema = Yup.object().shape({
+        groupname: Yup.string()
+                .required("Required!")
+                .min(2, "Mininum 2 characters"),
+        description: Yup.string().max(200, "Description maximum 200 character")
+      });
     const readURLImage = (input)=> {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -69,23 +79,53 @@ export const GeneralSetting = ({group})=>{
             <Formik
                 validationSchema={schema}
                 initialValues={{
+                    id: group.id,
                     groupname: group.groupname,
-                    description: group.description,
+                    description: group.description ??"",
                 }}
-                onSubmit={async (values) => {
-                    await new Promise((r) => setTimeout(r, 500));
-                    alert(JSON.stringify(values, null, 2));
+                onSubmit={async (values, { ...props }) => {
+                    try {
+                        const response = await axios.post(`${APIService.URL_REST_API}/update/group/${user_id}`,JSON.stringify(values),{
+                            headers: {
+                                Authorization: 'Bearer ' + token,
+                                "Content-Type": 'application/json',
+                                withCredentials: true
+                            }
+                        });
+                        if (response.status == '200') {
+                            console.log('Form submitted:', values);
+                            
+                            props.setErrors({})
+                            setTimeout(()=>{
+                                dispatch(refresh())
+                            },600)
+                            props.resetForm();
+                        } else {
+                            console.error('An error occurred while submitting the form.');
+                        }
+                    } catch (error) {
+                        console.error('An error occurred while submitting the form.', error);
+                    }
                 }}
             > {({ handleSubmit, handleChange, values, touched, errors }) => (
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="groupnname">
                         <Form.Label>Group Name</Form.Label>
-                        <Form.Control  name="groupname" value={values.groupname} onChange={handleChange} isValid={touched.groupname && !errors.groupname} />
+                        <Form.Control  name="groupname" 
+                                value={values.groupname} 
+                                onChange={handleChange} 
+                                isValid={touched.groupname && !errors.groupname} />
+                        {errors.groupname && touched.groupname && (
+                            <span className="text-danger">{errors.groupname}</span>
+                        )}
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label >Description</Form.Label>
-                        <Form.Control as="textarea" rows={3}  name="description" defaultValue={values.description} />
-
+                        <Form.Control as="textarea" rows={3}  name="description" 
+                                onChange={handleChange}  value={values.description}  isValid={touched.description && !errors.description} />
+                        {errors.description && touched.description && (
+                            <span className="text-danger">{errors.description}</span>
+                        )}  
                     </Form.Group>
                     <Button type="submit">Submit</Button>
                 </Form>)}

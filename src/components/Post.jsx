@@ -1,10 +1,12 @@
-import React from "react";
-import { Col, Image, Row } from "react-bootstrap";
+import React, { useRef, useState } from "react";
+import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
 import { Link } from "react-router-dom";
 
 function Post ({post, page}){
+    const [show, setShow] = useState(false);
+    const target = useRef(null);
     const getSettingType=()=>{
         switch(post.setting_type){
             case 'FOR_FRIEND':
@@ -39,7 +41,7 @@ function Post ({post, page}){
     return (
         <div className="border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
             <Row>
-                <Col xl={1} className="mx-3">
+                <Col xl={1} lg={1} md={1} sm={1} className="mx-3">
                     {
                         post.group_id!=null && page!='group'?(
                             post.group_image!=null?
@@ -62,21 +64,19 @@ function Post ({post, page}){
                 </Col>
                 {
                     post.group_id!=null && page!="group"?
-                    <div className="col-9 d-flex flex-column">
+                    <Col xl={9} lg={9} md={9} sm={9} className="d-flex flex-column">
                         <Link to={"/group/"+post.group_id} className="h5 text-black text-capitalize  text-decoration-none text-start mb-1">{post.group_name}</Link>
                         <div className="text-start "><Link to={"/member/profile/"+post.user_username} className="text-dark text-decoration-none">{post.user_fullname}</Link> &emsp;<Dot/> {getTimeOfPost()}</div>
-                    </div>
+                    </Col>
                     :
-                    <div className="col-9 d-flex flex-column">
+                    <Col xl={9} lg={9} md={9} sm={9}  className="d-flex flex-column">
                         <Link to={"/member/profile/"+post.user_username} className="h5 text-black text-capitalize text-start mb-1 " style={{textDecoration:"none"}}>{post.user_fullname}</Link>
                         <p className="text-start" style={{fontSize: "12px"}}>
                             {getSettingType()} &emsp;<Dot/> {getTimeOfPost()}</p>
-                    </div>
+                    </Col>
                 }
-                <Col xl={1} className="text-end mt-2">
-
+                <Col xl={1} lg={1} md={1} sm={1} className="text-end mt-2">
                     <ThreeDots size={30} fill='#e1e1e1' />
-                    
                 </Col>
                 <Col xl={12} className="text-start">
                     <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>

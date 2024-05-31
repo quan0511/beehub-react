@@ -10,29 +10,46 @@ import ProfilePhotos from "./ProfilePhotos";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../features/APIService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery } from "../../user/userApiSlice";
+import { refresh } from "../../features/userSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
-    const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username});
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
+   
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
-    
+    const hideFriendCheck = ()=>{
+        let check = false;
+        console.log(user);
+        if(isSuccess && (user.id != appUser.id)){
+            user.user_settings.forEach((e)=>{
+                console.log(e["setting_item"] == 'list_friend' && e["setting_type"] == "HIDDEN" );
+                console.log((user.relationship_with_user != "FRIEND"||user.relationship_with_user == null) && e["setting_type"] == "FOR_FRIEND");
+                if((e["setting_item"] == 'list_friend' && e["setting_type"] == "HIDDEN" )||((user.relationship_with_user != "FRIEND"||user.relationship_with_user == null) && e["setting_type"] == "FOR_FRIEND")){
+                    check = true;
+                }
+            })
+        }
+        return check;
+    }
     const tabSession = ()=>{
         switch(tab){
             case "posts": 
-                return <ProfilePost user={user}/>;
+                return <ProfilePost appUser={appUser} user={user}/>;
             case "friends":
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
-                return <ProfileFriends appUser={appUser} friends={listsfriend} />;
+                return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} />;
             case "about":
-                return <ProfileAbout user={user} />;
+                return <ProfileAbout user={user} appUser={appUser} />;
             case "photos":
                 return <ProfilePhotos galleries={user.galleries}/>;
             case "setting":
@@ -43,7 +60,7 @@ function Profile (){
     }
     const handleClick= async (typeClick)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: user.id, type: typeClick },token);
-        window.location.reload();
+        dispatch(refresh())
     }
     const getButton = ()=>{
         if(user!=null && user.id!=appUser.id){
@@ -75,7 +92,6 @@ function Profile (){
             </Container>
         );
     }
-    
     return (
             <Container style={{marginTop: "50px"}}>
                 <Row className="p-0" style={{position: "relative"}}>
@@ -138,12 +154,17 @@ function Profile (){
                                                     <span>About</span>
                                                 </Nav.Link>
                                             </Nav.Item>
-                                            <Nav.Item>
-                                                <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
-                                                    <People size={20}/>
-                                                    <span>Friends</span>
-                                                </Nav.Link>
-                                            </Nav.Item>
+                                            {hideFriendCheck()?
+                                                <></>
+                                                :
+                                                <Nav.Item>
+                                                    <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
+                                                        <People size={20}/>
+                                                        <span>Friends</span>
+                                                    </Nav.Link>
+                                                </Nav.Item>
+                                                
+                                            }
                                             <Nav.Item   >
                                                 <Nav.Link eventKey="photos" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                     <CardImage size={20}/>

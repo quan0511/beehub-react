@@ -4,11 +4,14 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import axios from "axios";
 import APIService from "../../features/APIService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
 export const FormSettingPassword = ({user, setMessageToast})=>{
     const [validated, setValidated] = useState(false);
     const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
     const schema2 = Yup.object({
         newPassword: Yup.string()
           .min(6, "Minimum 6 characters")
@@ -34,7 +37,8 @@ export const FormSettingPassword = ({user, setMessageToast})=>{
                     
                     let res1= await axios.get(`${APIService.URL_REST_API}/check-password/${user.id}?password=${values.currentPassword}`,{
                         headers: {
-                            Authorization: 'Bearer ' + token 
+                            Authorization: 'Bearer ' + token,
+                            withCredentials: true
                         }
                     });
                     let check= res1.data;
@@ -53,8 +57,8 @@ export const FormSettingPassword = ({user, setMessageToast})=>{
                             setMessageToast(true);
                             props.setErrors({})
                             setTimeout(()=>{
-                                window.location.reload();
-                            },1200)
+                                dispatch(refresh())
+                            },1000)
                         } else {
                             console.error('An error occurred while submitting the form.');
                         }

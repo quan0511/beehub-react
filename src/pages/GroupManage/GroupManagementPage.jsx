@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from "react";
 import {  Col, Form, Row, Spinner } from "react-bootstrap";
 import { Link, Navigate, useParams } from "react-router-dom";
-import axios from "axios";
 import APIService from "../../features/APIService";
 import { GeneralSetting } from "./GeneralSetting";
 import { ListMember } from "./ListMember";
 import { ListGroupManagers } from "./ListGroupManagers";
 import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useGroupInfoQuery } from "../../user/userApiSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
+import { refresh } from "../../features/userSlice";
 
 export const GroupManagementPage=()=>{
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const {id} =useParams();
-    const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id});
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id,reset: reset});
     const [checkMember ,setCheckMember] =useState(false);
     const handleButton= async(typeClick,user_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {receiver_id: user_id, group_id: group.id, type: typeClick },token);
-        console.log(resp);
-        // window.location.reload();
+        if(resp.result!='unsuccess'||resp.result != 'error'){
+            dispatch(refresh())
+        }
     }
     useEffect(()=>{
         if(group !=null&& (group.member_role==null || group.member_role=="MEMBER")){
@@ -57,7 +60,7 @@ export const GroupManagementPage=()=>{
                         </Col>
                         <Col className="tab-content " id="myTabContent" >
                             <div className="tab-pane fade show active text-start px-2 " id="v-tabs-general" role="tabpanel" aria-labelledby="v-tabs-general" tabIndex="0">
-                                <GeneralSetting group={group}/>
+                                <GeneralSetting user_id={appUser.id} group={group}  />
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-members" role="tabpanel" aria-labelledby="v-tabs-members" tabIndex="0">
                                 <ListMember handleButton={handleButton} members={group.group_members.filter(e=> e.role == 'MEMBER')} user_id={appUser.id}/>
@@ -66,7 +69,7 @@ export const GroupManagementPage=()=>{
                                 <ListGroupManagers handleButton={handleButton}  managers={group.group_members.filter(e=>e.role!='MEMBER')} user_id={appUser.id}/>
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-report" role="tabpanel" aria-labelledby="v-tabs-report" tabIndex="0">
-                               <ListGroupReports reports={group.reports_of_group}/>
+                               <ListGroupReports user_id={appUser.id} group_id={group.id} reports={group.reports_of_group}  />
                             </div>
                             {
                                 group.member_role=="GROUP_CREATOR"?
