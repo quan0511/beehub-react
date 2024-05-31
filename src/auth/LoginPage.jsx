@@ -2,7 +2,7 @@ import LoginRegisterLayout from './LoginRegisterLayout';
 import { setCredentials } from './authSlice';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from './authApiSlice';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { Envelope } from 'react-bootstrap-icons';
 import { BiKey } from 'react-icons/bi';
 
 import './LoginPage.css'
+import { ADMIN } from '../administrator/RequireAdmin';
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -51,7 +52,11 @@ function LoginPage() {
         try {
             const userData = await login(values).unwrap()
             dispatch(setCredentials({ ...userData }))
-            navigate('/')
+            if (userData.roles.includes(ADMIN)) {
+                navigate('/admin')
+            } else {
+                navigate('/')
+            }
         } catch (err) {
             if (!err.data) {
                 setErrMsg('No Server Response')
