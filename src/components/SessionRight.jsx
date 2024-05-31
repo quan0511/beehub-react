@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 function SessionRight(){
     const user = useSelector(selectCurrentUser);
-    const {data: friends, isLoading} = useFriendsQuery({id: user.id});
+    const {data: friends, isLoading} = useFriendsQuery({id: user?.id || 1});
     return (
         <div className="d-flex flex-column justify-content-start align-items-start mt-5"  style={{overflowY: "scroll", overflowX: "hidden",height: "100vh", position: "fixed", width: "inherit"}}>
             <Row className="mb-2 w-100 pb-2 bg-white" style={{zIndex: "4"}}>

@@ -1,26 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, setCredentials } from "./authSlice";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import APIService from "../features/APIService";
 import { Spinner } from "react-bootstrap";
+import { axiosInstance } from "../hooks/useAxios";
 
 function RequireAuth() {
     const [ token, setToken ] = useState(useSelector(selectCurrentToken))
-    const location = useLocation()
     const navigate = useNavigate()
-
     const dispatch = useDispatch()
-
+    
     useEffect(() => {
         if (!token) {
             tryRefreshToken()
         }
-    })
+    }, [])
 
     const tryRefreshToken = async () => {
         try {
-            const response = await APIService.axios.get('/auth/refresh')
+            const response = await axiosInstance.get('/auth/refresh')
             dispatch(setCredentials(response?.data))
             setToken(response?.data?.token)
         } catch(e) {
