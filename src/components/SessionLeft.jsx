@@ -9,8 +9,8 @@ import axios from "axios";
 import { useUserQuery } from "../user/userApiSlice";
 function SessionLeft ({appUser}){
     const location = useLocation();
-    const {data: user, isLoading }= useUserQuery({id: appUser!=null? appUser.id: 1});
-
+    const reset = useSelector((state)=>state.user.reset);
+    const {data: user, isLoading }= useUserQuery({id: appUser.id,reset:reset});
     useEffect(()=>{
         let childitem = document.getElementsByClassName("link-item");
         for (let index = 0; index < childitem.length; index++) {
@@ -29,7 +29,7 @@ function SessionLeft ({appUser}){
     }    
     return (
         <div className="d-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
-            <div style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", display: "block",textAlign:"center"}}>
+            <div  style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", textAlign:"center"}}>
                 <Image src="https://mythemestore.com/beehive-preview/wp-content/themes/beehive/assets/images/logo-vertical.svg"/>
                 
                 <div className="rounded-3 mx-auto px-5 py-4 shadow-sm sessionLeft2_profile" style={{width: "250px",height: "250px",backgroundColor: "#FFFFFF", marginTop: "1.2rem"}} >

@@ -1,19 +1,23 @@
 import React from "react";
 import { Button, Card, Col, Form, Image,  Row } from "react-bootstrap";
 import { Dot } from "react-bootstrap-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
 import APIService from "../features/APIService";
+import { refresh } from "../features/userSlice";
 const GroupCard =({group,image})=>{
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    
     const handleButton= async(typeClick)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
-        console.log(resp);
-        // window.location.reload();
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            dispatch(refresh())
+        }
     }
-    console.log(group);
     const setButton = ()=>{
         if(group.joined==null){
             return (<Col xl="4" className="d-flex flex-row justify-content-start align-items-center">

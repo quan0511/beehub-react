@@ -40,3 +40,49 @@
 .read-the-docs {
   color: #888;
 }
+
+@media only screen and (max-width: 600px) {
+  .session_left {
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .session_left {
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .session_left {
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .session_left{
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .session_left{
+    display: block !important;
+  }
+  .section-right{
+    display: block !important;
+  }
+}

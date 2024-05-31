@@ -3,14 +3,16 @@ import {Col, Row,Card, Form, InputGroup, Button, Image, Spinner, Dropdown } from
 import { Search, ThreeDots, } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
 
-function ProfileFriends({appUser,friends}){
+function ProfileFriends({appUser,friends,hideFriend,user_id}){
     const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
     const handleClick= async (typeClick,friend_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: friend_id, type: typeClick },token);
-        window.location.reload();
+        dispatch(refresh());
     }
     return (
         <Row className="mb-5">
@@ -54,18 +56,23 @@ function ProfileFriends({appUser,friends}){
                                                         <h4><Link to={`/member/profile/${friend.username}`} className="text-decoration-none text-black">{friend.fullname}</Link></h4>
                                                         <p>Friends: {friend.friend_counter}</p>
                                                     </Col>
-                                                    <Col xl={4} md={4} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
-                                                        <Dropdown>
-                                                            <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-                                                                Options
-                                                            </Dropdown.Toggle>
+                                                    {
+                                                        user_id != appUser.id?
+                                                        <></>
+                                                        :
+                                                        <Col xl={4} md={4} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
+                                                            <Dropdown>
+                                                                <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                                                                    Options
+                                                                </Dropdown.Toggle>
 
-                                                            <Dropdown.Menu>
-                                                                <Dropdown.Item as="button" onClick={()=> { handleClick("UN_FRIEND",friend.id)}}>Unfriend</Dropdown.Item>
-                                                                <Dropdown.Item as="button" onClick={()=> { handleClick("BLOCK",friend.id)}}>Block</Dropdown.Item>
-                                                            </Dropdown.Menu>
-                                                        </Dropdown>
-                                                    </Col>
+                                                                <Dropdown.Menu>
+                                                                    <Dropdown.Item as="button" onClick={()=> { handleClick("UN_FRIEND",friend.id)}}>Unfriend</Dropdown.Item>
+                                                                    <Dropdown.Item as="button" onClick={()=> { handleClick("BLOCK",friend.id)}}>Block</Dropdown.Item>
+                                                                </Dropdown.Menu>
+                                                            </Dropdown>
+                                                        </Col>
+                                                    }
                                                 </Row>
                                             </Card>
                                         </Col>);

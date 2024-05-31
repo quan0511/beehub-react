@@ -5,7 +5,7 @@ import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 
 export const ListMember = ({handleButton,members})=>{
-    console.log(members);    
+
     return (
         <div className="d-flex flex-column">
             <h3>List members in groups</h3>

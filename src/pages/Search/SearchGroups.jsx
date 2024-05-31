@@ -4,7 +4,6 @@ import { Dot } from "react-bootstrap-icons";
 import GroupCard from "../../components/GroupCard";
 import APIService from "../../features/APIService";
 function SearchGroups({groups}){
-    console.log(groups);
     return (
         <Row>
             <Col lg={10} md={12} className="mx-auto">

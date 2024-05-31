@@ -5,19 +5,32 @@ import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
+import { useEffect, useState } from 'react';
 
 function Homepage() {
+    const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
-    const {data: posts, isLoading} = useHomepageQuery({id: user!=null? user.id:1});
-    const handleScrollToTop=()=>{
-        window.scrollTo({top:0,behavior: "smooth"});
-    }
-
+    const {data:posts, isLoading,isFetching} = useHomepageQuery({id: user.id, page: page});
+    
+    useEffect(() => {
+        const onScroll = () => {
+          const scrolledToBottom =
+            Math.floor(window.innerHeight + window.scrollY) >= (document.body.offsetHeight-1);
+          if (scrolledToBottom && !isFetching) {
+            console.log("Fetching more data...");
+            setPage(page + 1);
+          }
+        };
+        document.addEventListener("scroll", onScroll);
+        return function () {
+          document.removeEventListener("scroll", onScroll);
+        };
+      }, [page, isFetching]);
     return (
-        <Container fluid className='ps-4' style={{marginTop: "60px"}}>
+        <Container fluid className='ps-4' style={{marginTop: "60px",marginBottom: "10px"}}>
             <Row>
-                <Col lg={8} >
-                    <div className="border-2 rounded-2 border-dark mt-2 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
+                <Col xl={8} lg={8} md={10} sm={12} className='m-md-auto'>
+                    <div className="border-2 rounded-2 border-dark mt-3 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
                         <Form method="post" className="row pe-4">
                             <label className="col-1 mx-auto mb-3 col-form-label">
                                 {
@@ -37,24 +50,22 @@ function Homepage() {
                         
                         </Form>
                     </div>
-                    {isLoading && posts==null? <div className='mt-5'>
-                        <Spinner animation="border"  role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner></div>
+                    {isLoading && posts==null?
+                       <></>
                         :
                         posts.map((post, index)=>{
                             return <Post key={index} post={post} page="activity" />;
                         })    
                     }
                     {
-                    !isLoading?
-                    <div className='mt-4 mb-3'>
-                        <Button variant='secondary' onClick={handleScrollToTop}>Reload</Button>
+                    isFetching?
+                    <div className='mt-4 mb-3 text-center w-100'>
+                        <p className='text-black-50'><Spinner animation='border' size='8' /> Loading</p>
                     </div>:
                     <div></div>
                     }
                 </Col>
-                <Col lg={4}>
+                <Col xl={4} lg={4} className='section-right'>
                     <SessionRight />
                 </Col>
             </Row>
