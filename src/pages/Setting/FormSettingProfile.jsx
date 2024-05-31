@@ -4,14 +4,16 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import axios from "axios";
 import APIService from "../../features/APIService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
 
 
 export const FormSettingProfile = ({user,setMessageToast})=>{
     const token = useSelector(selectCurrentToken);
     const [validated, setValidated] = useState(false);
-
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
     const schema = Yup.object({
         fullname: Yup.string()
           .min(2, "Mininum 2 characters")
@@ -35,12 +37,14 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
     const handleSubmit = async (values, { ...props }) => {
         let res1= await axios.get(APIService.URL_REST_API+"/check-user?username="+values.username,{
             headers: {
-              Authorization: 'Bearer ' + token 
+              Authorization: 'Bearer ' + token,
+              withCredentials: true
             }
         });
         let res2 = await axios.get(APIService.URL_REST_API+"/check-email?email="+values.email,{
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: 'Bearer ' + token,
+                withCredentials: true
             }
         });
         let checkUsername = res1.data;
@@ -51,6 +55,8 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
         if(checkEmail && values.email!=user.email){
             props.setErrors({email : "Email exists! Try another"})
         }
+        console.log(checkEmail && checkEmail );
+        if((!checkEmail && !checkEmail )||(values.username==user.username && values.email==user.email) ){
             try {
                 const response = await axios.post(`${APIService.URL_REST_API}/update/profile/${user.id}`,JSON.stringify(values),{
                     headers: {
@@ -65,15 +71,16 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
                     setMessageToast(true);
                     props.setErrors({})
                     setTimeout(()=>{
+                        dispatch(refresh());
                         window.location.reload();
-                    },1200)
+                    },1000)
                 } else {
                     console.error('An error occurred while submitting the form.');
                 }
             } catch (error) {
             console.error('An error occurred while submitting the form.', error);
             }
-        
+        }
             // Set isSubmitting to false when the form submission is complete
             props.setSubmitting(false);
         }
@@ -102,7 +109,7 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
                             onChange={handleChange} 
                             isValid={touched.fullname && !errors.fullname} 
                             placeholder="Enter Fullname" />
-                        {errors.fullname && touched.fullname && (
+                    {errors.fullname && touched.fullname && (
                         <span className="text-danger">{errors.fullname}</span>
                     )}
                 </Form.Group>

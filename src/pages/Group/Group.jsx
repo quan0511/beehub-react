@@ -9,15 +9,28 @@ import axios from "axios";
 import APIService from "../../features/APIService";
 import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useGroupInfoQuery, useGroupPostsQuery } from "../../user/userApiSlice";
+import { refresh } from "../../features/userSlice";
+import { GroupError } from "./GroupError";
 function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
-    const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id});
+    const token = useSelector(selectCurrentToken);
+    const reset = useSelector((state)=>state.user.reset);
+    const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
     const {data: posts} =useGroupPostsQuery({id_user: appUser.id, id_group: id});
     const [tab, setTab] = useState('discussion');
+    const dispatch = useDispatch();
+    
+    const handleButton= async(typeClick)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            console.log(resp.data);
+            dispatch(refresh())
+        }
+    }
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -86,13 +99,17 @@ function Group (){
                                     :<span><LockFill/> Private group</span>
                                 }<Dot/> {group.member_count} members</p>
                                 {group.member_role ==null && group.joined ==null?
-                                    <Button variant="primary" style={{width: "100px",fontWeight: "bold"}}>Join</Button>
+                                    <Button variant="primary" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("JOIN")}>Join</Button>
                                     :( group.member_role ==null && group.joined =='send request' ?
-                                        <Button variant="outline-warning" style={{width: "100px",fontWeight: "bold"}}>Cancel Request</Button>
+                                        <Button variant="outline-warning" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("CANCEL_JOIN")}>Cancel Request</Button>
                                         :
-                                        (group.member_role == "MEMBER"||group.member_role == "GROUP_MANAGER"?
-                                        <Button variant="outline-danger" style={{width: "200px"}}>Leave Group</Button>
-                                        : <Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link>)   
+                                        (group.member_role == "MEMBER"?
+                                        <Button variant="outline-danger" style={{width: "200px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
+                                        : (group.member_role == "GROUP_MANAGER"?
+                                            <div><Button variant="outline-danger" style={{width: "200px", marginRight:"10px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
+                                            <Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link></div>
+                                            :<Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link>
+                                        ))
                                     )
                                 }
                             </div>

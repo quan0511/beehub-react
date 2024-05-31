@@ -5,17 +5,20 @@ import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 import { FormSettingProfile } from "./FormSettingProfile";
 import { FormSettingPassword } from "./FormSettingPassword";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery } from "../../user/userApiSlice";
 import { SettingItems } from "./SettingItems";
+import { refresh } from "../../features/userSlice";
 export function AccountSetting(){
     const appUser = useSelector(selectCurrentUser);
-    const {data: account, isLoading} = useProfileQuery({id: appUser.id,username: appUser.username});
+    const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    const {data: account, isLoading} = useProfileQuery({id: appUser.id,username: appUser.username,reset:reset});
     const [ blockedUsers, setBlockedUsers] = useState([]);
     const [ messageToast, setMessageToast] = useState(false);
     const [ messageToastError, setMessageToastError] = useState(false);
-    
     //For bootstrap
     const triggerTabList = document.querySelectorAll('#myTab button')
         triggerTabList.forEach(triggerEl => {
@@ -26,7 +29,12 @@ export function AccountSetting(){
             tabTrigger.show()
         })
     })
-    
+    const handleClick= async (typeClick,receiver_id)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id:receiver_id, type: typeClick },token);
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            dispatch(refresh())
+        }
+    }
     useEffect(()=>{
         if(!isLoading && account!=null&& account.relationships!=null){
             let blockedList= account.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED');
@@ -89,7 +97,7 @@ export function AccountSetting(){
                                 <FormSettingPassword user={account} setMessageToast={setMessageToast} setMessageToastError={setMessageToastError} />
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-account" role="tabpanel" aria-labelledby="v-tabs-account" tabIndex="0">
-                                <SettingItems settings={account!=null?account.user_settings:[]} setMessageToast={setMessageToast} setMessageToastError={setMessageToastError} />
+                                <SettingItems settings={account!=null?account.user_settings:[]}  setMessageToast={setMessageToast} setMessageToastError={setMessageToastError} />
                             </div>
                             <div className="tab-pane fade text-start px-5" id="v-tabs-blocklist" role="tabpanel" aria-labelledby="v-tabs-blocklist" tabIndex="0">
                                 <h4>List User Blocked</h4>
@@ -104,7 +112,7 @@ export function AccountSetting(){
                                                     <Image src={image}  style={{height: "80px",width: "80px", objectFit: "contain"}} rounded/>
                                                     <Card.Title style={{width: "200px", marginLeft: "20px"}} ><p style={{fontSize: "18px"}}>{block.fullname}</p></Card.Title>
                                                 </div>
-                                                <Button variant="outline-danger" style={{width: "150px"}}>Unblock</Button>
+                                                <Button variant="outline-danger" style={{width: "150px"}} onClick={()=> handleClick("UN_BLOCK",block.id)} >Unblock</Button>
                                             </Card.Body>
                                         </Card>);
                                         })

@@ -25,10 +25,10 @@ function Layout(){
     return (
         <Container className="p-0 overflow-x-hidden" fluid>
             <Row >
-                <Col xl={3} className='p-0 ' >
+                <Col xl={3} className='p-0 session_left' >
                     <SessionLeft appUser={user}/>
                 </Col>
-                <Col xl={9} className='p-0'>
+                <Col xl={9} md={12}  className='p-0 main'>
                     <div className='d-flex flex-column'>
                         <NavigatorBar user={user}/>
                         <Outlet />

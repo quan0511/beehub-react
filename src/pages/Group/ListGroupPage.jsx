@@ -9,7 +9,8 @@ import { useListgroupQuery } from "../../user/userApiSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
 const ListGroupPage =()=>{
     const appUser = useSelector(selectCurrentUser);
-    const {data: data, isLoading, isSuccess} = useListgroupQuery({id: appUser!=null? appUser.id: 1});
+    const reset = useSelector((state)=>state.user.reset);
+    const {data: data, isLoading, isSuccess} = useListgroupQuery({id: appUser!=null? appUser.id: 1,reset:reset});
     const [select, setSelect]=useState('joined_groups');
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);

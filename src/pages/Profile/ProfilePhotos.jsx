@@ -2,7 +2,6 @@ import React from "react";
 import {Col, Image, Row } from "react-bootstrap";
 import APIService from "../../features/APIService";
 function ProfilePhotos({galleries}){
-    console.log(galleries);
     return (
         <Row>
             <Col xl={12} className="mx-auto bg-white border rounded p-3 shadow-lg" style={{marginTop: "170px", minHeight: "450px"}}>

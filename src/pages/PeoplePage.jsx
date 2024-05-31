@@ -6,12 +6,13 @@ import PeopleCard from "../components/PeopleCard"
 import { Search } from "react-bootstrap-icons"
 import APIService from "../features/APIService"
 import axios from "axios"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { selectCurrentUser } from "../auth/authSlice"
 import { usePeoplepageQuery } from "../user/userApiSlice"
 function PeoplePage(){
     const appUser = useSelector(selectCurrentUser);
-    const {data : people, isLoading, isSuccess } = usePeoplepageQuery({id: appUser!=null?appUser.id:1});
+    const reset = useSelector((state)=>state.user.reset);
+    const {data : people, isLoading, isSuccess } = usePeoplepageQuery({id:appUser.id,reset:reset});
     const [select, setSelect]=useState('suggestions');
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);
@@ -38,7 +39,7 @@ function PeoplePage(){
              return people["people"].map((val,key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} user_id={val.id} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={val.typeRelationship}/>
+                            <PeopleCard img={sr} size="16rem" people={val} />
                         </Col>
                 });
             
@@ -46,14 +47,14 @@ function PeoplePage(){
                 return people["friends"].map((val, key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} user_id={val.id} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={val.typeRelationship}/>
+                            <PeopleCard img={sr} size="16rem" people={val}/>
                         </Col>
                 });
             case "send_request": 
                 return people["addfriend"].map((val, key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                     return <Col key={key} className="mx-auto mb-3">
-                            <PeopleCard img={sr} user_id={val.id} size="16rem" name={val.fullname} username={val.username} groups={val.group_counter} friends={val.friend_counter} relationship={"SENT_REQUEST"}/>
+                            <PeopleCard img={sr} size="16rem" people={val} />
                         </Col>
                 })
             default: 

@@ -4,7 +4,7 @@ import { Col, Row } from "react-bootstrap";
 function SearchPosts({posts}){
     return (
         <Row>
-            <Col lg={10} md={12} className="mx-auto">
+            <Col lg={10} md={12} className="mx-auto mb-5">
                 {
                 posts.map((post, index)=> <Post key={index} post={post}/>)
                 }

@@ -6,7 +6,7 @@ import SearchPeople from "./SearchPeople"
 import SearchPosts from "./SearchPost"
 import axios from "axios"
 import { ThreeDots} from "react-bootstrap-icons"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useSearchParams } from "react-router-dom"
 import { selectCurrentUser } from "../../auth/authSlice"
 import { useSearchingQuery } from "../../user/userApiSlice"
@@ -14,10 +14,11 @@ import { useSearchingQuery } from "../../user/userApiSlice"
 function Searching(){
     const appUser = useSelector(selectCurrentUser);
     const [searchStr, setSearchStr] = useSearchParams();
-    let {data: resultSearch,isLoading,isSuccess} = searchStr.get("search")!=null ? useSearchingQuery({id: appUser.id, search: searchStr.get("search")}): {data: {}, isLoading:true};
-    console.log(resultSearch);
+    const reset = useSelector((state)=>state.user.reset);
+    let {data: resultSearch,isLoading,isFetching} = searchStr.get("search")!=null ? useSearchingQuery({id: appUser.id, search: searchStr.get("search"),reset:reset}): {data: {}, isLoading:true};
     const [tab,setTab]=useState('post');
-    const [changeRelationship, setChangeRelationship] = useState(false);
+
+    
     const handleSelectTab = (selectedKey) => {
       setTab(selectedKey);
     };

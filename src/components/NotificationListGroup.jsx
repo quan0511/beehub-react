@@ -2,7 +2,7 @@ import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
 import APIService from "../features/APIService";
 function NotificationListGroup({requirements,handleButton}){
-    console.log(requirements);
+
     return (
         <Card className="p-0">
             <ListGroup >
