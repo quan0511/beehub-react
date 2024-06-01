@@ -11,17 +11,18 @@ import { selectCurrentUser } from "../auth/authSlice";
 import { useAddLikePostMutation, useCheckLikeQuery, useCountLikeQuery, useDeleteLikeMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useUpdateLikePostMutation } from "../post/postApiSlice";
 import { useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
-function Post ({id, page}){
+function Post ({post, page}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
-  const {data: post} = useFetchPostQuery({id})
+  //const {data: post} = useFetchPostQuery({id:post.id})
     const [addLike] = useAddLikePostMutation();
     const [deleteLike] = useDeleteLikeMutation();
     const [updateLike] = useUpdateLikePostMutation();
-    const {data:getLikeUser} = useGetLikeUserQuery({id})
-    const {data:countLike} = useCountLikeQuery({id})
-    const {data:checkLike} = useCheckLikeQuery({userid:user?.id, postid: id})
-    const {data:getEnumEmo} = useGetEnumEmoQuery({userid:user?.id, postid: id})
+    const { data: getLikeUser, refetch: refetchGetLikeUser } = useGetLikeUserQuery({ id: post.id });
+    const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
+    const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
+    const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
+    const [movePostId,setMovePostId] = useState(null);
     const handleShow = (id) =>{
       setShowPostModal((prev) => ({
         ...prev,
@@ -73,31 +74,10 @@ function Post ({id, page}){
           post: postId,
           enumEmo: enumEmo,
         });
-    
-        setLikes(prevLikes => ({
-          ...prevLikes,
-          [postId]: true,
-        }));
-    
-        setCountLikes(prevCountLikes => ({
-          ...prevCountLikes,
-          [postId]: (prevCountLikes[postId] || 0) + 1,
-        }));
-    
-        setEnumEmo(enumEmo);
-    
-        setEmoPost(prevEmoPost => ({
-          ...prevEmoPost,
-          [postId]: [
-            ...(prevEmoPost[postId] || []),
-            { emoji: enumEmo, userId: user?.id },
-          ],
-        }));
-    
-        setEmojis(prevEmojis => ({
-          ...prevEmojis,
-          [postId]: enumEmo,
-        }));
+        refetchGetLikeUser();
+        refetchCountLike();
+        refetchCheckLike();
+        refetchGetEnumEmo();
         console.log(response);
       } catch (error) {
         console.error('Error occurred while liking:', error);
@@ -112,8 +92,10 @@ function Post ({id, page}){
             post: postId,
             enumEmo: enumEmo,
           });
-          getLikeUser;
-          getEnumEmo;
+          refetchGetLikeUser();
+          refetchCountLike();
+          refetchCheckLike();
+          refetchGetEnumEmo();
         } catch (error) {
           console.error('Error occurred while updating like:', error);
         }
@@ -122,6 +104,10 @@ function Post ({id, page}){
         try {
           console.log(user?.id, postId);   
           const response = await deleteLike({id: user?.id, postId}); // Giả sử ID người dùng là 1
+          refetchGetLikeUser();
+          refetchCountLike();
+          refetchCheckLike();
+          refetchGetEnumEmo();
         } catch (error) {
           console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
         }
@@ -130,7 +116,7 @@ function Post ({id, page}){
         return checkLike === true; // Check if the post is liked by the user
     };
 
-  if (!post) return
+  //if (!post) return
 
     return (
         <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
@@ -238,11 +224,11 @@ function Post ({id, page}){
                     <div className="toggleEmojiAll">
                     {isLiked(post.id) ? (
                         <>
-                        <span onClick={() => handleChangeUpdateLike(post.id,"👍",user?.id)} className="click">👍 1</span>
-                        <span onClick={() => handleChangeUpdateLike(post.id,"❤️",user?.id)} className="click">❤️ 2</span>
-                        <span onClick={() => handleChangeUpdateLike(post.id,"😂",user?.id)} className="click">😂 3</span>
-                        <span onClick={() => handleChangeUpdateLike(post.id,"😡",user?.id)} className="click">😡 4</span>
-                        <span onClick={() => handleChangeUpdateLike(post.id,"😢",user?.id)} className="click">😢 5</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"👍",user?.id)} className="click">👍</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"❤️",user?.id)} className="click">❤️</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😂",user?.id)} className="click">😂</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😡",user?.id)} className="click">😡</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😢",user?.id)} className="click">😢</span>
                         </>
                     ):( 
                         <>

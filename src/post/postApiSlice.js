@@ -15,14 +15,15 @@ export const postApiSlice = apiSlice.injectEndpoints({
             query: ({id}) => ({
                 url: POST_URL + '/comment' + `/${id}`,
             }),
-            transformErrorResponse: (error) => {
-                    console.log(error)
-                    return error
-                },
-                transformResponse: (response) => {
-                    console.log(response)
-                    return response
-                }
+            // transformErrorResponse: (error) => {
+            //         console.log(error)
+            //         return error
+            //     },
+            //     transformResponse: (response) => {
+            //         console.log(response)
+            //         return response
+            //     }
+            providesTags: ['comment']
         }),
         commentByPost: builder.query({
             query: ({id}) => ({
@@ -37,18 +38,21 @@ export const postApiSlice = apiSlice.injectEndpoints({
         recomment: builder.query({
             query: ({id}) => ({
                 url: POST_URL + '/recomment' + `/${id}`,
-            })
+            }),
+            providesTags: ['recomment']
         }),
         checkLike: builder.query({
             query: ({userid,postid}) =>({
                 url: POST_URL + '/check'+ `/${userid}`+`/${postid}`,
-            })
+            }),
+            providesTags: ['checkLike']
         }),
         getEnumEmo:builder.query({
             query:({userid,postid}) =>({
                 url: POST_URL+ '/getenum'+ `/${userid}`+`/${postid}`,
                 responseHandler: (response) => response.text()
             }),
+            providesTags: ['EnumEmo']
             // transformErrorResponse: (error) => {
             //     console.log(error)
             //     return error
@@ -61,12 +65,14 @@ export const postApiSlice = apiSlice.injectEndpoints({
         getEmoPostByEnum:builder.query({
             query:({postid,emoji})=>({
                 url: POST_URL + '/emo'+`/${postid}`+`/${emoji}`,
-            })
+            }),
+            providesTags: ['EmoPostByEnum']
         }),
         countLike:builder.query({
             query:({id})=>({
                 url:POST_URL + '/like/user'+`/${id}`,
-            })
+            }),
+            providesTags: ['CountLike']
         }),
         countReaction:builder.query({
             query:({id}) =>({
@@ -77,6 +83,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
             query:({id})=>({
                 url:POST_URL + '/like'+ `/${id}`
             }),
+            providesTags: ['LikeUser']
             // transformErrorResponse: (error) => {
             //         console.log(error)
             //         return error
@@ -169,7 +176,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { ...likePost}
             }),
-            invalidatesTags: ['Post']
+            invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser']
         }),
         updateLikePost: builder.mutation({
             query:likePost => ({
@@ -177,13 +184,14 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 method:'POST',
                 body: {...likePost}
             }),
-            invalidatesTags: ['Post']
+            invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser']
         }),
         deleteLike: builder.mutation({
             query: ({id, postId}) =>({
                 url:POST_URL + `/like/remove/${id}/${postId}`,
                 method:'POST',
-            })
+            }),
+            invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser']
         }),
     })
 })
@@ -215,15 +223,6 @@ export const {
 
 } = postApiSlice
 
-// getUser(){
-//     return axios.get(`${SOCIAL_REST_API_URL}/user`);
-// }
-// getPostById(id){
-//     return axios.get(`${SOCIAL_REST_API_URL}/getpost/${id}`)
-// }
 
-// getUserName(name){
-//     return axios.get(`${SOCIAL_REST_API_URL}/user/${name}`)
-// }
 
 

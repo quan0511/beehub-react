@@ -11,9 +11,11 @@ import { BsThreeDots } from "react-icons/bs";
 import '../css/showcomment.css';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
-import { useCommentQuery, useDeletePostCommentMutation, useDeletePostReCommentMutation, usePostCommentMutation, usePostReCommentMutation, useUpdateCommentMutation, useUpdateReCommentMutation } from '../post/postApiSlice';
+import { useCommentQuery, useCountReactionQuery, useDeletePostCommentMutation, useDeletePostReCommentMutation, usePostCommentMutation, usePostReCommentMutation, useRecommentQuery, useUpdateCommentMutation, useUpdateReCommentMutation } from '../post/postApiSlice';
 function ShowComment({ postIdco }){
   const {data:getComment} = useCommentQuery({id:postIdco.id})
+  const {data:countReComment} = useCountReactionQuery({id:getComment?.id})
+  const {data:getReComment} = useRecommentQuery({id:getComment?.id})
   const [createComment] = usePostCommentMutation();
   const [editComment] = useUpdateCommentMutation();
   const [deleteComment] = useDeletePostCommentMutation();
@@ -24,6 +26,7 @@ function ShowComment({ postIdco }){
   const [replyStates, setReplyStates] = useState({});
   const [content, setContent] = useState(false);
   const [postId, setPostId] = useState(null);
+  const [movePostId,setMovePostId] = useState(null);
   const [toggleComment, setToggleComment] = useState({});
     const handleToggleComment = (commentId) =>{
       setToggleComment((prevState) =>({
@@ -32,22 +35,14 @@ function ShowComment({ postIdco }){
       }));
     }
     const calculateTimeDifference = (createdAt) => {
-      // Chuyển đổi mảng createdAt thành một đối tượng Date
       const createdDate = new Date(createdAt[0], createdAt[1] - 1, createdAt[2], createdAt[3], createdAt[4], createdAt[5]);
-      
-      // Lấy thời gian hiện tại
       const currentDate = new Date();
-      
-      // Tính toán sự khác biệt thời gian giữa thời điểm hiện tại và thời điểm tạo bài đăng
       const timeDifference = currentDate.getTime() - createdDate.getTime();
-    
-      // Chuyển đổi sự khác biệt thời gian từ mili giây thành giờ, phút và giây
       const secondsDifference = Math.floor(timeDifference / 1000);
       const minutesDifference = Math.floor(secondsDifference / 60);
       const hoursDifference = Math.floor(minutesDifference / 60);
       const daysDifference = Math.floor(hoursDifference / 24);
     
-      // Trả về kết quả dưới dạng chuỗi
       if (daysDifference > 0) {
         return `${daysDifference} days`;
       } else if (hoursDifference > 0) {
@@ -69,77 +64,8 @@ function ShowComment({ postIdco }){
       updatedReplyStates[commentId] = !prevState[commentId];
       return updatedReplyStates;
     });
-  };
-    //hiển thị post theo id
-    const [post,setPost] = useState([]);
-    useEffect(() => {
-    const fetchPost = async (id) => {
-      try {
-        const response = await api.findPostById(id);
-        setPost([response.data]);
-        fetchComment(id);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const fetchComment = async (postId) => {
-      try {
-        const response = await api.getCommentByPostId(postId);
-        setComments(response.data);
-      } catch (error) {
-        console.error('Error fetching post:', error);
-      }
-    };
-
-    if (postIdco) {
-      fetchPost(postIdco);
-    }
-  }, [postIdco]);      
-    const [commentId, setCommentId] = useState(null);
-    //hiển thị danh sách user
-    const [users,setUsers] = useState([]);
-    useEffect(() => {
-      const fetchUsers = async () =>{
-        try{
-          const response = await api.getUser();
-          setUsers(response.data)
-        }catch(error){
-          console.log(error);
-        }
-      };
-      fetchUsers();
-    },[])
-    // hiển thị comment
-    const [comments, setComments] = useState([]);
-      const fetchComment = async (postId) => {
-          try {
-              const response = await api.getCommentByPostId(postId);
-              setComments(response.data);
-              setCommentId(response.data.postId);
-
-          } catch (error) {
-              console.error('Error fetching post:', error);
-          }
-      };
-      
-      const [comment,setComment] = useState([]);
-      //hiển thị comment theo id
-      const fetchCommentById = async (id) =>{
-        try{
-          const response = await api.getCommentById(id);
-          setComment([response.data]);
-          setCommentId(response.data.id)
-          setFormEditComment({
-            ...formEditComment,
-            id:response.data.id,
-            comment: response.data.comment,
-          })
-          
-        }catch (error){
-          console.log(error);
-        }
-      };
+  };     
+ 
     const [editCommentId, setEditCommentId] = useState(null);
     const handleShowEditComment = (commentId) =>{
       const commentToEdit = comments.find(comment => comment.commentId === commentId);
@@ -176,15 +102,11 @@ function ShowComment({ postIdco }){
         ...formEditComment,
         comment:userInput
       };
-      api.editPostComment(updateComment)
-        .then((response) =>{
-          console.log(response);
-          handleCancelEditComment();
-          fetchComment(postIdco);
-        })
-        .catch((error)=> {
-          console.log(error);
-        })
+      try{
+        await editComment(updateComment)
+      }catch(error){
+        console.error(error)
+      }
     }
     const handleCancelEditComment = () => {
       setEditCommentId(null);
@@ -243,21 +165,7 @@ function ShowComment({ postIdco }){
         [reCommentId]:!prevState[reCommentId],
       }));
     }
-    //hiển thị recomment
-    const [recomments, setRecomments] = useState([]);
-    const [viewReplies, setViewReplies] = useState({});
-      const fetchReComment = async (commentId) =>{
-        try{
-          const response = await api.getReCommentByPostId(commentId);
 
-          setRecomments(prevState => ({
-            ...prevState,
-            [commentId]: response.data
-          }));
-        }catch(error){
-          console.log(error);
-        }
-      };
     //hiển thị recomment theo id
     const [reComment,setReComment] = useState([]);
     const fetchReCommentById = async(id) =>{
@@ -294,6 +202,7 @@ function ShowComment({ postIdco }){
          // Gọi API để lấy chi tiết recomment nếu cần
       }
     };
+    const [viewReplies, setViewReplies] = useState({});
       const handleViewReComments = (commentId) => {
         setViewReplies(prevState =>({
           ...prevState,
@@ -379,34 +288,7 @@ function ShowComment({ postIdco }){
             console.log(error);
           });
       };
-    const [countReComment, setCountReComment] = useState({});
-    useEffect(() => {
-      const fetchCountReComment = async () =>{
-        const ReCommentCountData = {};
-        for(const comment of comments){
-          try{
-            const response = await api.countReaction(comment.id);
-            ReCommentCountData[comment.id] = response.data;
-          }catch(error){
-            console.error(error);
-          }
-        }
-        setCountReComment(ReCommentCountData);
-      }
-      fetchCountReComment();
-    },[comments])
-    const [posts,setPosts] = useState([]);
-    const fetchData = async () => {
-      try {
-        const response = await api.getPost();
-        setPosts(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    useEffect(() => {
-      fetchData();
-    }, []);
+
     const [currentPostId,setCurrentPostId] = useState(null);
     const [showLike, setShowLike] = useState({});
     const handleOpenLikeModal = (postid) => {
@@ -698,7 +580,7 @@ function getOverwrittenText(currentInput, selectedName) {
                                     {commentTagLink(comment.comment) ? renderCommentWithLink(comment.comment) : comment.comment}
                                   </div>
                               </div>
-                              {comment.user.id === 1 &&(
+                              {comment.user === user?.id &&(
                                 <div className="buttonthreedotcomment" onClick={() =>{
                                   handleToggleComment(comment.id)
                                 }}><BsThreeDots className="" />
@@ -746,7 +628,7 @@ function getOverwrittenText(currentInput, selectedName) {
                           </div>
                         </div>
                       )}
-                      {countReComment[comment.id] ? (
+                      {countReComment ? (
                         <div className="modalshowhiderecomment">
                           {viewReplies[comment.id] ? (
                             <div className="showReComment" onClick={() => handleHideReComments(comment.id)}>Ẩn trả lời</div>
@@ -758,7 +640,7 @@ function getOverwrittenText(currentInput, selectedName) {
                         <div></div>
                       )}
                       
-                      {viewReplies[comment.id] && recomments[comment.id] && recomments[comment.id].map((recomment)=>(
+                      {viewReplies[comment.id] && getReComment && getReComment.map((recomment)=>(
                       <div className="model-showrecomment">
                         <div className="modalthreedotrecomment">
                           <div className="modal-showrecommentkhungcon">
@@ -771,7 +653,7 @@ function getOverwrittenText(currentInput, selectedName) {
                                     {commentTagLink(recomment.reaction) ? renderCommentWithLink(recomment.reaction) : recomment.reaction}
                                     </div>
                                 </div>
-                                {recomment.user.id === 1 &&(
+                                {recomment.user.id === user?.id &&(
                                 <div className="buttonthreedotrecomment" onClick={() =>{
                                   handleToggleComment(recomment.id)
                                 }}><BsThreeDots className="" />
@@ -843,9 +725,9 @@ function getOverwrittenText(currentInput, selectedName) {
                     <div>
                     <div className="divcomment" id="newMyInput" contentEditable="true" onInput={() => handleInput('newCommentInput', 'newMyInput','comment')}></div>
                     <ul id="newMyInput-ul" className="myul" >
-                    {users.map((user) => (
+                    {/* {users.map((user) => (
                       <li onClick={() => selectName(user.name, 'newCommentInput', 'newMyInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                    ))}
+                    ))} */}
                   </ul>
                     </div>
                     <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
