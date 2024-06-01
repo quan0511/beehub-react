@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from 'formik';
-import { Button, Col, Container,  Form,  Row } from "react-bootstrap";
+import { Button, Col, Container,  Form,  Image,  Row } from "react-bootstrap";
 import * as Yup from 'yup';
 import APIService from "../../features/APIService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
 import { refresh } from "../../features/userSlice";
+import { useUploadBgGroupMutation, useUploadImageGroupMutation } from "../../features/userApiSlice";
 export const GeneralSetting = ({user_id,group})=>{
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
-    
+    const [bgGroup,setBgGroup ] = useState();
+    const [imageGroup,setImageGround ] = useState();
+    const [uploadImage, {isLoading1,isSuccess1, isError1}] = useUploadImageGroupMutation();
+    const [uploadBg, {isLoading2,isSuccess2, isError2}] = useUploadBgGroupMutation();
     const schema = Yup.object().shape({
         groupname: Yup.string()
                 .required("Required!")
@@ -27,6 +31,7 @@ export const GeneralSetting = ({user_id,group})=>{
             }
             
             reader.readAsDataURL(input.files[0]);
+            setImageGround(input.files[0]);
             document.getElementById("submit-image").hidden= false;
         }
     }
@@ -40,9 +45,26 @@ export const GeneralSetting = ({user_id,group})=>{
             }
             
             reader.readAsDataURL(input.files[0]);
+            setBgGroup(input.files[0]);
             document.getElementById("submit-background").hidden= false;
         }
     }  
+    const handleChangeImage =async (id_group)=>{
+        try {
+            await uploadImage({id: user_id,image: imageGroup,id_group:id_group});
+            dispatch(refresh());
+        } catch (error) {
+            console.log(error);
+        }   
+    }
+    const handleChangeBackground =async (id_group)=>{
+        try {
+            await uploadBg({id: user_id,background: bgGroup,id_group:id_group});
+            dispatch(refresh());
+        } catch (error) {
+            console.log(error);
+        }   
+    }
     return (
     <div className="d-flex flex-column">
         <div>
@@ -57,14 +79,14 @@ export const GeneralSetting = ({user_id,group})=>{
             </div>
             <div className="d-flex align-items-center justify-content-center">
                 <input type="file" name="background" id="background" className="form-control my-3" onChange={(e)=>readURLBg(e.target)} />
-                <Button variant="primary" id="submit-background" hidden style={{width:"200px",marginLeft:"5px"}}>Save Change</Button>
+                <Button variant="primary" id="submit-background" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeBackground(group.id)}>Save Change</Button>
             </div>
         </div>
         <div>
             <label className="mb-2">Change Image</label>
             <div className="border rounded-2" style={{height: "150px",width: "150px"}}>
-                {group.background_group !=null? 
-                    <Image src={group.background_group} id="img-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                {group.image_group !=null? 
+                    <Image src={group.image_group} id="img-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
                     : <div style={{height: "inherit",objectPosition: "center",width: "100%",backgroundColor: "rgb(57,59,70,0.2)",}}>
                         <img id="img-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
                     </div>
@@ -72,7 +94,7 @@ export const GeneralSetting = ({user_id,group})=>{
             </div>
             <div className="d-flex align-items-center justify-content-center">
                 <input type="file" name="image" id="image" className="form-control my-3" onChange={(e)=>readURLImage(e.target)}  />
-                <Button variant="primary" id="submit-image" hidden style={{width:"200px",marginLeft:"5px"}}>Save Change</Button>
+                <Button variant="primary" id="submit-image" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeImage(group.id)}>Save Change</Button>
             </div>
         </div>
         <div>

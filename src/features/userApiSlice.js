@@ -108,6 +108,56 @@ export const userApiSlice = apiSlice.injectEndpoints({
             forceRefetch({ currentArg, previousArg }) {
             return currentArg !== previousArg
             },
+        }),
+        uploadImageProfile: builder.mutation({
+            query: ({id, image})=>{
+                var bodyFormData = new FormData();
+                bodyFormData.append('media', image);
+                return {
+                    url: '/upload/profile/image/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true,
+                }
+            }
+        }),
+        uploadBackgroundProfile: builder.mutation({
+            query: ({id, background})=>{
+                var bodyFormData = new FormData();
+                bodyFormData.append('media', background);
+                return {
+                    url: '/upload/profile/background/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true,
+                }
+            }
+        }),
+        uploadImageGroup: builder.mutation({
+            query: ({id,id_group,image}) => {
+                var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',image);
+                return {
+                    url: '/upload/group/image/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true
+                }
+            }
+        }),
+        uploadBgGroup: builder.mutation({
+            query: ({id,id_group,background}) => {
+                var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',background);
+                return {
+                    url: '/upload/group/background/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true
+                }
+            }
         })
     })
 })
@@ -125,5 +175,9 @@ export const {
     useCheckSetUpPostsQuery,
     useGetSettingItemsQuery,
     useGetFriendsAndGroupQuery,
-    useSearchingQuery
+    useSearchingQuery,
+    useUploadImageProfileMutation,
+    useUploadBackgroundProfileMutation,
+    useUploadImageGroupMutation,
+    useUploadBgGroupMutation
 } = userApiSlice

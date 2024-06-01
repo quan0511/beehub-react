@@ -80,12 +80,8 @@ body {
     left: 0;
     width: 100%;
   }
-  .profile-username{
-    margin-left: 240px;
-    margin-bottom: 10px;
-  }
   .profile-tab{
-    margin-top:160px;
+    margin-top:220px;
   }
   .group-menu{
     top: 250px;
@@ -104,11 +100,11 @@ body {
     padding-bottom: 50px;
     padding-top: 160px;
   }
-  .tab-content{
-    margin-top: 100px;
-  }
   .group-manage-page{
     padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -140px
   }
 }
 
@@ -127,10 +123,6 @@ body {
     top: 220px;
     left: 0;
     width: 90%;
-  }
-  .profile-username{
-    margin-left: 240px;
-    margin-bottom: 50px;
   }
   .my-photo{
     display: none;
@@ -155,11 +147,11 @@ body {
     padding-bottom: 50px;
     padding-top: 160px;
   }
-  .tab-content{
-    margin-top: 100px;
-  }
   .group-manage-page{
     padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -100px
   }
 }
 
@@ -175,10 +167,6 @@ body {
     top: 220px;
     left: 1rem;
     width: 90%;
-  }
-  .profile-username{
-    margin-left: 240px;
-    margin-bottom: 50px;
   }
   .my-photo{
     display: block;
@@ -203,11 +191,11 @@ body {
     padding-bottom: 50px;
     padding-top: 160px;
   }
-  .tab-content{
-    margin-top: 100px;
-  }
   .group-manage-page{
     padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -80px
   }
 }
 @media only screen and (min-width: 1200px) {
@@ -221,10 +209,6 @@ body {
     top: 220px;
     left: 1rem;
     width: 90%;
-  }
-  .profile-username{
-    margin-left: 240px;
-    margin-bottom: 50px;
   }
   .my-photo{
     display: block;
@@ -252,10 +236,10 @@ body {
   .group-manage-page{
     padding: 20px 10px 0 0;
   }
-  .tab-content{
-    margin-top: 100px;
-  }
   .section-left-group{
     padding: 80px 2px 100px 10px;
+  }
+  .edit-avatar{
+    right: -20px
   }
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Image, ListGroup, Nav, Row, Spinner } from "react-bootstrap";
-import { CardImage, ColumnsGap, GearFill, People, PersonVcard, PlusCircle,} from "react-bootstrap-icons";
+import { Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
+import { CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
-
+import "./Profile.css"
 import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
@@ -12,8 +12,8 @@ import axios from "axios";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useProfileQuery } from "../../features/userApiSlice";
-import { refresh } from "../../features/userSlice";
+import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
+import userSlice, { refresh } from "../../features/userSlice";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
@@ -23,7 +23,14 @@ function Profile (){
     const reset = useSelector((state)=>state.user.reset);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
-   
+    const handleClose1 = () => setShow1(false);
+    const [show1, setShow1] = useState(false);
+    const handleShow1 = () => setShow1(true);
+    const [show2, setShow2]= useState(false);
+    const [fileImage,setFileImage] = useState();
+    const [fileBackground, setFileBackground] = useState();
+    const [saveImg,{isLoadingImage, isFetchingImage, isErrorImage, isSuccessImage}] = useUploadImageProfileMutation();
+    const [saveBg,{isLoadingBg, isFetchingBg,isErrorBg, isSuccessBg}] = useUploadBackgroundProfileMutation();
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -78,7 +85,48 @@ function Profile (){
             }
         }
     }
-
+    const readURLImage = (input)=> {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                document.getElementById("img-upload").setAttribute("src",e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+            setFileImage(input.files[0]);
+            document.getElementById("submit-image").disabled= false;
+        }
+    }
+    const readURLBackground = (input)=>{
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                document.getElementById("bg-upload").setAttribute("src",e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+            setFileBackground(input.files[0]);
+            document.getElementById("submit-bg").disabled= false;
+        }
+    }
+    const handleSubmitBackground = async (e)=>{
+        try {
+            await saveBg({id:appUser.id,background:fileBackground });
+            setShow2(false);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleSubmitImage = async (e)=>{
+        try {
+            await saveImg({id: appUser.id,image: fileImage})
+            handleClose1();
+        } catch (error) {
+            console.log(error);
+        }
+    }
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -95,37 +143,110 @@ function Profile (){
     return (
             <Container style={{marginTop: "50px"}} fluid>
                 <Row className="p-0" style={{position: "relative"}}>
+                    <div className="d-flex justify-content-center align-items-center bg-secondary" style={{height: "350px",width: "100%", overflow:"hidden"}}>
                     {
                         user.background!=null?
-                        <Image src={`${APIService.URL_REST_API}/files/`+user.background} className="object-fit-cover" style={{height: "350px",objectPosition: "center",width: "100%"}}/>
+                        <Image src={user.background} className="object-fit-cover" style={{objectPosition: "center"}} fluid/>
                         :
-                        <div className="d-flex justify-content-center align-items-center bg-secondary" style={{height: "350px"}}>
-                            <Button variant="link">
-                                <PlusCircle size={30} color="black" />
-                            </Button>
-                        </div>
+                        <></>        
                     }
-                    <div className="position-absolute " id="profile-menu">
-                        <div className="d-flex flex-column ps-md-5 bg-white rounded-3 shadow p-2">
-                            {
-                                user.image!=null?
-                                <Image src={`${APIService.URL_REST_API}/files/`+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
-                                :
-                                (user.gender=='female'?
-                                <Image src={`${APIService.URL_REST_API}/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
-                                :
-                                <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
-                                )
-                            }
-                            <div className="d-flex flex-md-row flex-sm-column justify-content-md-between justify-content-sm-around align-items-md-center pe-5 profile-username" >
-                                <div className="mb-sm-3">
-                                    <h2>{user.fullname}</h2>
-                                    <span className="d-block text-black-50">@{user.username}</span>
-                                </div>
-                                <div>
-                                    {getButton()}
-                                </div>
+                    
+                    </div>
+                    <Modal show={show2}
+                        onHide={()=>setShow2(false)}
+                        backdrop="static"
+                        keyboard={false}
+                        fullscreen={false}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Upload Avatar</Modal.Title>
+                        </Modal.Header>
+                        <form onSubmit={handleSubmitBackground} encType="multipart/form-data">
+                        <Modal.Body className="d-flex flex-column align-items-center justify-content-center">
+                            <div className="border rounded-2" style={{height: "150px",width: "450px"}}>
+                                {user.background !=null? 
+                                    <Image src={user.background} id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                    : <div style={{height: "inherit",objectPosition: "center",width: "100%",backgroundColor: "rgb(57,59,70,0.2)",}}>
+                                        <img id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                    </div>
+                                }
                             </div>
+                            <div className="d-flex align-items-center justify-content-center">
+                                <input type="file" name="bg" id="bg" className="form-control my-3 mx-auto" onChange={(e)=>readURLBackground(e.target)}  />
+
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="primary" id="submit-bg" type="submit" disabled>Save</Button>
+                        </Modal.Footer>
+                        </form>
+                    </Modal>
+                    <div className="position-absolute " id="profile-menu">
+                        <div className="d-flex flex-column ps-lg-5 ps-md-1 bg-white rounded-3 shadow p-2">
+                            <Row>
+                                <Col xl={2} lg={2} md={2} sm={2} className="position-relative mb-3" style={{height: "120px"}} >
+                                    {
+                                        user.image!=null?
+                                        <Image src={user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}}  />
+                                        :
+                                        (user.gender=='female'?
+                                        <Image src={`${APIService.URL_REST_API}/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute"  style={{width: "220px", height: "220px",top:"-100px"}} />
+                                        :
+                                        <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute"  style={{width: "220px", height: "220px",top:"-100px"}}/>
+                                        )
+                                    }
+                                    {
+                                        appUser.id == user.id? 
+                                        <>
+                                            <Button variant="outline-light"  className="position-absolute rounded-circle bottom-0 edit-avatar"  onClick={handleShow1}>
+                                                <PencilFill />
+                                            </Button>
+                                            <Modal show={show1}
+                                                onHide={handleClose1}
+                                                backdrop="static"
+                                                keyboard={false}
+                                                size="sm"
+                                                fullscreen={false}>
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title>Upload Avatar</Modal.Title>
+                                                </Modal.Header>
+                                                <form onSubmit={handleSubmitImage} encType="multipart/form-data">
+                                                <Modal.Body className="d-flex flex-column align-items-center justify-content-center">
+                                                    <div className="border rounded-2" style={{height: "150px",width: "150px"}}>
+                                                        {user.image !=null? 
+                                                            <Image src={user.image} id="img-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                                            : <div style={{height: "inherit",objectPosition: "center",width: "100%",backgroundColor: "rgb(57,59,70,0.2)",}}>
+                                                                <img id="img-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div className="d-flex align-items-center justify-content-center">
+                                                        <input type="file" name="image" id="image" className="form-control my-3 mx-auto" onChange={(e)=>readURLImage(e.target)}  />
+            
+                                                    </div>
+                                                </Modal.Body>
+                                                <Modal.Footer>
+                                                    <Button variant="primary" id="submit-image" type="submit" disabled>Save</Button>
+                                                </Modal.Footer>
+                                                </form>
+                                            </Modal>
+                                        </>
+                                        :<></>
+                                    }
+                                </Col>
+                                <Col xl={1} lg={1} md={2} sm={3}></Col>
+                                <Col xl={9} lg={9} md={8} sm={5} className="d-flex flex-md-row flex-sm-column justify-content-md-between justify-content-sm-around align-items-md-center pe-5 ps-md-5" >
+                                    <div className="mb-sm-3 position-relative" >
+                                        <h2>{user.fullname}</h2>
+                                        <span className="d-block text-black-50">@{user.username}</span>
+                                    </div>
+                                    <div>
+                                        {getButton()}
+                                    </div>
+                                    <Button variant="outline-light" className="position-absolute rounded-circle " onClick={()=>setShow2(true)} style={{top: "-50px", right:0}}>
+                                        <PencilFill/>
+                                    </Button>
+                                </Col>
+                            </Row>
                             <Container fluid>
                                 <Row>
                                     <Col xl={2} lg={3} md={2} sm={12} className="d-flex justify-content-md-center align-items-center ms-md-3">

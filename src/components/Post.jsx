@@ -208,9 +208,9 @@ function Post ({id, page}){
                     
                     <div className="mb-2 img-media">
                         { post.media!=null?
-                            <Image src={post.media.media}  fluid />
+                            <Image src={post.media.media} className="img-style" fluid />
                             : (post.group_media !=null ?
-                                <Image src={post.group_media.media} fluid />
+                                <Image src={post.group_media.media} className="img-style" fluid />
                                 :<></>)
                         }
                     </div>

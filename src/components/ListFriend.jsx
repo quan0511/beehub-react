@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 function ListFriend ({friends}){
     const dispatch = useDispatch();
     const loading = useSelector(state=> state.friends);
+    console.log(friends);
     return (
         <ListGroup className=" w-100" >
             {friends.map((e,index)=>{

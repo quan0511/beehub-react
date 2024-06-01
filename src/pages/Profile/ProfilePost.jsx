@@ -10,7 +10,7 @@ function ProfilePost ({appUser,user}){
                         <hr/>
                         <Row className="g-1">
                             {user.galleries!=null && user.galleries.length>0? user.galleries.map((gallery, index)=>{
-                                let imageUrl = APIService.URL_REST_API+"/files/"+gallery.media;
+                                let imageUrl = gallery.media;
                                 return (<Col key={index}>
                                     <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
                                     </Col>);

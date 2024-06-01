@@ -21,6 +21,7 @@ export const GroupManagementPage=()=>{
     const reset = useSelector((state)=>state.user.reset);
     const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id,reset: reset});
     const [checkMember ,setCheckMember] =useState(false);
+   
     const handleButton= async(typeClick,user_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {receiver_id: user_id, group_id: group.id, type: typeClick },token);
         if(resp.result!='unsuccess'||resp.result != 'error'){
@@ -41,15 +42,15 @@ export const GroupManagementPage=()=>{
     </div>;
     }
     return (
-        <Container>
+        <Container fluid>
             <Row className="group-manage-page">
                 <Col xl={3} lg={12} md={12} sm={12} xs={12} >
                     <SessionLeftGroup requirements={group.requirements} handleButton={handleButton}/>
                 </Col>
-                <Col xl={9} lg={12} md={12} sm={12} xs={12} className="position-relative mt-sm-5 ps-sm-4 mt-md-4 mt-lg-4 ms-lg-4 mx-xl-auto text-center ms-md-3"style={{marginBottom: "100px"}}>
+                <Col xl={9} lg={12} md={12} sm={12} xs={12} className="position-relative mt-sm-5 ps-sm-4 mt-md-4 mt-lg-4 mt-xl-5 ms-lg-4 mx-xl-auto text-center ms-md-3"style={{marginBottom: "100px"}}>
                     <Row>
-                        <h3>Settings</h3>
                         <Col xl={4} lg={4} md={4} sm={12} className="nav flex-lg-column flex-xl-column flex-md-column flex-sm-row nav-underline border-end pe-4" id="myTab" role="tablist" aria-orientation="vertical">
+                        <h3>Settings</h3>
                             <hr/>
                             <button className="nav-link text-start text-black fs-5 active" id="v-tabs-general-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-general" type="button" role="tab" aria-controls="v-tabs-general" aria-selected="true">General Setting</button>
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-members-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-members" type="button" role="tab" aria-controls="v-tabs-members" aria-selected="false">Manage Members</button>

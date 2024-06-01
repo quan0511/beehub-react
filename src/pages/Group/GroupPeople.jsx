@@ -3,10 +3,15 @@ import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "rea
 import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
 function GroupPeople({members}){
     const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    
     const getButton = (mem)=>{
         if(mem.username == appUser.username){
             return <></>
@@ -24,11 +29,14 @@ function GroupPeople({members}){
     }
     const handleClick= async (typeClick,receiver_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: receiver_id, type: typeClick },token);
-        window.location.reload();
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            dispatch(refresh())
+        }
     }
     return <Container>
         <Row className="group-section">
-            <Col xl={6} lg={10} md={10} className="mx-xl-auto mx-lg-auto me-md-auto">
+            <Col xl={6} lg={10} m
+            d={10} sm={12} className="mx-xl-auto mx-lg-auto me-md-auto">
                 <div className="border-1 rounded-2 border p-3 text-start" style={{boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
                     <p>
                         <b>Members  </b>· {members.length}
