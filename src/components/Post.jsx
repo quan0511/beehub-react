@@ -1,12 +1,34 @@
 import React, { useRef, useState } from "react";
 import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
+import Modal from 'react-bootstrap/Modal';
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
 import { Link } from "react-router-dom";
-
-function Post ({post, page}){
-    const [show, setShow] = useState(false);
-    const target = useRef(null);
+import '../css/post.css';
+import { MdReport } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { selectCurrentUser } from "../auth/authSlice";
+import { useAddLikePostMutation, useCheckLikeQuery, useCountLikeQuery, useDeleteLikeMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useUpdateLikePostMutation } from "../post/postApiSlice";
+import { useSelector } from "react-redux";
+import ShowComment from "./ShowComment";
+function Post ({id, page}){
+  const user = useSelector(selectCurrentUser);
+  const [showPostModal, setShowPostModal] = useState({});
+  const {data: post} = useFetchPostQuery({id})
+    const [addLike] = useAddLikePostMutation();
+    const [deleteLike] = useDeleteLikeMutation();
+    const [updateLike] = useUpdateLikePostMutation();
+    const {data:getLikeUser} = useGetLikeUserQuery({id})
+    const {data:countLike} = useCountLikeQuery({id})
+    const {data:checkLike} = useCheckLikeQuery({userid:user?.id, postid: id})
+    const {data:getEnumEmo} = useGetEnumEmoQuery({userid:user?.id, postid: id})
+    const handleShow = (id) =>{
+      setShowPostModal((prev) => ({
+        ...prev,
+        [id]: true,
+      }));
+       setMovePostId(id);
+    };
     const getSettingType=()=>{
         switch(post.setting_type){
             case 'FOR_FRIEND':
@@ -35,11 +57,83 @@ function Post ({post, page}){
             return <span  style={{fontSize: "12px"}}>{diffHour} hours ago</span>
         }else{
             return <span  style={{fontSize: "12px"}}>{datePost.toLocaleString("en-GB")}</span>
-        }
-        
+        }  
     }
+    const [togglePost, setTogglePost] = useState({});
+    const handleTogglePost = (postId) =>{
+      setTogglePost((prevState) =>({
+        ...prevState,
+        [postId]:!prevState[postId],
+      }));
+    }
+    const handleChangeAddLike = async (postId, enumEmo) => {
+      try {
+        const response = await addLike({
+          user: user?.id,
+          post: postId,
+          enumEmo: enumEmo,
+        });
+    
+        setLikes(prevLikes => ({
+          ...prevLikes,
+          [postId]: true,
+        }));
+    
+        setCountLikes(prevCountLikes => ({
+          ...prevCountLikes,
+          [postId]: (prevCountLikes[postId] || 0) + 1,
+        }));
+    
+        setEnumEmo(enumEmo);
+    
+        setEmoPost(prevEmoPost => ({
+          ...prevEmoPost,
+          [postId]: [
+            ...(prevEmoPost[postId] || []),
+            { emoji: enumEmo, userId: user?.id },
+          ],
+        }));
+    
+        setEmojis(prevEmojis => ({
+          ...prevEmojis,
+          [postId]: enumEmo,
+        }));
+        console.log(response);
+      } catch (error) {
+        console.error('Error occurred while liking:', error);
+      }
+    };
+    
+    const handleChangeUpdateLike = async (postId, enumEmo) => {
+    
+        try {
+          await updateLike({
+            user: user?.id, // Assuming user ID is 1
+            post: postId,
+            enumEmo: enumEmo,
+          });
+          getLikeUser;
+          getEnumEmo;
+        } catch (error) {
+          console.error('Error occurred while updating like:', error);
+        }
+    };
+    const handleChangeRemoveLike = async (postId) => {
+        try {
+          console.log(user?.id, postId);   
+          const response = await deleteLike({id: user?.id, postId}); // Giả sử ID người dùng là 1
+        } catch (error) {
+          console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
+        }
+    };
+    const isLiked = () => {
+        return checkLike === true; // Check if the post is liked by the user
+    };
+
+  if (!post) return
+
     return (
-        <div className="border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
+        <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
             <Row>
                 <Col xl={1} lg={1} md={1} sm={1} className="mx-3">
                     {
@@ -75,37 +169,101 @@ function Post ({post, page}){
                             {getSettingType()} &emsp;<Dot/> {getTimeOfPost()}</p>
                     </Col>
                 }
-                <Col xl={1} lg={1} md={1} sm={1} className="text-end mt-2">
+                <Col xl={1} className="text-end mt-2" onClick={() =>{
+                  handleTogglePost(post.id)
+                }}>
+
                     <ThreeDots size={30} fill='#e1e1e1' />
                 </Col>
+                {togglePost[post.id] && (
+                   <div className="togglePost">
+                   <div className="selectedfunction" >
+                     <div><MdReport className="iconefunctionpost" /></div>
+                     <div className="fonttextfunctionpost">Report</div>
+                   </div>
+                   <div className="selectedfunction" >
+                     <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                     <div className="fonttextfunctionpost">chưa biết</div>
+                   </div>
+                 </div>
+                )}
                 <Col xl={12} className="text-start">
+                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit") ?(
+                  <div
+                  className={
+                    post.color !== null
+                      ? 'postuser-showcommentBackgroundcolor'
+                      : ''
+                  }
+                  style={{
+                    '--showpostcolor': post.color || 'black' ,
+                    '--showpostbackground': post.background || 'white'
+                  } } // Sử dụng kiểu dữ liệu CustomCSSProperties
+                  >
+                    {post.text}
+                  </div>
+                  ):(
                     <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>
-                    <div className="mb-2">
+                  )}
+                    
+                    <div className="mb-2 img-media">
                         { post.media!=null?
-                            <Image src={APIService.URL_REST_API+"/files/"+post.media.media}  fluid />
+                            <Image src={post.media.media}  fluid />
                             : (post.group_media !=null ?
-                                <Image src={APIService.URL_REST_API+"/files/"+post.group_media.media} fluid />
+                                <Image src={post.group_media.media} fluid />
                                 :<></>)
                         }
                     </div>
                 </Col>
                 <Col md={3} lg={4} xl={4} className="d-flex justify-content-center  mt-2">
-                    <HandThumbsUpFill size={20} fill='#006CDE' className='mx-1' />
-                    <HeartFill size={20} fill='#E8254A' className='mx-1' />
-                    <p className="fw-bold mx-2 mt-1 text-black-50" style={{fontSize:"13px"}}>123 people</p>
+               
+                {getLikeUser && 
+                    Array.from(new Set(getLikeUser?.map(item => item.enumEmo))).slice(0,3).map((emoji, index) => (
+                      <span key={index} className="iconEmo">
+                        {emoji}
+                      </span>
+                    ))
+                  }
+                    <p className="fw-bold mx-2 mt-1 text-black-50" style={{fontSize:"13px"}}>{countLike}</p>
                 </Col>
                 <Col md={9} lg={8} className="d-flex flex-row justify-content-end align-items-center">
-                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50" >123 Comments</p>
+                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>123 Comments</p>
                     <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">23 Shares</p>                
                 </Col>
                 <hr className="mx-auto"style={{ width:"90%"}} />
-                <Col xl={12} className="row pb-2">
-                    <div className="col-4 d-flex justify-content-center">
-                        <HandThumbsUp size={22} fill='#8224E3'/>
-                        
+                <Col xl={12} className="row pb-2 posticonbinhluan-all">
+                    
+                    <div className="col-4 d-flex justify-content-center posticonbinhluan-like">
+                    <div className="toggleEmoji">
+                    <div className="toggleEmojiAll">
+                    {isLiked(post.id) ? (
+                        <>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"👍",user?.id)} className="click">👍 1</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"❤️",user?.id)} className="click">❤️ 2</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😂",user?.id)} className="click">😂 3</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😡",user?.id)} className="click">😡 4</span>
+                        <span onClick={() => handleChangeUpdateLike(post.id,"😢",user?.id)} className="click">😢 5</span>
+                        </>
+                    ):( 
+                        <>
+                        <span onClick={() => handleChangeAddLike(post.id,"👍")} className="click">👍</span>
+                        <span onClick={() => handleChangeAddLike(post.id,"❤️")} className="click">❤️</span>
+                        <span onClick={() => handleChangeAddLike(post.id,"😂")} className="click">😂</span>
+                        <span onClick={() => handleChangeAddLike(post.id,"😡")} className="click">😡</span>
+                        <span onClick={() => handleChangeAddLike(post.id,"😢")} className="click">😢</span>
+                        </>
+                    )}
+                    </div>
+                    
+                    </div>
+                        {checkLike ? (             
+                        <span onClick={() => handleChangeRemoveLike(post.id)} className="click">{getEnumEmo}</span>
+                        ) : (
+                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click">👍</span>
+                        )}           
                         <p className="h6 mx-2 text-black-50">Like</p>
                     </div>
-                    <div className="col-4 d-flex justify-content-center">
+                    <div className="col-4 d-flex justify-content-center click" onClick={() => handleShow(post.id)}>
                         <ChatLeft size={22} fill='#8224E3'/>
                         <p className="h6 mx-2 text-black-50" >Comment</p>
                     </div>
@@ -114,6 +272,14 @@ function Post ({post, page}){
                         
                         <p className="h6 mx-2 text-black-50">Share</p>
                     </div>
+                    <Modal className="modalShowComment"  show={showPostModal[post.id]} onHide={() =>
+                      setShowPostModal((prev) => ({
+                          ...prev,
+                          [post.id]: false,
+                        }))
+                      } animation={false}>
+                      <ShowComment postIdco={post}/>
+                    </Modal>
                 </Col>
             </Row>
         </div>

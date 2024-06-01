@@ -1,0 +1,89 @@
+.toggleEmoji{
+    height: 85px;
+    display: none;
+    background-color: transparent;
+    position: absolute;
+    bottom: 25px;
+    left: 60px;
+    flex-direction: row;
+    font-size: 20px;
+}
+.click{
+    cursor: pointer;
+}
+.toggleEmojiAll{
+    background-color: whitesmoke;
+    flex-direction: row;
+    font-size: 25px;
+    position: relative;
+}
+.posticonbinhluan-like:hover .toggleEmoji {
+    display: flex;
+    align-items: center;
+}
+.posticonbinhluan-all{
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 10px !important;
+    bottom: 5px;
+}
+.img-fluid{
+    max-width: 700px;
+    height: 400px;
+}
+.img-media{
+    display: flex;
+    justify-content: center;
+}
+.postuser-showcommentBackgroundcolor{
+    border-radius: 10px;
+    background-color: var(--showpostbackground);
+    color:var(--showpostcolor);
+    width: 75%;
+    /* box-shadow: 1px 1px 1px 2px #d1d4dc; */
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    left: 60px;
+    font-size: 35px;
+    /* bottom: 20px; */
+    gap: 9px;
+}
+.togglePost{
+    background-color: white;
+    width: 250px;
+    height: 90px;
+    z-index: 100;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px 5px #d1d4dc;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    right: -121px;
+    top: 103px;
+}
+.togglePost > * {
+    margin-bottom: 10px; /* Thay đổi giá trị này để điều chỉnh khoảng cách */
+}
+.selectedfunction{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.iconefunctionpost{
+    width: 27px;
+    height: 27px;
+}
+.fonttextfunctionpost{
+    font-size: 15px;
+    margin-left: 10px;
+    font-weight: bold;
+    margin-top: 4px;
+}
