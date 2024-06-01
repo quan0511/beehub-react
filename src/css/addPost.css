@@ -1,0 +1,306 @@
+.modalpost-divcommentcolore {
+    color: var(--postcolor);
+    background-color: var(--postbg);
+
+    height: 350px;
+    position: relative;
+    top: 10px;
+    border: none;
+    outline: none;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 30px;
+    margin-left: -17px;
+    margin-right: -17px;
+    text-align: center;
+}
+.modalpost-divcommentimg{
+    height: 50px;
+    position: relative;
+    top: 10px;
+    border: none;
+    outline: none;
+    overflow: auto;
+    font-size: 15px;
+}
+.borderpostcolor{
+    border: 4px solid burlywood;
+}
+.modalpost-nameanh{
+    display: flex;
+}
+.model-showbinhluananhdaidien{
+    border-radius: 50%;
+    background-color: lab(91 -0.71 -0.32);
+    width: 43px;
+    height: 43px;
+    position: relative;
+}
+.modalpost-name{
+    font-size: 15px;
+    font-weight: bold;
+    top: 8px;
+    left: 10px;
+    position: relative;
+}
+.post-testandshowimage{
+    overflow: auto;
+    height: 400px;
+    margin-top: 10px;
+}
+.inputCreatePost{
+    border: none;
+    outline: none;
+}
+#myUL {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 30%;
+    position: absolute;
+    z-index: 100;
+}
+
+#myUL li a {
+    border: 1px solid #ddd;
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #f6f6f6;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+}
+.myul {
+    display: none;
+}
+
+#myUL li a:hover:not(.header) {
+    background-color: #eee;
+}
+.modalpost-image{
+    display: flex;
+    position: relative;
+    top: 10px;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+.modalpost-xoafile{
+    position: absolute;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: white;
+    left: 440px;
+    display: flex;
+    top: 5px;
+}
+.modalpost-iconxoafile{
+    width: 100%;
+    height: 100%;
+    color: #8224e3;
+}
+.modalpost-imagechil{
+    width: 100%;
+    height: 100%;
+}
+.modalpost-divcomment{
+    height: 150px;
+    position: relative;
+    top: 10px;
+    border: none;
+    outline: none;
+    overflow: auto;
+}
+.modalpost-divcommentimg{
+    height: 50px;
+    position: relative;
+    top: 10px;
+    border: none;
+    outline: none;
+    overflow: auto;
+    font-size: 15px;
+}
+.postfountbackground{
+    position: relative;
+    height: 32px;
+}
+.clickchangefount{
+    position: relative;
+    background-image: conic-gradient(yellow, rgb(60, 166, 60), rgb(207, 67, 207), red);
+    color: white;
+    display: flex;
+    width: 32px;
+    height: 100%;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 20px;
+}
+.modalpost-fountcolorall{
+    display: flex;
+    flex-direction: row; 
+    gap: 10px;
+    height: 35px;
+    margin-top: 20px;
+}
+.modalpost-fountcolororBack{
+    width: 35px;
+    background-color: rgb(214, 202, 202);
+    border-radius: 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    cursor: pointer;
+}
+.modalpost-fountcolororigan{
+    width: 35px;
+    background-color: whitesmoke;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor1{
+    width: 35px;
+    background-color: #8224e3;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+  }
+  .modalpost-fountcolor2{
+    width: 35px;
+    background-color: aqua;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor3{
+    width: 35px;
+    background-color: brown;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor4{
+    width: 35px;
+    background-color: palevioletred;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor5{
+    width: 35px;
+    background-color: red;
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor6{
+    width: 35px;
+    background-color: rgb(153, 255, 0);
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor7{
+    width: 35px;
+    background-color: rgb(40, 56, 179);
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor8{
+    width: 35px;
+    background-color: rgb(0, 157, 255);
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-fountcolor9{
+    width: 35px;
+    background-color: rgb(33, 68, 91);
+    color: transparent;
+    border-radius: 5px;
+    height: 100%;
+    cursor: pointer;
+}
+.modalpost-buttonmedia{
+    border: none;
+    background-color:white;
+    margin-top: 15px;
+}
+.modalpost-buttonmediadisable{
+    border: none;
+    background-color:white;
+    margin-top: 15px;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+}
+.modalpost-media{
+    border-radius: 50%;
+    background-color: lab(96 -2.08 -0.92);
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    display: inline-grid;
+}
+.modalpost-iconmedia{
+    width: 14px;
+    height: 14px;
+    color: #8224e3;
+}
+.modalpost-font{
+    color: #8224e3;
+    font-size: 13.9px;
+}
+.modalpost-postst{
+    position: relative;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modalpost-poststright{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.modalpost-buttonpost{
+    background-color: #8224e3;
+    color: white;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    height: 40px;
+    cursor: pointer;
+}
+.modalpost-buttonpostdisable{
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #8224e3;
+    color: white;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    height: 40px;
+}
+.inputCreatePost:empty:before {
+    content: attr(data-text);
+    color: gray;
+  }
