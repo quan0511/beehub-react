@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { apiSlice } from "../api/apiSlice";
-import { setCredentials } from '../auth/authSlice'
-
+import { selectCurrentToken, setCredentials } from '../auth/authSlice'
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         homepage: builder.query({
@@ -13,6 +12,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
+                console.log(currentCache.length);
+                console.log(newItems);
             currentCache.push(...newItems)
             },
             // Refetch when the page arg changes

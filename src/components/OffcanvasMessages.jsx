@@ -5,7 +5,7 @@ import ListFriend from "./ListFriend";
 import ListGroups from "./ListGroups";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
-import { useGetFriendsAndGroupQuery } from "../user/userApiSlice";
+import { useGetFriendsAndGroupQuery } from "../features/userApiSlice";
 
 function OffcanvasMessages({show,handleClose}){
     const userApp = useSelector(selectCurrentUser);

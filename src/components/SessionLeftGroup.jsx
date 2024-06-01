@@ -6,7 +6,7 @@ import APIService from "../features/APIService";
 
 function SessionLeftGroup({requirements,handleButton}){
     
-    return (<div className="d-flex flex-column h-100 "style={{padding: "80px 2px 100px 10px"}}>
+    return (<div className="d-flex flex-column h-100 section-left-group">
             <h4>{requirements.length} Notifications</h4>
             <div className="mt-4">
                 <NotificationListGroup requirements={requirements} handleButton={handleButton}  />

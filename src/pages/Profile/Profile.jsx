@@ -12,7 +12,7 @@ import axios from "axios";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useProfileQuery } from "../../user/userApiSlice";
+import { useProfileQuery } from "../../features/userApiSlice";
 import { refresh } from "../../features/userSlice";
 
 function Profile (){
@@ -93,7 +93,7 @@ function Profile (){
         );
     }
     return (
-            <Container style={{marginTop: "50px"}}>
+            <Container style={{marginTop: "50px"}} fluid>
                 <Row className="p-0" style={{position: "relative"}}>
                     {
                         user.background!=null?
@@ -105,8 +105,8 @@ function Profile (){
                             </Button>
                         </div>
                     }
-                    <div className="position-absolute"style={{top: "250px",left: "1rem",width: "90%"}} >
-                        <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow p-2">
+                    <div className="position-absolute " id="profile-menu">
+                        <div className="d-flex flex-column ps-md-5 bg-white rounded-3 shadow p-2">
                             {
                                 user.image!=null?
                                 <Image src={`${APIService.URL_REST_API}/files/`+user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
@@ -117,8 +117,8 @@ function Profile (){
                                 <Image src={`${APIService.URL_REST_API}/files/user_male.png`}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}} />
                                 )
                             }
-                            <div className="d-flex flex-row justify-content-between align-items-center pe-5" style={{marginLeft: "240px",marginBottom: "50px"}}>
-                                <div >
+                            <div className="d-flex flex-md-row flex-sm-column justify-content-md-between justify-content-sm-around align-items-md-center pe-5 profile-username" >
+                                <div className="mb-sm-3">
                                     <h2>{user.fullname}</h2>
                                     <span className="d-block text-black-50">@{user.username}</span>
                                 </div>
@@ -126,24 +126,24 @@ function Profile (){
                                     {getButton()}
                                 </div>
                             </div>
-                            <Container >
+                            <Container fluid>
                                 <Row>
-                                    <Col xl={2} className="d-flex justify-content-center align-items-center ms-3">
+                                    <Col xl={2} lg={3} md={2} sm={12} className="d-flex justify-content-md-center align-items-center ms-md-3">
                                         <ListGroup horizontal>
-                                            <ListGroup.Item className="w-50 border-0">
+                                            <ListGroup.Item className="w-50 border-0 px-md-2">
                                                 <p className="text-center fs-5"><span className="fw-bold">{user.relationships.filter(e=>e.typeRelationship=='FRIEND').length}</span><span className="d-block text-black-50">Friends</span></p>
                                                 
                                             </ListGroup.Item>
-                                            <ListGroup.Item className="w-50 border-0">
+                                            <ListGroup.Item className="w-50 border-0 px-md-2">
                                                 <p className="text-center fs-5"><span className="fw-bold">{user.group_joined.length}</span><span  className="d-block text-black-50">Groups</span></p>
                                                 
                                             </ListGroup.Item>
                                         </ListGroup>
                                     </Col>
-                                    <Col xl={8} className="mx-auto" >
+                                    <Col xl={8} lg={8} md={9} sm={12} className="mx-lg-auto ms-md-auto " >
                                         <Nav horizontal="md"  variant="tabs" defaultActiveKey="posts" className="my-2 flex-wrap justify-content-start align-items-center" onSelect={handelSelectTab}>
                                             <Nav.Item>
-                                                <Nav.Link eventKey="posts"  style={{width: "80px"}} className="profile-active d-flex flex-column align-items-center justify-content-between text-light p-2 text-dark">
+                                                <Nav.Link eventKey="posts"  style={{width: "80px"}} className=" d-flex flex-column align-items-center justify-content-between text-light p-2 text-dark">
                                                     <ColumnsGap size={20}/>
                                                     <span>Posts</span>
                                                 </Nav.Link>

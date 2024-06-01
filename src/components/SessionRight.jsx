@@ -2,7 +2,7 @@ import React from "react";
 import { Col, Row, Spinner } from "react-bootstrap";
 import { Search, ThreeDots } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
-import { useFriendsQuery } from "../user/userApiSlice";
+import { useFriendsQuery } from "../features/userApiSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 function SessionRight(){

@@ -9,7 +9,7 @@ import { ThreeDots} from "react-bootstrap-icons"
 import { useDispatch, useSelector } from "react-redux"
 import { useSearchParams } from "react-router-dom"
 import { selectCurrentUser } from "../../auth/authSlice"
-import { useSearchingQuery } from "../../user/userApiSlice"
+import { useSearchingQuery } from "../../features/userApiSlice"
 
 function Searching(){
     const appUser = useSelector(selectCurrentUser);

@@ -1,5 +1,5 @@
 import { Col, Container, Row, Form, Image, Spinner, Button  } from 'react-bootstrap';
-import { useHomepageQuery } from '../user/userApiSlice';
+import { useHomepageQuery } from '../features/userApiSlice';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';

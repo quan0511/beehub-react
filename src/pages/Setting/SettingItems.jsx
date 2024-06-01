@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Accordion, Col, Form, Row } from "react-bootstrap";
-import { useCheckSetUpPostsQuery } from "../../user/userApiSlice";
+import { useCheckSetUpPostsQuery } from "../../features/userApiSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import axios from "axios";

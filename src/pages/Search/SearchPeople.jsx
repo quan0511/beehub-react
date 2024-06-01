@@ -5,7 +5,7 @@ import APIService from "../../features/APIService";
 function SearchPeople ({people}) {
     
     return (
-        <Row xl={3} md={2}>
+        <Row xl={3} lg={4} md={4} sm={3}>
             
             {
                 people.map((p, index)=>{

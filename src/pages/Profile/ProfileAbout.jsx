@@ -46,7 +46,7 @@ function ProfileAbout({user,appUser}) {
     },[])
     return (
         <Row className="mb-5">
-            <Col xl={8} className="mx-auto" style={{marginTop: "150px", minHeight:"450px"}}>
+            <Col xl={8} className="mx-auto profile-tab" >
                 <div className="d-flex flex-column ">
                     { appUser.id ==  user.id?
                     <Card className="mb-3">

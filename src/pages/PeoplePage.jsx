@@ -8,7 +8,7 @@ import APIService from "../features/APIService"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { selectCurrentUser } from "../auth/authSlice"
-import { usePeoplepageQuery } from "../user/userApiSlice"
+import { usePeoplepageQuery } from "../features/userApiSlice"
 function PeoplePage(){
     const appUser = useSelector(selectCurrentUser);
     const reset = useSelector((state)=>state.user.reset);
@@ -38,7 +38,7 @@ function PeoplePage(){
             case "suggestions": 
              return people["people"].map((val,key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
-                    return <Col key={key} className="mx-auto mb-3">
+                    return <Col  xl={4} lg={3} md={3} sm={4} key={key} className="mx-auto mb-3">
                             <PeopleCard img={sr} size="16rem" people={val} />
                         </Col>
                 });
@@ -46,14 +46,14 @@ function PeoplePage(){
             case "friends":
                 return people["friends"].map((val, key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
-                    return <Col key={key} className="mx-auto mb-3">
+                    return <Col xl={4} lg={3} md={3} sm={4} key={key} className="mx-auto mb-3">
                             <PeopleCard img={sr} size="16rem" people={val}/>
                         </Col>
                 });
             case "send_request": 
                 return people["addfriend"].map((val, key)=>{
                     let sr = val.image!=null?val.image: (val.gender == "female"? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
-                    return <Col key={key} className="mx-auto mb-3">
+                    return <Col  xl={4} lg={3} md={3} sm={4} key={key} className="mx-auto mb-3">
                             <PeopleCard img={sr} size="16rem" people={val} />
                         </Col>
                 })
@@ -83,7 +83,7 @@ function PeoplePage(){
                             </Nav>
                             <hr/>
                             <Container fluid>
-                                <Row xl={4}>
+                                <Row >
                                     <Col xl={12} className="mb-3">
                                     <Form >
                                         <InputGroup >

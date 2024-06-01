@@ -1,5 +1,5 @@
 import React from "react";
-import { ListGroup, Offcanvas } from "react-bootstrap";
+import { Image, ListGroup, Offcanvas } from "react-bootstrap";
 import { Cart3, DoorOpen, GearFill, House, JournalBookmark, People, Person, PersonCircle } from "react-bootstrap-icons";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -9,9 +9,11 @@ export const OffcanvasSectionLeft =({show,handleClose})=>{
     const appUser= useSelector(selectCurrentUser);
     return (
         <Offcanvas show={show} onHide={handleClose} placement="start">
-            <Offcanvas.Header closeButton>
-                <Offcanvas.Title >                                        
-                  Beehub
+            <Offcanvas.Header className="bg-dark" >
+                <Offcanvas.Title className="mx-auto" >                                        
+                <Link to="/">
+                    <Image src="https://mythemestore.com/beehive-preview/wp-content/themes/beehive/assets/images/logo-icon.svg" fluid width="100%" />
+                </Link>
                 </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body className="p-0" >

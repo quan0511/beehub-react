@@ -6,7 +6,7 @@ import APIService from "../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import axios from "axios";
-import { useUserQuery } from "../user/userApiSlice";
+import { useUserQuery } from "../features/userApiSlice";
 function SessionLeft ({appUser}){
     const location = useLocation();
     const reset = useSelector((state)=>state.user.reset);

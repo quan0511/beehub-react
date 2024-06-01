@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {  Col, Form, Row, Spinner } from "react-bootstrap";
+import {  Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Link, Navigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { GeneralSetting } from "./GeneralSetting";
@@ -9,7 +9,7 @@ import SessionLeftGroup from "../../components/SessionLeftGroup";
 import { ListGroupReports } from "./ListGroupReports";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useGroupInfoQuery } from "../../user/userApiSlice";
+import { useGroupInfoQuery } from "../../features/userApiSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
 import { refresh } from "../../features/userSlice";
 
@@ -41,11 +41,15 @@ export const GroupManagementPage=()=>{
     </div>;
     }
     return (
-            <Row>
-                <Col xl={9} style={{position: "relative"}}>
-                <Row style={{padding: "80px 0px 100px 0"}}>
-                        <Col xl={4} className="nav flex-column nav-underline me-3 border-end pe-4" id="myTab" role="tablist" aria-orientation="vertical">
-                            <h4>Settings</h4>
+        <Container>
+            <Row className="group-manage-page">
+                <Col xl={3} lg={12} md={12} sm={12} xs={12} >
+                    <SessionLeftGroup requirements={group.requirements} handleButton={handleButton}/>
+                </Col>
+                <Col xl={9} lg={12} md={12} sm={12} xs={12} className="position-relative mt-sm-5 ps-sm-4 mt-md-4 mt-lg-4 ms-lg-4 mx-xl-auto text-center ms-md-3"style={{marginBottom: "100px"}}>
+                    <Row>
+                        <h3>Settings</h3>
+                        <Col xl={4} lg={4} md={4} sm={12} className="nav flex-lg-column flex-xl-column flex-md-column flex-sm-row nav-underline border-end pe-4" id="myTab" role="tablist" aria-orientation="vertical">
                             <hr/>
                             <button className="nav-link text-start text-black fs-5 active" id="v-tabs-general-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-general" type="button" role="tab" aria-controls="v-tabs-general" aria-selected="true">General Setting</button>
                             <button className="nav-link text-start text-black fs-5" id="v-tabs-members-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-members" type="button" role="tab" aria-controls="v-tabs-members" aria-selected="false">Manage Members</button>
@@ -58,7 +62,7 @@ export const GroupManagementPage=()=>{
                             }
                             <Link className="nav-link text-start text-black fs-5" to={"/group/"+id} >Go to Group Page</Link>
                         </Col>
-                        <Col className="tab-content " id="myTabContent" >
+                        <Col xl={8} lg={8} md={8} sm={12} className="tab-content " >
                             <div className="tab-pane fade show active text-start px-2 " id="v-tabs-general" role="tabpanel" aria-labelledby="v-tabs-general" tabIndex="0">
                                 <GeneralSetting user_id={appUser.id} group={group}  />
                             </div>
@@ -74,10 +78,10 @@ export const GroupManagementPage=()=>{
                             {
                                 group.member_role=="GROUP_CREATOR"?
                                 <div className="tab-pane fade text-start px-5" id="v-tabs-sercurity" role="tabpanel" aria-labelledby="v-tabs-sercurity" tabIndex="0">
-                                    <div className="d-flex flex-column">
                                         <h3>Sercurity groups</h3>
+                                    <div className="d-flex flex-lg-column flex-md-column">
                                         <hr/>
-                                        <Row xl={2}>
+                                        <Row xl={2} lg={2} md={2} sm={2}>
                                             <Col className="mb-3">
                                                 <p>Setting Public / Private for group</p>
                                             </Col>
@@ -104,9 +108,8 @@ export const GroupManagementPage=()=>{
                         </Col>
                     </Row>
                 </Col>
-                <Col xl={3} >
-                    <SessionLeftGroup requirements={group.requirements} handleButton={handleButton}/>
-                </Col>
+                
             </Row>
+        </Container>
     );
 }

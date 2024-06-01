@@ -44,7 +44,7 @@ export const GeneralSetting = ({user_id,group})=>{
         }
     }  
     return (
-        <div className="d-flex flex-column">
+    <div className="d-flex flex-column">
         <div>
             <label className="mb-2">Change Background</label>
             <div className="border rounded-2" style={{height: "150px",width: "100%"}}>
