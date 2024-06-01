@@ -9,10 +9,9 @@ import './LoginPage.css'
 import { Link } from "react-router-dom"
 
 function RegisterPage() {
-    const [register] = useRegisterMutation()
+    const [register, {isLoading, error, isSuccess, isError}] = useRegisterMutation()
 
     const [errMsg, setErrMsg] = useState('')
-    const [isSuccess, setIsSuccess] = useState(false)
 
     let errField = ['fullName']
 
@@ -64,16 +63,13 @@ function RegisterPage() {
         return errors;
     }
 
-    
-
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
         try {
             await register(values)
-            await waitForSmoothTransition()
         } catch (err) {
-            console.log(err)
             if (!err.data) {
+                console.log(err.data)
                 setErrMsg('No Server Response')
             } else if (err.data.message) {
                 setErrMsg(err.data.message)
@@ -82,15 +78,6 @@ function RegisterPage() {
                 setErrMsg('Register Failed')
             }
         }
-    }
-
-    const waitForSmoothTransition = () => {
-        return new Promise((resolve, _) => {
-          setTimeout(() => {
-              setIsSuccess(true)
-              resolve()
-          }, 1500);
-        })
     }
 
     return (
@@ -173,16 +160,15 @@ function RegisterPage() {
                             <ErrorMessage name="passwordConfirm" component="div" className="mb-0 text-danger small text-start" />
                         </div>
 
-                        <p className="mb-1 text-danger small text-start">{errMsg}</p>
+                        <p className="mb-1 text-danger small text-start">{error?.data?.message}</p>
 
                         <button
                             disabled={isSubmitting}
                             type='submit'
                             className="primary-button rounded-5 fw-normal mb-3"
-                        >Create your account</button>
-                        {isSubmitting &&
-                            <p className='small'>signing you up...</p>
-                        }
+                        >
+                            {isSubmitting ? 'signing you up...': 'Create your account'}
+                        </button>
                         {isSuccess ?
                             <p className="text-center text-success small">Sign up successfully, click here to <Link to='/login'>Sign in</Link></p>
                             :
