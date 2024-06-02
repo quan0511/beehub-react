@@ -62,9 +62,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 },
         }),
         groupPosts: builder.query({
-            query: ({id_user,id_group}) => ({
-                url: `/user/${id_user}/group/${id_group}/posts`
-            })
+            query: ({id_user,id_group,page}) => ({
+                url: `/user/${id_user}/group/${id_group}/posts?limit=3&page=${page}`
+            }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems) => {
+                console.log(currentCache.length);
+                console.log(newItems);
+            currentCache.push(...newItems)
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+            return currentArg !== previousArg
+            },
         }),
         profile: builder.query({
             query: ({id,username}) => ({

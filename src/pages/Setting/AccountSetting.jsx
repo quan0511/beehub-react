@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {Button, Card, Col, Container,  Image, Row, Spinner, Toast, ToastContainer} from "react-bootstrap";
 import * as bootstrap from 'bootstrap';
 import APIService from "../../features/APIService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FormSettingProfile } from "./FormSettingProfile";
 import { FormSettingPassword } from "./FormSettingPassword";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ export function AccountSetting(){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
+    const navigator = useNavigate()
     const reset = useSelector((state)=>state.user.reset);
     const {data: account, isLoading} = useProfileQuery({id: appUser.id,username: appUser.username,reset:reset});
     const [ blockedUsers, setBlockedUsers] = useState([]);
@@ -34,6 +35,12 @@ export function AccountSetting(){
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id:receiver_id, type: typeClick },token);
         if(resp.result != 'unsuccess'|| resp.result !="error"){
             dispatch(refresh())
+        }
+    }
+    const handleClickDeactive= async (typeClick,receiver_id)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id:receiver_id, type: typeClick },token);
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            navigator("/logout")
         }
     }
     useEffect(()=>{
@@ -87,6 +94,7 @@ export function AccountSetting(){
                                 <button className="nav-link text-start text-black fs-5" id="v-tabs-password-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-password" type="button" role="tab" aria-controls="v-tabs-password" aria-selected="false">Password Setting</button>
                                 <button className="nav-link text-start text-black fs-5" id="v-tabs-account-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-account" type="button" role="tab" aria-controls="v-tabs-account" aria-selected="false">Account Settings</button>
                                 <button className="nav-link text-start text-black fs-5" id="v-tabs-blocklist-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-blocklist" type="button" role="tab" aria-controls="v-tabs-blocklist" aria-selected="false">Block List</button>
+                                <button className="nav-link text-start text-black fs-5" id="v-tabs-security-tab" data-bs-toggle="tab" data-bs-target="#v-tabs-security" type="button" role="tab" aria-controls="v-tabs-security" aria-selected="false">Security Settings</button>
                             </div>
                             <hr/>
                         </Col>
@@ -125,6 +133,12 @@ export function AccountSetting(){
                                         :<p className="fs-5">Not Found Blocked</p>
                                         }
                                     </div>
+                                </div>
+                                <div className="tab-pane fade text-start px-5" id="v-tabs-security" role="tabpanel" aria-labelledby="v-tabs-security" tabIndex="0">
+                                        <h4>Deactive Account</h4>
+                                        <hr/>
+                                        <p>When you deactive your account, No one can found you on Beehub social media. You can active your account again by sign in again.</p>
+                                        <Button variant="outline-danger" onClick={()=>{ if(confirm("Really you want to deactive your account?")){handleClickDeactive("DEACTIVE_ACCOUNT",appUser.id);}} } >Deactive Account</Button>
                                 </div>
                             </div>
                             }

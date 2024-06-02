@@ -18,9 +18,10 @@ function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
     const token = useSelector(selectCurrentToken);
+    const [page, setPage] = useState(0);
     const reset = useSelector((state)=>state.user.reset);
     const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
-    const {data: posts} =useGroupPostsQuery({id_user: appUser.id, id_group: id});
+    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page});
     const [tab, setTab] = useState('discussion');
     const dispatch = useDispatch();
     
@@ -47,7 +48,10 @@ function Group (){
                                             toAbout={()=>setTab("about")} 
                                             list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} 
                                             isPublic={group.public_group} 
-                                            isActive={group.active} />;
+                                            isActive={group.active} 
+                                            page={page}
+                                            setPage={setPage}
+                                            isFetching={isFetching}/>;
                 }
                 return <GroupError/>
             case "people":

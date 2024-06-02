@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
-function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
+function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
     const appUser = useSelector(selectCurrentUser);
+    useEffect(() => {
+        const onScroll = () => {
+          const scrolledToBottom =
+            Math.floor(window.innerHeight + window.scrollY) >= (document.body.offsetHeight-1);
+            console.log(Math.floor(window.innerHeight + window.scrollY));
+            console.log(document.body.offsetHeight-1);
+            console.log(page);
+          if (scrolledToBottom && !isFetching) {
+            console.log("Fetching more data...");
+            setPage(page + 1);
+          }
+        };
+        document.addEventListener("scroll", onScroll);
+        return function () {
+          document.removeEventListener("scroll", onScroll);
+        };
+      }, [page, isFetching]);
     return <Container fluid>
         <Row className="group-section">
             <Col xl={7} lg={8} md={10} sm={10} className="mx-sm-auto ms-lg-auto ms-sm-0 mx-md-auto " >
