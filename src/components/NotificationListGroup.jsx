@@ -22,18 +22,18 @@ function NotificationListGroup({requirements,handleButton}){
                     return (
                         <ListGroup.Item key={index} >
                             <Row className="py-1">
-                                <Col xl={2} lg={1} md={1} sm={1}>
+                                <Col xl={1} lg={1} md={1} sm={1}>
                                     <Image src={urlImage} width={50} className="border bg-light p-1" roundedCircle/>
                                 </Col>
-                                <Col xl={9} lg={7} md={6} sm={5} className="ms-3">
+                                <Col xl={7} lg={6} md={6} sm={5} className="ms-3">
                                     <p className="text-black text-start lh-sm"><b>{req.sender.fullname}</b> &nbsp;
                                     want to joined group <br/>
                                     <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
                                     </p>
                                     
                                 </Col>
-                                <Col xl={12} lg={3} md={4} sm={5} >
-                                <div >
+                                <Col xl={3} lg={3} md={3} sm={5} >
+                                <div className="d-lg-inline-flex d-flex">
                                     <Button variant="outline-primary" onClick={()=>{handleButton("ACCEPT_MEMBER",req.sender.id)}}>Accept</Button>
                                     <Button variant="outline-danger ms-3" onClick={()=>{handleButton("REJECT",req.sender.id)}}>Reject</Button>
                                 </div>

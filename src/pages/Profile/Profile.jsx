@@ -7,18 +7,20 @@ import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
 import userSlice, { refresh } from "../../features/userSlice";
+import BeehubSpinner from "../../components/BeehubSpinner";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
@@ -112,17 +114,27 @@ function Profile (){
         }
     }
     const handleSubmitBackground = async (e)=>{
+        e.preventDefault();
+        document.getElementById("waiting-bg").style.display = "block";
         try {
             await saveBg({id:appUser.id,background:fileBackground });
             setShow2(false);
+            dispatch(refresh());
+            document.getElementById("waiting-bg").style.display = "none";
+            navigate("/member/profile/"+username);
         } catch (error) {
             console.log(error);
         }
     }
     const handleSubmitImage = async (e)=>{
+        e.preventDefault();
+        document.getElementById("waiting-img").style.display = "block";
         try {
             await saveImg({id: appUser.id,image: fileImage})
             handleClose1();
+            document.getElementById("waiting-img").style.display = "none";
+            dispatch(refresh())
+            navigate("/member/profile/"+username);
         } catch (error) {
             console.log(error);
         }
@@ -131,10 +143,8 @@ function Profile (){
         return (
             <Container style={{marginTop: "150px"}}>
                 <Row>
-                    <Col xl={2} className="mx-auto pt-5">
-                    <Spinner animation="border"  role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
+                    <Col xl={4} className="mx-auto" style={{height: "400px"}}>
+                    {BeehubSpinner()}
                     </Col>
                 </Row>
             </Container>
@@ -143,10 +153,10 @@ function Profile (){
     return (
             <Container style={{marginTop: "50px"}} fluid>
                 <Row className="p-0" style={{position: "relative"}}>
-                    <div className="d-flex justify-content-center align-items-center bg-secondary" style={{height: "350px",width: "100%", overflow:"hidden"}}>
+                    <div className="d-flex justify-content-center align-items-center bg-secondary p-0" style={{height: "350px",width: "100%", overflow:"hidden"}}>
                     {
                         user.background!=null?
-                        <Image src={user.background} className="object-fit-cover" style={{objectPosition: "center"}} fluid/>
+                        <Image src={user.background} className="object-fit-fill" style={{width: "100%"}} fluid/>
                         :
                         <></>        
                     }
@@ -158,7 +168,7 @@ function Profile (){
                         keyboard={false}
                         fullscreen={false}>
                         <Modal.Header closeButton>
-                            <Modal.Title>Upload Avatar</Modal.Title>
+                            <Modal.Title>Upload Background</Modal.Title>
                         </Modal.Header>
                         <form onSubmit={handleSubmitBackground} encType="multipart/form-data">
                         <Modal.Body className="d-flex flex-column align-items-center justify-content-center">
@@ -173,6 +183,9 @@ function Profile (){
                             <div className="d-flex align-items-center justify-content-center">
                                 <input type="file" name="bg" id="bg" className="form-control my-3 mx-auto" onChange={(e)=>readURLBackground(e.target)}  />
 
+                            </div>
+                            <div id="waiting-bg" style={{display:"none"}}>
+                                <Spinner animation="border" /> Uploading
                             </div>
                         </Modal.Body>
                         <Modal.Footer>
@@ -197,7 +210,7 @@ function Profile (){
                                     {
                                         appUser.id == user.id? 
                                         <>
-                                            <Button variant="outline-light"  className="position-absolute rounded-circle bottom-0 edit-avatar"  onClick={handleShow1}>
+                                            <Button variant="outline-dark"  className="position-absolute rounded-circle bottom-0 edit-avatar"  onClick={handleShow1}>
                                                 <PencilFill />
                                             </Button>
                                             <Modal show={show1}
@@ -222,6 +235,9 @@ function Profile (){
                                                     <div className="d-flex align-items-center justify-content-center">
                                                         <input type="file" name="image" id="image" className="form-control my-3 mx-auto" onChange={(e)=>readURLImage(e.target)}  />
             
+                                                    </div>
+                                                    <div id="waiting-img" style={{display:"none"}}>
+                                                        <Spinner animation="border" /> Uploading
                                                     </div>
                                                 </Modal.Body>
                                                 <Modal.Footer>

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
-import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, ThreeDots } from 'react-bootstrap-icons';
+import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
 import { Link } from "react-router-dom";
 import '../css/post.css';

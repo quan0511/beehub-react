@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "react-bootstrap"
-import SessionLeft from "../components/SessionLeft"
-import NavigatorBar from "../components/NavigatorBar"
 import PeopleCard from "../components/PeopleCard"
 import { Search } from "react-bootstrap-icons"
 import APIService from "../features/APIService"
-import axios from "axios"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../auth/authSlice"
 import { usePeoplepageQuery } from "../features/userApiSlice"
+import BeehubSpinner from "../components/BeehubSpinner"
 function PeoplePage(){
     const appUser = useSelector(selectCurrentUser);
     const reset = useSelector((state)=>state.user.reset);
@@ -17,9 +15,7 @@ function PeoplePage(){
     const handleSelectTab = (selectedKey) => {
         setSelect(selectedKey);
     };
-    console.log(people);
     const handelClick=(e)=>{
-        
         const badge= e.target.querySelector(".badge");
         const otherbadge =document.querySelectorAll('.badge');
         if(badge!=null){
@@ -64,9 +60,8 @@ function PeoplePage(){
     return (<Container fluid className='ps-4' style={{marginTop: "60px"}}>
                     <Row>
                         {isLoading || !isSuccess ?
-                        <Col>
-                        <Spinner animation="border">
-                        </Spinner>
+                        <Col xl={4} className="mx-auto d-flex justify-content-center align-items-center" style={{height: "400px"}}>
+                            {BeehubSpinner()}
                         </Col>
                         :
                         <Col xl={12} className="mt-2">

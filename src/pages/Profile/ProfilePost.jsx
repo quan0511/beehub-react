@@ -5,7 +5,7 @@ import APIService from "../../features/APIService";
 function ProfilePost ({appUser,user}){
     return <Container fluid >
                 <Row className="profile-tab">
-                    <Col xl={4} lg={3} className="text-start my-photo d-sm-none d-lg-block">
+                    <Col xl={3} lg={3} className="text-start my-photo d-sm-none d-lg-block">
                         <h5>My Photos</h5>
                         <hr/>
                         <Row className="g-1">
@@ -18,7 +18,7 @@ function ProfilePost ({appUser,user}){
                             
                         </Row>
                     </Col>
-                    <Col xl={6} lg={8} md={10} className="mx-auto mb-4">
+                    <Col xl={7} lg={8} md={12} sm={12} className="me-lg-auto mb-4">
                         {appUser.id == user.id?<div>
                             <div className="border-1 rounded-2 border mt-2" style={{paddingTop:"10px", paddingLeft: "1px"}}>
                                 <Form method="post" className="row pe-2">
