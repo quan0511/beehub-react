@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
-import { CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
+import { Ban, CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
 import "./Profile.css"
 import ProfileAbout from "./ProfileAbout";
@@ -71,6 +71,10 @@ function Profile (){
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: user.id, type: typeClick },token);
         dispatch(refresh())
     }
+    const handleClickBlock= async (typeClick,user_id)=>{
+        let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: user_id, type: typeClick },token);
+        dispatch(refresh());
+    }
     const getButton = ()=>{
         if(user!=null && user.id!=appUser.id){
             switch(user.relationship_with_user){
@@ -83,7 +87,11 @@ function Profile (){
                 case "NOT_ACCEPT":
                     return <Button variant="outline-success"  onClick={()=>{ handleClick("ACCEPT")}}>Accept</Button>
                 default:
-                    return <Button variant="primary"  onClick={()=>{ handleClick("ADD_FRIEND")}}>Add Friend</Button>
+                    return (
+                    <div>
+                        <Button variant="primary"  onClick={()=>{ handleClick("ADD_FRIEND")}}>Add Friend</Button>
+                        <Button variant="outline-danger" className="mx-3"  onClick={()=>{ handleClickBlock("BLOCK", user.id)}}><Ban /></Button>
+                    </div>);
             }
         }
     }

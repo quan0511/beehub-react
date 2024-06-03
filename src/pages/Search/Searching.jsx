@@ -62,13 +62,13 @@ function Searching(){
                         <Col xl={10} md={12} className="mt-2">
                             <Nav justify  variant="tabs" defaultActiveKey="post" onSelect={handleSelectTab}>
                             <Nav.Item>
-                                    <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["posts"].length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="post" onClick={handelClick}>Posts <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["posts"]!=null?resultSearch["posts"].length:"0"}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="friend" onClick={handelClick}>People <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["people"].length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="friend" onClick={handelClick}>People <Badge bg="primary">{isLoading? <ThreeDots />:resultSearch["people"]!=null?resultSearch["people"].length:"0"}</Badge></Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{isLoading? <ThreeDots />:resultSearch['groups'].length}</Badge></Nav.Link>
+                                    <Nav.Link eventKey="group" onClick={handelClick}>Groups <Badge bg="secondary">{isLoading? <ThreeDots />:resultSearch['groups']!=null?resultSearch['groups'].length:"0"}</Badge></Nav.Link>
                                 </Nav.Item>
                             </Nav>
                             <hr/>
