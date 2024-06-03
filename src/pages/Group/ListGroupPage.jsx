@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
 import { useListgroupQuery } from "../../features/userApiSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
+import { Link } from "react-router-dom";
 const ListGroupPage =()=>{
     const appUser = useSelector(selectCurrentUser);
     const reset = useSelector((state)=>state.user.reset);
@@ -44,6 +45,7 @@ const ListGroupPage =()=>{
             case "own_groups":
                 return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
+                    <Link to={"/group/create-group"} role="button" className="btn btn-outline-primary mb-3">Create New Group</Link>
                     {data["own_group"].map((group, index)=>{
                         let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
                         return  <GroupCard key={index} group={group} image={urlImage}/>
