@@ -5,7 +5,7 @@ import { Badge, Col, Container, Form, InputGroup, Nav, Row, Spinner } from "reac
 import GroupCard from "../../components/GroupCard";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
-import { useListgroupQuery } from "../../user/userApiSlice";
+import { useListgroupQuery } from "../../features/userApiSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
 const ListGroupPage =()=>{
     const appUser = useSelector(selectCurrentUser);

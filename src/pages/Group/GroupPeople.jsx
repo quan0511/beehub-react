@@ -3,10 +3,15 @@ import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "rea
 import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
+import { refresh } from "../../features/userSlice";
 function GroupPeople({members}){
     const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
+    
     const getButton = (mem)=>{
         if(mem.username == appUser.username){
             return <></>
@@ -24,12 +29,15 @@ function GroupPeople({members}){
     }
     const handleClick= async (typeClick,receiver_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: receiver_id, type: typeClick },token);
-        window.location.reload();
+        if(resp.result != 'unsuccess'|| resp.result !="error"){
+            dispatch(refresh())
+        }
     }
     return <Container>
-        <Row style={{paddingBottom: "80px"}}>
-            <Col xl={6} className="mx-auto">
-                <div className="border-1 rounded-2 border p-3 text-start" style={{marginTop: "200px", boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
+        <Row className="group-section">
+            <Col xl={6} lg={10} m
+            d={10} sm={12} className="mx-xl-auto mx-lg-auto me-md-auto">
+                <div className="border-1 rounded-2 border p-3 text-start" style={{boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
                     <p>
                         <b>Members  </b>· {members.length}
                     </p>
@@ -51,7 +59,7 @@ function GroupPeople({members}){
                             :(appUser.gender=='female'? <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />:
                             <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />)
                             }
-                            <b>{appUser.fullname}</b>
+                            <b>You</b>
                         </div>
                         <Button variant="secondary">
                             <ThreeDots/>
@@ -62,10 +70,10 @@ function GroupPeople({members}){
                         {members.filter((manager)=>manager.role=='GROUP_CREATOR' || manager.role=="GROUP_MANAGER").map((user,index)=>{
                             let urlImg = user.user_image!=null ?user.user_image :( user.user_gender=='female'? `${APIService.URL_REST_API}/files/user_female.png`:`${APIService.URL_REST_API}/files/user_male.png`);
                             return <Row key={index} className="mb-3">
-                                <Col xl={2}>
+                                <Col xl={2} lg={2} md={2} sm={2}>
                                     <Image src={urlImg} style={{width:"60px",height: "60px",marginRight: "20px"}}roundedCircle />
                                 </Col>
-                                <Col xl={6} style={{lineHeight: "0.1"}}>
+                                <Col xl={6} lg={6} md={6} sm={6} style={{lineHeight: "0.1"}}>
                                     <p className="fw-bold">{user.user_fullname}</p>
                                     {user.role == 'GROUP_CREATOR'?
                                     <Badge bg="danger">Group Creator</Badge>

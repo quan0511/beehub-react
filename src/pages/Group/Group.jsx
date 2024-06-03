@@ -11,19 +11,20 @@ import { Link, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useGroupInfoQuery, useGroupPostsQuery } from "../../user/userApiSlice";
+import { useGroupInfoQuery, useGroupPostsQuery } from "../../features/userApiSlice";
 import { refresh } from "../../features/userSlice";
 import { GroupError } from "./GroupError";
 function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
     const token = useSelector(selectCurrentToken);
+    const [page, setPage] = useState(0);
     const reset = useSelector((state)=>state.user.reset);
     const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
-    const {data: posts} =useGroupPostsQuery({id_user: appUser.id, id_group: id});
+    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page});
     const [tab, setTab] = useState('discussion');
     const dispatch = useDispatch();
-    
+    console.log(token);
     const handleButton= async(typeClick)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
         if(resp.result != 'unsuccess'|| resp.result !="error"){
@@ -47,7 +48,10 @@ function Group (){
                                             toAbout={()=>setTab("about")} 
                                             list_media={group.group_medias>4?group.group_medias.slice(group.group_medias.length-4, group.group_medias.length):group.group_medias} 
                                             isPublic={group.public_group} 
-                                            isActive={group.active} />;
+                                            isActive={group.active} 
+                                            page={page}
+                                            setPage={setPage}
+                                            isFetching={isFetching}/>;
                 }
                 return <GroupError/>
             case "people":
@@ -78,21 +82,21 @@ function Group (){
     }
     return (
         <Row>
-            <Col xl={12} className="p-0" style={{width: "100vw",position: "relative"}}>
+            <Col xl={12} className="p-0" style={{position: "relative"}}>
                 {group.background_group !=null? 
                     <Image src={group.background_group} className="object-fit-cover" style={{height: "350px",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px"}}/>
                     : <div style={{height: "350px",objectPosition: "center",width: "100%",borderRadius: "0 0 0 5px",backgroundColor: "rgb(57,59,70,0.5)",}}></div>
                 }
-                <div className="position-absolute"style={{top: "250px",left: "4rem",width: "80%"}} >
-                    <div className="d-flex flex-column ps-5 bg-white rounded-3 shadow px-2 pt-3">
+                <div className="position-absolute group-menu" >
+                    <div className="d-flex flex-column ps-md-5 px-sm-4 bg-white rounded-3 shadow pt-3">
                         {group.image_group!=null?
                             <Image src={group.image_group}  className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
                             :
                             <Image src={APIService.URL_REST_API+"/files/group_image.png"} className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}} />
                         }
-                        <div style={{marginLeft: "240px", textAlign: "start",marginBottom: "50px"}}>
+                        <div className="group-name">
                             <h2 style={{fontWeight: "900"}}>{group.groupname}</h2>
-                            <div className="d-flex flex-row justify-content-between align-items-center">
+                            <div className="d-flex flex-lg-row flex-md-column flex-sm-column justify-content-lg-between justify-content-md-around align-items-lg-center align-items-lg-start">
                                 <p>{
                                     group.public_group?
                                     <span><GlobeAmericas /> Public group</span> 
@@ -113,7 +117,7 @@ function Group (){
                                     )
                                 }
                             </div>
-                            <div className="d-flex flex-row mb-2 flex-nowrap align-items-end" style={{overflowX: "hidden"}}>
+                            <div className="d-flex flex-row mb-2 flex-nowrap align-items-end d-none d-lg-block d-xl-block" style={{overflowX: "hidden"}}>
                                 {
                                     group.public_group || group.member_role!=null?
                                     group.group_members.map((member,index)=>{
@@ -123,30 +127,25 @@ function Group (){
                                     :
                                     <></>
                                 }
-                                {
-                                    group.public_group? 
-                                    <Link color="secondary">
-                                        <ThreeDots width={40}/>
-                                    </Link>
-                                    :<></>
-                                }
                             </div>
                             
                         </div>
-                        <Nav justify  variant="tabs" defaultActiveKey={tab} className="fs-5 w-50" onSelect={handelSelectTab}>
-                            <Nav.Item>
-                                <Nav.Link eventKey="about" className="text-dark">About</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item >
-                                <Nav.Link eventKey="discussion" className="text-dark" >Discussion</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="people" className="text-dark">People</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="media" className="text-dark">Media</Nav.Link>
-                            </Nav.Item>
-                        </Nav>
+                        <div className="group-nav">
+                            <Nav justify  variant="tabs" defaultActiveKey={tab} onSelect={handelSelectTab}>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="about" className="text-dark">About</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item >
+                                    <Nav.Link eventKey="discussion" className="text-dark" >Discussion</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="people" className="text-dark">People</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="media" className="text-dark">Media</Nav.Link>
+                                </Nav.Item>
+                            </Nav>
+                        </div>
                     </div>
                 </div>
                 {tabSession()}

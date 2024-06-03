@@ -9,7 +9,7 @@ import { selectCurrentUser } from "../auth/authSlice";
 import Hero from "./Hero";
 import { OffcanvasSectionLeft } from "./OffcanvasSectionLeft";
 
-function NavigatorBar(){
+function NavigatorBar({hideButton}){
     const user = useSelector(selectCurrentUser);
     const navigate = useNavigate();
     const [show,setShow] = useState(false);
@@ -33,14 +33,14 @@ function NavigatorBar(){
     return (
          <Navbar expand="xl" style={{boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 3px 0px",width:"-webkit-fill-available", zIndex:"3"}} className="bg-body-tertiary pb-2 position-fixed">
             <Container fluid >
-                <Row style={{ width: "100%", marginTop: "3px"}}>
-                    <Col lg={6} md={7} sm={7} xs={4}>
+                <Row style={{  width: "-webkit-fill-available",marginTop: "3px"}}>
+                    <Col lg={6} md={7} sm={7} xs={6}>
                         <Row>
-                            <Col>
-                            <Button className="navbar-toggler" onClick={()=>setShowLeft(true)} >
-                                <span className="navbar-toggler-icon"></span>
-                            </Button>
-                            <OffcanvasSectionLeft show={showLeft} handleClose={()=>setShowLeft(false)} />
+                            <Col xl={0} lg={1} md={1} sm={1} xs={1}>
+                                <Button className="navbar-toggler" onClick={()=>setShowLeft(true)}  >
+                                    <span className="navbar-toggler-icon"></span>
+                                </Button>
+                                <OffcanvasSectionLeft show={showLeft} handleClose={()=>setShowLeft(false)} />
                             </Col>
                             <Col lg={8} md={8} sm={8} xs={6} className="mx-auto">
                             
@@ -57,47 +57,48 @@ function NavigatorBar(){
                                     </InputGroup>
                                 </Form>
                             </Col>
+                        
                         </Row>
                     </Col>
-                    <Col ></Col>
-                    <Col lg={3} md={3} sm={3} xs={2}>
-                    <Nav className="justify-content-end d-flex flex-row" variant="none" defaultActiveKey="/home">
-                    <Nav.Item className="me-2">
-                            <Nav.Link >
-                                <PersonAdd size={20}/>
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item className="me-2">
-                            <Nav.Link >
-                                <Bell size={20}/>
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item  className="me-2">
-                            <Nav.Link  href="/friend">
-                                <EnvelopeOpen size={20}/>
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item  className="me-2">
-                            <Nav.Link  href="/friend">
-                                <Bag size={20}/>
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item >
-                            <Hero
-                                img={heroImage()}
-                                title={user?.username}
-                                timestamp={'May, 2024'}
-                                linkTitle={'Profile'} linkUrl={`/member/profile/`+user.username}
-                            />
-                        </Nav.Item>
+                    {/* <Col  ></Col> */}
+                    <Col lg={3} md={3} sm={5} xs={6} className="ms-auto">
+                        <Nav className="justify-content-end d-flex flex-row" variant="none" defaultActiveKey="/home">
+                            <Nav.Item className="me-2">
+                                <Nav.Link >
+                                    <PersonAdd size={20}/>
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item className="me-2">
+                                <Nav.Link >
+                                    <Bell size={20}/>
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item  className="me-2">
+                                <Nav.Link  href="/friend">
+                                    <EnvelopeOpen size={20}/>
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item  className="me-2">
+                                <Nav.Link  href="/friend">
+                                    <Bag size={20}/>
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item >
+                                <Hero
+                                    img={heroImage()}
+                                    title={user?.username}
+                                    timestamp={'May, 2024'}
+                                    linkTitle={'Profile'} linkUrl={`/member/profile/`+user.username}
+                                />
+                            </Nav.Item>
 
-                        <Nav.Item>
-                            <Button onClick={() => setShow(!show)} className="me-2" variant="link" >
-                                <ChatRightHeartFill fill="#8224e3" size={24}/>
-                            </Button>
-                            <OffcanvasMessages show={show} handleClose={handleClose}/>
-                        </Nav.Item>
-                    </Nav>
+                            <Nav.Item>
+                                <Button onClick={() => setShow(!show)} className="me-2" variant="link" >
+                                    <ChatRightHeartFill fill="#8224e3" size={24}/>
+                                </Button>
+                                <OffcanvasMessages show={show} handleClose={handleClose}/>
+                            </Nav.Item>
+                        </Nav>
                     </Col>
                 </Row>
             </Container>

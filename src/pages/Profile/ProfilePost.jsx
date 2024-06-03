@@ -3,16 +3,14 @@ import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../features/APIService";
 function ProfilePost ({appUser,user}){
-    return<Row>
-        <Col xl={4} style={{width: "-webkit-fill-available",marginTop: "150px"}}>
-            <Container fluid>
-                <Row>
-                    <Col xl={3} className="text-start">
+    return <Container fluid >
+                <Row className="profile-tab">
+                    <Col xl={3} lg={3} className="text-start my-photo d-sm-none d-lg-block">
                         <h5>My Photos</h5>
                         <hr/>
                         <Row className="g-1">
                             {user.galleries!=null && user.galleries.length>0? user.galleries.map((gallery, index)=>{
-                                let imageUrl = APIService.URL_REST_API+"/files/"+gallery.media;
+                                let imageUrl = gallery.media;
                                 return (<Col key={index}>
                                     <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
                                     </Col>);
@@ -20,7 +18,7 @@ function ProfilePost ({appUser,user}){
                             
                         </Row>
                     </Col>
-                    <Col xl={6} className="me-auto ms-5 mb-4">
+                    <Col xl={7} lg={8} md={12} sm={12} className="me-lg-auto mb-4">
                         {appUser.id == user.id?<div>
                             <div className="border-1 rounded-2 border mt-2" style={{paddingTop:"10px", paddingLeft: "1px"}}>
                                 <Form method="post" className="row pe-2">
@@ -40,32 +38,18 @@ function ProfilePost ({appUser,user}){
                                 </Form>
                             </div>
                             <hr/>
-                            <div className="d-flex border px-5 py-3 rounded-3">
-                                <div>
-                                    <h5>Posts</h5>
-                                </div>
-                                <div className="w-50 ms-auto d-flex flex-row me-2">
-                                    <Button variant="secondary" className="me-2 ">
-                                    <Sliders2 size={20} />
-                                    <span className="ms-2">Filters</span>
-                                    </Button>
-                                    <Button variant="secondary">
-                                    <GearFill size={20}/>
-                                    <span className="ms-2">Manager Post</span>
-                                    </Button>
-                                </div>
-                            </div>
+                           
                         </div>
                         :<></>
                         }
-                        {
+                        {user.posts.length==0?
+                            <h2 className="text-black-50">There are no post in this profile</h2>
+                        :
                         user.posts.map((post, index)=> <Post key={index} post={post} page="profile"/>)
                         }
                     </Col>
                 </Row>
             </Container>
-        </Col>
-
-    </Row>;
+        ;
 }
 export default ProfilePost;

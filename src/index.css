@@ -62,3 +62,184 @@ body {
 .people-card:hover{
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
+
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .section-left {
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+  .people-count{
+    padding: 0;
+  }
+  #profile-menu{
+    top: 220px;
+    left: 0;
+    width: 100%;
+  }
+  .profile-tab{
+    margin-top:220px;
+  }
+  .group-menu{
+    top: 250px;
+    left: 0;
+    width: 90%;
+  }
+  .group-name{
+    margin-left: 240px;
+    text-align: start;
+    margin-bottom: 20px;
+  }
+  .group-nav{
+    width: 100%;
+  }
+  .group-section{
+    padding-bottom: 50px;
+    padding-top: 160px;
+  }
+  .group-manage-page{
+    padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -140px
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .section-left {
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+  .people-count{
+    padding: 0;
+  }
+  #profile-menu{
+    top: 220px;
+    left: 0;
+    width: 90%;
+  }
+  .my-photo{
+    display: none;
+  }
+  .profile-tab{
+    margin-top:130px;
+  }
+  .group-menu{
+    top: 250px;
+    left: 2rem;
+    width: 80%;
+  }
+  .group-name{
+    margin-left: 240px;
+    text-align: start;
+    margin-bottom: 20px;
+  }
+  .group-nav{
+    width: 70%;
+  }
+  .group-section{
+    padding-bottom: 50px;
+    padding-top: 160px;
+  }
+  .group-manage-page{
+    padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -100px
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .section-left{
+    display: none !important;
+  }
+  .section-right{
+    display: none !important;
+  }
+  #profile-menu{
+    top: 220px;
+    left: 1rem;
+    width: 90%;
+  }
+  .my-photo{
+    display: block;
+  }
+  .profile-tab{
+    margin-top:130px;
+  }
+  .group-menu{
+    top: 250px;
+    left: 4rem;
+    width: 80%;
+  }
+  .group-name{
+    margin-left: 240px;
+    text-align: start;
+    margin-bottom: 20px;
+  }
+  .group-nav{
+    width: 70%;
+  }
+  .group-section{
+    padding-bottom: 50px;
+    padding-top: 160px;
+  }
+  .group-manage-page{
+    padding: 80px 10px 0 0;
+  }
+  .edit-avatar{
+    right: -80px
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .section-left{
+    display: block !important;
+  }
+  .section-right{
+    display: block !important;
+  }
+  #profile-menu{
+    top: 220px;
+    left: 1rem;
+    width: 90%;
+  }
+  .my-photo{
+    display: block;
+  }
+  .profile-tab{
+    margin-top:130px;
+  }
+  .group-menu{
+    top: 250px;
+    left: 4rem;
+    width: 80%;
+  }
+  .group-name{
+    margin-left: 240px;
+    text-align: start;
+    margin-bottom: 50px;
+  }
+  .group-nav{
+    width: 50%;
+  }
+  .group-section{
+    padding-bottom: 100px;
+    padding-top: 180px;
+  }
+  .group-manage-page{
+    padding: 20px 10px 0 0;
+  }
+  .section-left-group{
+    padding: 80px 2px 100px 10px;
+  }
+  .edit-avatar{
+    right: -20px
+  }
+}

@@ -12,8 +12,8 @@ export const GroupAbout = ({group}) =>{
         });
     }
     return <Container>
-        <Row style={{paddingBottom: "100px",paddingTop: "220px"}}>
-            <Col xl={7} className="mx-auto">
+        <Row className="group-section">
+            <Col xl={7} lg={7} md={10} sm={10} className="mx-auto">
                 <div className="d-flex flex-column ">
                     <div className="border-1 rounded-2 border p-4 text-start mb-4" style={{ boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
                         <h5>About this group</h5>

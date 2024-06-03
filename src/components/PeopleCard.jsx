@@ -30,17 +30,17 @@ function PeopleCard({img,people, size}){
         }
     }
     return (
-        <Card className="people-card" style={{ width: size,padding: "10px 15px" ,transition: "box-shadow .3s"}}>
-            <Card.Body className="m-0 py-3 px-0">
+        <Card className="people-card " style={{ padding: "10px 15px" ,transition: "box-shadow .3s"}}>
+            <Card.Body className="m-0 py-3 px-0 text-center ">
                 <Link to={"/member/profile/"+people.username}>
-                    <Image src={img} width={200} height={200} roundedCircle  />
+                    <Image src={img} width={200} height={200} roundedCircle fluid  />
                 </Link>
-                <Card.Title className="mt-3"><Link className="text-decoration-none text-black" to={"/member/profile/"+people.username}>{people.fullname}</Link></Card.Title>
+                <Card.Title className="mt-3 text-center"><Link className="text-decoration-none text-black" to={"/member/profile/"+people.username}>{people.fullname}</Link></Card.Title>
                     <ListGroup horizontal>
-                        <ListGroup.Item className="w-50 border-0">
+                        <ListGroup.Item className="w-50 border-0 people-count">
                             <p className="text-center">{people.friend_counter}<span className="d-block text-black-50">Friends</span></p>
                         </ListGroup.Item>
-                        <ListGroup.Item className="w-50 border-0">
+                        <ListGroup.Item className="w-50 border-0 people-count">
                             <p className="text-center">{people.group_counter}<span  className="d-block text-black-50">Groups</span></p>
                         </ListGroup.Item>
                     </ListGroup>

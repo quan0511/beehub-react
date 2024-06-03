@@ -16,13 +16,13 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
     }
     return (
         <Row className="mb-5">
-            <Col xl={10} className="mx-auto" style={{marginTop: "160px", minHeight: "450px"}}>
+            <Col xl={10} className=" profile-tab">
                 <div className=" w-100 ps-4 pe-2">
                     <Row >
-                        <Col xl={6}>
+                        <Col xl={6} lg={6} md={5} sm={5}>
                             <h3>Friends</h3>
                         </Col>
-                        <Col xl={4}>
+                        <Col xl={4} lg={4} md={5} sm={5}>
                             <Form  >
                                 <InputGroup >
                                     <InputGroup.Text id="basic-addon2" style={{borderRight: 0, borderTopLeftRadius: "50rem", borderBottomLeftRadius: "50rem",backgroundColor: "#ffffff"}}>
@@ -42,17 +42,17 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                         </Col>
                     </Row>
                     <hr/>
-                    <Row xl={2}>
+                    <Row xl={2} lg={2} md={2} sm={1}>
                         {friends?
                             friends.map((friend,index)=>{
                                 let urlImage = friend.image!=null?friend.image: (friend.gender =='female'? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                                 return (<Col key={index}>
                                             <Card className="p-1 mb-2 text-start">
                                                 <Row className="g-0" >
-                                                    <Col xl={3} md={3}>
+                                                    <Col xl={3} md={3} sm={2}>
                                                     <Link to={`/member/profile/${friend.username}`}><Image src={urlImage} fluid rounded /></Link>
                                                     </Col>
-                                                    <Col xl={5} md={5} className="d-flex flex-column justify-content-center align-items-start ps-4">
+                                                    <Col xl={5} md={5} sm={6} className="d-flex flex-column ms-auto justify-content-center align-items-start ps-4">
                                                         <h4><Link to={`/member/profile/${friend.username}`} className="text-decoration-none text-black">{friend.fullname}</Link></h4>
                                                         <p>Friends: {friend.friend_counter}</p>
                                                     </Col>
@@ -60,7 +60,7 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                                                         user_id != appUser.id?
                                                         <></>
                                                         :
-                                                        <Col xl={4} md={4} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
+                                                        <Col xl={4} md={4} sm={3} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
                                                             <Dropdown>
                                                                 <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
                                                                     Options

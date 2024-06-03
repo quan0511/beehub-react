@@ -9,6 +9,7 @@ import { refresh } from "../../features/userSlice";
 export const ListGroupReports =({reports,user_id,group_id})=>{
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
+    console.log(reports);
     const getTimeOf = (createDate)=>{
         let dateTime = new Date(createDate);
         let diffDay = Math.round(Math.abs(new Date() - dateTime)/ 86400000);

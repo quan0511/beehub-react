@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
-function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined}){
+function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
     const appUser = useSelector(selectCurrentUser);
-    return <Container>
-        <Row style={{paddingBottom: "100px",paddingTop: "220px"}}>
-            <Col xl={7} className="mx-auto" >
+    useEffect(() => {
+        const onScroll = () => {
+          const scrolledToBottom =
+            Math.floor(window.innerHeight + window.scrollY) >= (document.body.offsetHeight-1);
+            console.log(Math.floor(window.innerHeight + window.scrollY));
+            console.log(document.body.offsetHeight-1);
+            console.log(page);
+          if (scrolledToBottom && !isFetching) {
+            console.log("Fetching more data...");
+            setPage(page + 1);
+          }
+        };
+        document.addEventListener("scroll", onScroll);
+        return function () {
+          document.removeEventListener("scroll", onScroll);
+        };
+      }, [page, isFetching]);
+    return <Container fluid>
+        <Row className="group-section">
+            <Col xl={7} lg={8} md={10} sm={10} className="mx-sm-auto ms-lg-auto ms-sm-0 mx-md-auto " >
                 {
                     joined?
                         <div className="border-1 rounded-2 border pe-2 text-start" style={{paddingTop:"10px", paddingLeft: "1px",boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
@@ -39,7 +56,7 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                     <p className="text-black-50">There are no post in group</p>
                 }
             </Col>
-            <Col xl={5}>
+            <Col xl={4} lg={4} className="d-lg-none d-none d-xl-block me-xl-auto " >
                 <div className="border rounded-2 text-start px-4 mb-3" style={{paddingTop:"10px", paddingLeft: "15px",marginTop: "200px", boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
                     <p>
                         <span className="fw-bold">About</span><br/>
@@ -116,6 +133,7 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                     <Button variant="secondary" className="w-100 mb-3" onClick={toListMedia}>See all</Button>
                 </div>
             </Col>
+            {/* <Col className="d-lg-none d-md-none d-sm-none d-xl-block"></Col> */}
         </Row>
     </Container>
     ;

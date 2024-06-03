@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { apiSlice } from "../api/apiSlice";
-import { setCredentials } from '../auth/authSlice'
-
+import { selectCurrentToken, setCredentials } from '../auth/authSlice'
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         homepage: builder.query({
@@ -13,6 +12,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
+                console.log(currentCache.length);
+                console.log(newItems);
             currentCache.push(...newItems)
             },
             // Refetch when the page arg changes
@@ -61,9 +62,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 },
         }),
         groupPosts: builder.query({
-            query: ({id_user,id_group}) => ({
-                url: `/user/${id_user}/group/${id_group}/posts`
-            })
+            query: ({id_user,id_group,page}) => ({
+                url: `/user/${id_user}/group/${id_group}/posts?limit=3&page=${page}`
+            }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems) => {
+                console.log(currentCache.length);
+                console.log(newItems);
+            currentCache.push(...newItems)
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+            return currentArg !== previousArg
+            },
         }),
         profile: builder.query({
             query: ({id,username}) => ({
@@ -107,6 +121,56 @@ export const userApiSlice = apiSlice.injectEndpoints({
             forceRefetch({ currentArg, previousArg }) {
             return currentArg !== previousArg
             },
+        }),
+        uploadImageProfile: builder.mutation({
+            query: ({id, image})=>{
+                var bodyFormData = new FormData();
+                bodyFormData.append('media', image);
+                return {
+                    url: '/upload/profile/image/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true,
+                }
+            }
+        }),
+        uploadBackgroundProfile: builder.mutation({
+            query: ({id, background})=>{
+                var bodyFormData = new FormData();
+                bodyFormData.append('media', background);
+                return {
+                    url: '/upload/profile/background/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true,
+                }
+            }
+        }),
+        uploadImageGroup: builder.mutation({
+            query: ({id,id_group,image}) => {
+                var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',image);
+                return {
+                    url: '/upload/group/image/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true
+                }
+            }
+        }),
+        uploadBgGroup: builder.mutation({
+            query: ({id,id_group,background}) => {
+                var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',background);
+                return {
+                    url: '/upload/group/background/'+id,
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true
+                }
+            }
         })
     })
 })
@@ -124,5 +188,9 @@ export const {
     useCheckSetUpPostsQuery,
     useGetSettingItemsQuery,
     useGetFriendsAndGroupQuery,
-    useSearchingQuery
+    useSearchingQuery,
+    useUploadImageProfileMutation,
+    useUploadBackgroundProfileMutation,
+    useUploadImageGroupMutation,
+    useUploadBgGroupMutation
 } = userApiSlice
