@@ -24,7 +24,7 @@ function Group (){
     const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page});
     const [tab, setTab] = useState('discussion');
     const dispatch = useDispatch();
-    console.log(token);
+    console.log(group);
     const handleButton= async(typeClick)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
         if(resp.result != 'unsuccess'|| resp.result !="error"){

@@ -15,7 +15,7 @@ export function AccountSetting(){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
-    const navigator = useNavigate()
+    const navigator = useNavigate();
     const reset = useSelector((state)=>state.user.reset);
     const {data: account, isLoading} = useProfileQuery({id: appUser.id,username: appUser.username,reset:reset});
     const [ blockedUsers, setBlockedUsers] = useState([]);

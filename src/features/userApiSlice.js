@@ -171,6 +171,16 @@ export const userApiSlice = apiSlice.injectEndpoints({
                     formData: true
                 }
             }
+        }),
+        createGroup: builder.mutation({
+            query: ({id,data})=>{
+                return {
+                    url: '/user/create-group/'+id,
+                    method: 'POST',
+                    body: data,
+                    formData: true
+                }
+            }
         })
     })
 })
@@ -192,5 +202,6 @@ export const {
     useUploadImageProfileMutation,
     useUploadBackgroundProfileMutation,
     useUploadImageGroupMutation,
-    useUploadBgGroupMutation
+    useUploadBgGroupMutation,
+    useCreateGroupMutation
 } = userApiSlice

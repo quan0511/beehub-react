@@ -43,7 +43,7 @@ export const GroupManagementPage=()=>{
     }
     return (
         <Container fluid>
-            <Row className="group-manage-page position-relative mt-5 ps-4 mx-auto text-center "style={{marginBottom: "100px"}}>
+            <Row className="group-manage-page position-relative ps-4 mx-auto text-center "style={{marginBottom: "100px"}}>
                 <Col xl={4} lg={4} md={4} sm={12} className="nav flex-lg-column flex-xl-column flex-md-column flex-sm-row nav-underline border-end pe-4 mb-4" id="myTab" role="tablist" aria-orientation="vertical">
                 <h3>Settings</h3>
                     <hr/>
