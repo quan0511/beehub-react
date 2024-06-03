@@ -9,31 +9,53 @@ export const postApiSlice = apiSlice.injectEndpoints({
             query: ({ id }) => ({
                 url: POST_URL+ `/${ id }`,
             }),
+            
             providesTags: ['Post']
         }),
         comment: builder.query({
             query: ({id}) => ({
                 url: POST_URL + '/comment' + `/${id}`,
             }),
-            // transformErrorResponse: (error) => {
-            //         console.log(error)
-            //         return error
-            //     },
-            //     transformResponse: (response) => {
-            //         console.log(response)
-            //         return response
-            //     }
             providesTags: ['comment']
         }),
-        commentByPost: builder.query({
+        commentById: builder.query({
             query: ({id}) => ({
                 url: POST_URL + '/commentpost' + `/${id}`,
+            }),
+            providesTags: ['commentbyid']
+            // transformErrorResponse: (error) => {
+            //             console.log(error)
+            //             return error
+            //         },
+            //         transformResponse: (response) => {
+            //             console.log(response)
+            //             return response
+            //         }
+        }),
+        countComment:builder.query({
+            query:({id}) =>({
+                url: POST_URL + '/comment/post' + `/${id}`,
+            }),
+            providesTags: ['countcomment']
+        }),
+        getUser: builder.query({
+            query: () => ({
+                url: POST_URL + '/user',
             })
         }),
         recommentPost: builder.query({
             query: ({id}) => ({
                 url: POST_URL + '/recommentpost' + `/${id}`,
-            })
+            }),
+            providesTags: ['recommentpost']
+            // transformErrorResponse: (error) => {
+            //     console.log(error)
+            //     return error
+            // },
+            // transformResponse: (response) => {
+            //     console.log(response)
+            //     return response
+            // },
         }),
         recomment: builder.query({
             query: ({id}) => ({
@@ -66,6 +88,14 @@ export const postApiSlice = apiSlice.injectEndpoints({
             query:({postid,emoji})=>({
                 url: POST_URL + '/emo'+`/${postid}`+`/${emoji}`,
             }),
+            // transformErrorResponse: (error) => {
+            //     console.log(error)
+            //     return error
+            // },
+            // transformResponse: (response) => {
+            //     console.log(response)
+            //     return response
+            // },
             providesTags: ['EmoPostByEnum']
         }),
         countLike:builder.query({
@@ -111,15 +141,26 @@ export const postApiSlice = apiSlice.injectEndpoints({
             },     
         }),
         updatePost: builder.mutation({
-            query: post => ({
-                url: POST_URL + '/update',
-                method: 'POST',
-                body: { ...post }
-            })
+            query: ({id,text, color, background, user, medias,group}) => {
+                var bodyFormData = new FormData();
+                bodyFormData.append('id', id);
+                bodyFormData.append('text', text);
+                bodyFormData.append('color', color);
+                bodyFormData.append('background', background);
+                bodyFormData.append('user', user);
+                bodyFormData.append('medias', medias);
+                bodyFormData.append('group', group);
+                return {
+                    url: POST_URL + '/updatepost',
+                    method: 'POST',
+                    body: bodyFormData,
+                    formData: true,
+                }
+            },
         }),
         deletePost: builder.mutation({
             query: ({id}) => ({
-                url: POST_URL + `/delete/${id}`,
+                url: POST_URL + `/deletepost/${id}`,
                 method: 'POST',
             })
         }),
@@ -131,18 +172,11 @@ export const postApiSlice = apiSlice.injectEndpoints({
             })
         }),
         updateComment: builder.mutation({
-            query: ({comment,post,user }) =>{
-                var bodyFormData = new FormData();
-                bodyFormData.append('comment',comment);
-                bodyFormData.append('post',post);
-                bodyFormData.append('user',user);
-                return{
-                    url:POST_URL+ '/comment/create',
-                    method:'POST',
-                    body:bodyFormData,
-                    formData:true,
-                }
-            }
+            query: comment => ({
+                url: POST_URL + `/comment/edit`,
+                method: 'POST',
+                body: { ...comment }
+            }),
         }),
         deletePostComment: builder.mutation({
             query: ({id}) => ({
@@ -193,13 +227,21 @@ export const postApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser']
         }),
+        sharePost: builder.mutation({
+            query: sharePost => ({
+                url: POST_URL + `/share`,
+                method: 'POST',
+                body: {...sharePost}
+            }),
+  
+        }),
     })
 })
 
 export const {
     useFetchPostQuery,
     useCommentQuery,
-    useCommentByPostQuery,
+    useCommentByIdQuery,
     useRecommentQuery,
     useRecommentPostQuery,
     useCheckLikeQuery,
@@ -208,8 +250,11 @@ export const {
     useGetEmoPostByEnumQuery,
     useGetEnumEmoQuery,
     useGetLikeUserQuery,
+    useGetUserQuery,
+    useCountCommentQuery,
 
     usePostMutation,
+    useUpdatePostMutation,
     useDeletePostMutation,
     useAddLikePostMutation,
     useUpdateLikePostMutation,
@@ -220,6 +265,7 @@ export const {
     usePostCommentMutation,
     useUpdateCommentMutation,
     useDeletePostCommentMutation,
+    useSharePostMutation
 
 } = postApiSlice
 
