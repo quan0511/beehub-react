@@ -34,7 +34,7 @@ export const ListGroupManagers = ({managers,handleButton, user_id})=>{
                                 user.role !='GROUP_CREATOR'&& user.user_id != user_id ?
                                 <Button variant="outline-danger" onClick={()=>{handleButton("REMOVE_MANAGER", user.user_id)}} >Remove from the group managers</Button>
                                 :user.role !='GROUP_CREATOR'&& user.user_id == user_id?
-                                <Button variant="outline-danger" onClick={()=>{handleButton("REMOVE_MANAGER", user.user_id)}} >Retire</Button>
+                                <Button variant="outline-danger" onClick={()=>{handleButton("RETIRE", user.user_id)}} >Retire</Button>
                                 :<></>
                             }
                         </div>

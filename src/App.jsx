@@ -23,6 +23,7 @@ import Posts from "./administrator/pages/Posts"
 import ShopManagement from "./administrator/pages/ShopManagement"
 import Logout from "./auth/Logout"
 import { GroupCreatePage } from "./pages/Group/GroupCreatePage"
+import NotFoundGroup from "./pages/Group/NotFoundGroup"
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path=':id' element={<Group />} />
           <Route path='manage/:id' element={<GroupManagementPage />} />
           <Route path="create-group" element={<GroupCreatePage />}/>
+          <Route  element={<NotFoundGroup/>} />
         </Route>
 
         <Route path='/shop' element={<Layout />} >

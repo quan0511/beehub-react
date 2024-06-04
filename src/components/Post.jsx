@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
+import { Button, Col, Form, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
@@ -9,8 +9,11 @@ import { MdReport } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentUser } from "../auth/authSlice";
 import { useAddLikePostMutation, useCheckLikeQuery, useCountLikeQuery, useDeleteLikeMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useUpdateLikePostMutation } from "../post/postApiSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
+import { Formik } from "formik";
+import * as Yup from 'yup';
+import { refresh } from "../features/userSlice";
 function Post ({post, page}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
@@ -18,11 +21,13 @@ function Post ({post, page}){
     const [addLike] = useAddLikePostMutation();
     const [deleteLike] = useDeleteLikeMutation();
     const [updateLike] = useUpdateLikePostMutation();
+    const dispatch = useDispatch(); 
     const { data: getLikeUser, refetch: refetchGetLikeUser } = useGetLikeUserQuery({ id: post.id });
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
     const [movePostId,setMovePostId] = useState(null);
+    const [showReport,setShowReport] = useState(false);
     const handleShow = (id) =>{
       setShowPostModal((prev) => ({
         ...prev,
@@ -30,6 +35,7 @@ function Post ({post, page}){
       }));
        setMovePostId(id);
     };
+    
     const getSettingType=()=>{
         switch(post.setting_type){
             case 'FOR_FRIEND':
@@ -112,6 +118,12 @@ function Post ({post, page}){
           console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
         }
     };
+    const schema = Yup.object().shape({
+      groupname: Yup.string()
+              .required("Required!")
+              .min(2, "Mininum 2 characters"),
+      description: Yup.string().max(200, "Description maximum 200 character")
+    });
     const isLiked = () => {
         return checkLike === true; // Check if the post is liked by the user
     };
@@ -162,9 +174,13 @@ function Post ({post, page}){
                     <ThreeDots size={30} fill='#e1e1e1' />
                 </Col>
                 {togglePost[post.id] && (
-                   <div className="togglePost">
+                  <div className="togglePost">
                    <div className="selectedfunction" >
-                     <div><MdReport className="iconefunctionpost" /></div>
+                     <div>
+                      <Button role="link" onClick={()=> setShowReport(true)}>
+                      <MdReport className="iconefunctionpost" />
+                      </Button>
+                      </div>
                      <div className="fonttextfunctionpost">Report</div>
                    </div>
                    <div className="selectedfunction" >
@@ -265,6 +281,49 @@ function Post ({post, page}){
                         }))
                       } animation={false}>
                       <ShowComment postIdco={post}/>
+                    </Modal>
+                    <Modal show={false} onHide={()=>setShowReport(false)}>
+                      <Modal.Header className="text-center" closeButton>
+                        <Modal.Title>Report</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                      <Formik
+                          validationSchema={schema}
+                          initialValues={{
+                            sender_id: "",
+                            target_user_id: "",
+                            target_group_id: "",
+                            target_post_id: "",
+                            type_id: "",
+                            add_description: ""
+                          }}
+                          onSubmit={async (values, { ...props }) => {
+                              try {
+                                 
+                              } catch (error) {
+                                  console.error('An error occurred while submitting the form.', error);
+                              }
+                          }}
+                      > {({ handleSubmit, handleChange, values, touched, errors }) => (
+                          <Form noValidate onSubmit={handleSubmit}>
+                             <Form.Label>Please select a problem</Form.Label>
+                             <Form.Select aria-label="select report type">
+                              <option>Open this select menu</option>
+                              <option value="1">One</option>
+                              <option value="2">Two</option>
+                              <option value="3">Three</option>
+                            </Form.Select>
+                          </Form>
+                      )}</Formik>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={()=>setShowReport(false)}>
+                          Close
+                        </Button>
+                        <Button variant="primary" onClick={()=>setShowReport(false)}>
+                          Save Changes
+                        </Button>
+                      </Modal.Footer>
                     </Modal>
                 </Col>
             </Row>
