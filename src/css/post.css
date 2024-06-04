@@ -29,8 +29,12 @@
     bottom: 5px;
 }
 .img-style{
-    max-width: 700px;
-    height: 400px;
+    height: 500px;
+    width: 600px;
+}
+.img-styleshare{
+    height: 500px;
+    width: 700px;
 }
 .img-media{
     display: flex;
@@ -86,4 +90,55 @@
     margin-left: 10px;
     font-weight: bold;
     margin-top: 4px;
+}
+.likemodal .modal-dialog {
+    width: 35%;
+}
+.likemodal .modal-dialog .modal-content {
+    height: 400px;
+    margin-top: 130px;
+    overflow: auto;
+}
+.postmodaleditpost .modal-dialog {
+    width: 35%;
+}
+.postmodaleditpost .modal-dialog .modal-content {
+    height: auto;
+}
+.useshare{
+    position: relative;
+    top: 10px;
+}
+.textshare{
+    position: relative;
+    top:10px
+}
+.sharepublic{
+    position: relative;
+    right: 20px;
+}
+.sharekhung{
+    width: 600px;
+    position: relative;
+    left: 50px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.14) 0px -4px 8px, rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px;
+}
+.sharekhungchill{
+    width: 100%;
+}
+.postuser-showcommentBackgroundcolorshare{
+    border-radius: 10px;
+    background-color: var(--showpostbackground);
+    color:var(--showpostcolor);
+    width: 540px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    left: 20px;
+    font-size: 35px;
+    /* bottom: 20px; */
+    gap: 9px;
 }

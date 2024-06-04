@@ -366,7 +366,7 @@ const AddPost = ({handleCloseModal}) => {
             </span>
             <span className="modalpost-font">Attach media</span>
             </button>
-            <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple />
+            <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple hidden/>
         </div>
         
         <input type="hidden" name="color" value={formData.color} onChange={(e) => handleChangePost(e)}/>

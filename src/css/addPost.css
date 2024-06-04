@@ -16,6 +16,12 @@
     margin-right: -17px;
     text-align: center;
 }
+.postmodal .modal-dialog {
+    width: 35%;
+}
+.postmodal .modal-dialog .modal-content {
+    height: auto;
+}
 .modalpost-divcommentimg{
     height: 50px;
     position: relative;

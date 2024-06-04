@@ -6,12 +6,15 @@ import APIService from '../features/APIService';
 import SessionRight from '../components/SessionRight';
 import Post from '../components/Post';
 import { useEffect, useState } from 'react';
-
+import AddPost from '../components/AddPost';
+import Modal from 'react-bootstrap/Modal';
 function Homepage() {
     const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
-    const {data:posts, isLoading,isFetching} = useHomepageQuery({id: user.id, page: page});
-    
+    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page});
+    const [showInputModal, setShowInputModal] = useState(false);
+    const handleOpenInputModal = () => setShowInputModal(true);
+    const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
         const onScroll = () => {
           const scrolledToBottom =
@@ -31,7 +34,7 @@ function Homepage() {
             <Row>
                 <Col xl={8} lg={8} md={10} sm={12} className='m-md-auto'>
                     <div className="border-2 rounded-2 border-dark mt-3 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
-                        <Form method="post" className="row pe-4">
+                        <div method="post" className="row pe-4" onClick={handleOpenInputModal}>
                             <label className="col-1 mx-auto mb-3 col-form-label">
                                 {
                                     user?.image?
@@ -44,17 +47,31 @@ function Homepage() {
                                 }
                             </label>
                             <div className='col-9 d-flex flex-row justify-content-center align-items-center'>
-                                <input type="text" className="col-11 mb-3 mx-auto form-control " style={{borderRadius: "30px", padding: "5px 20px "}} placeholder="What do you think?"/>
+                                <div className="col-11 mb-3 mx-auto form-control " style={{borderRadius: "30px", padding: "5px 20px "}}>What do you think?</div>
                             </div>
                             <div className='col-1'></div>
                         
-                        </Form>
+                        </div>
                     </div>
+                    <Modal className="postmodal" show={showInputModal} onHide={handleCloseInputModal} animation={false}>
+                    <div >
+                        <div >
+                        <Modal.Header  closeButton>
+                            <Modal.Title className="modalpost-title">
+                                    Write New Post
+                            </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body >
+                            <AddPost handleCloseModal={handleCloseInputModal} refetchHomePage={refetchHomePage}/>
+                            </Modal.Body>
+                            </div>
+                        </div>
+                    </Modal>
                     {isLoading && posts==null?
                        <></>
                         :
                         posts.map((post, index)=>{
-                            return <Post key={index} post={post} page="activity" />;
+                            return <Post key={index} post={post} refetchHomePage={refetchHomePage} page="activity" />;
                         })    
                     }
                     {
