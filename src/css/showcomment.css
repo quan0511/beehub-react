@@ -57,6 +57,9 @@
     border: 1px solid ;
     height: 100%;
 }
+.modalpostimgshare{
+    height: 100%;
+}
 .modal-showcommentBackgroundcolor{
     background-color: var(--showpostbackground);
     color: var(--showpostcolor);
@@ -82,7 +85,7 @@
     display: flex;
     left: 30px;
     cursor: pointer;
-    top: 50px;
+    top: 7px;
 }
 .modalshowcommentlikehr{
     position: relative;
@@ -224,6 +227,7 @@
     margin-left: 45px;
     font-size: 14px;
     width: 300px;
+    background-color: gainsboro;
 }
 .commentRecommentmodal{
     background-color: #8224e3;
@@ -418,6 +422,7 @@
     position: relative;
     margin-left: 45px;
     font-size: 14px;
+    width: 500px;
 }
 .commentRecomment{
     background-color: #8224e3;
@@ -432,30 +437,90 @@
     font-size: 13px;
 }
 .divcomment{
-    border: 2px solid #dad3d3;
-    border-radius: 10px;
     height: 70px;
     overflow: auto;
     position: relative;
-    margin-top: 10px;
+    /* margin-top: 10px; */
+    color: black;
+    padding-left: 5px;
 }
+.divcomment:focus {
+    outline: none; 
+  }
+.divcomment[data-text]:empty::before {
+    content: attr(data-text);
+    color: #a9a9a9;
+  }
 .commentpost{
-    background-color: #8224e3;
-    color: white;
+    background-color: transparent;
+    color: #8224e3;
     border-radius: 5px;
     position: relative;
-    width: 95%;
-    height: 35px;
+    /* width: 95%; */
+    height: 25px;
     border: 0px;
-    left: 15px;
+    left: 585px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.iconcomment{
+    width: 25px;
+    height: 25px;
 }
 .modalShowComment .modal-dialog {
-    max-width: 600px;
+    max-width: 650px;
     justify-content: center;
     display: flex;
+}
+.modalShowComment .modal-dialog .modal-content {
+    height: 700px;
+    bottom: 15px;
 }
 .modal-content{
     height: 700px;
     bottom: 15px;
+}
+.div-EditReComment{
+    position: relative;
+    right: 30px;
+}
+.toggleEmojiCommentAll{
+    background-color: whitesmoke;
+    flex-direction: row;
+    font-size: 25px;
+    position: relative;
+    display: flex;
+}
+.toggleEmojiComment{
+    height: 85px;
+    display: none;
+    background-color: transparent;
+    position: absolute;
+    bottom: 14px;
+    left: -20px;
+    flex-direction: row;
+    font-size: 20px;
+}
+.posticonbinhluan-like:hover .toggleEmojiComment {
+    display: flex;
+    align-items: center;
+}
+.inputcomment{
+    position: relative;
+    border: 2px solid;
+    background-color: #f7f7f7;
+    height: 90px;
+    top: 30px;
+    width: 630px;
+    border-radius: 10px;
+    left: 10px;
+}
+.showcommentsharekhung{
+    position: relative;
+    border: 1px solid;
+    width: 610px;
+    left: 19px;
 }
 
