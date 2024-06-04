@@ -1,30 +1,30 @@
 import { Route, Routes } from "react-router-dom"
 
-import Homepage from './pages/Homepage'
-import Layout from './layouts/Layout'
-import Profile from './pages/Profile/Profile'
-import PeoplePage from './pages/PeoplePage'
-import Searching from './pages/Search/Searching'
-import Group from './pages/Group/Group'
 import LoginPage from './auth/LoginPage'
 import RequireAuth from './auth/RequireAuth'
 import RegisterPage from './auth/RegisterPage'
-import ListGroupPage from "./pages/Group/ListGroupPage"
-import Layout2 from "./layouts/Layout2"
-import { AccountSetting } from "./pages/Setting/AccountSetting"
-import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
-import Shop from "./pages/Shop/Shop"
+import Logout from "./auth/Logout"
+import ShopManagement from "./administrator/pages/ShopManagement"
 import RequireAdmin from "./administrator/RequireAdmin"
 import AdminLayout from "./administrator/AdminLayout"
 import Dashboard from "./administrator/pages/Dashboard"
 import Reports from "./administrator/pages/Reports"
 import Users from "./administrator/pages/Users"
 import Posts from "./administrator/pages/Posts"
-import ShopManagement from "./administrator/pages/ShopManagement"
-import Logout from "./auth/Logout"
+import Groups from "./administrator/pages/Groups"
+import Layout from './layouts/Layout'
+import Layout2 from "./layouts/Layout2"
+import Homepage from './pages/Homepage'
+import Profile from './pages/Profile/Profile'
+import PeoplePage from './pages/PeoplePage'
+import Searching from './pages/Search/Searching'
+import Group from './pages/Group/Group'
+import ListGroupPage from "./pages/Group/ListGroupPage"
+import { AccountSetting } from "./pages/Setting/AccountSetting"
 import { GroupCreatePage } from "./pages/Group/GroupCreatePage"
+import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
+import Shop from "./pages/Shop/Shop"
 import NotFoundGroup from "./pages/Group/NotFoundGroup"
-
 function App() {
   return (
     <Routes>
@@ -64,6 +64,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='reports' element={<Reports />} />
             <Route path='users' element={<Users />} />
+            <Route path='groups' element={<Groups />} />
             <Route path='posts' element={<Posts />} />
             <Route path='shop' element={<ShopManagement />} />
           </Route>

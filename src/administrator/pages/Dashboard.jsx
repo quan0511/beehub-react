@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 function Dashboard() {
     return (
         <>
-        <ContentHeader title={'Dashboard'}/>
+        <ContentHeader title={'Dashboard'} pageName={'Dashboard'}/>
 
         <div className="admin-content">
             <div className="container-fluid">
