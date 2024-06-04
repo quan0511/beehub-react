@@ -2,7 +2,7 @@ import ContentHeader from "../components/ContentHeader";
 
 function ShopManagement() {
     return (<>
-        <ContentHeader title={'Shop'} />
+        <ContentHeader title={'Shop'} pageName={'Shop'} />
 
         <div className="admin-content">
             <div className="container-fluid">

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { People, Shop, Speedometer } from "react-bootstrap-icons";
 import { BsPostcard } from "react-icons/bs";
 import { GoReport } from "react-icons/go";
+import { GrGroup } from "react-icons/gr";
 import { Link, useLocation } from "react-router-dom";
 
 function SideBar({ setSidebarOpen }) {
@@ -27,6 +28,9 @@ function SideBar({ setSidebarOpen }) {
                         </li>
                         <li className="nav-item">
                             <Link to={'/admin/users'} className={`nav-link ${location.pathname == '/admin/users' && 'active'}`}><People className="me-2"/> Users</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to={'/admin/groups'} className={`nav-link ${location.pathname == '/admin/groups' && 'active'}`}><GrGroup className="me-2"/> Groups</Link>
                         </li>
                         <li className="nav-item">
                             <Link to={'/admin/posts'} className={`nav-link ${location.pathname == '/admin/posts' && 'active'}`}><BsPostcard className="me-2"/> Posts</Link>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function ContentHeader({ title }) {
+function ContentHeader({ title, pageName }) {
     return (
         <div className="admin-content-header">
             <div className="container-fluid">
@@ -10,8 +10,8 @@ function ContentHeader({ title }) {
                     </div>
                     <div className="col-sm-6">
                         <ol className="breadcrumb float-sm-end">
-                            {title !== 'Dashboard' && <li className="breadcrumb-item"><Link to={'/admin'}>Dashboard</Link></li>}
-                            <li className="breadcrumb-item active">{ title }</li>
+                            {pageName !== 'Dashboard' && <li className="breadcrumb-item"><Link to={'/admin'}>Dashboard</Link></li>}
+                            <li className="breadcrumb-item active">{ pageName }</li>
                         </ol>
                     </div>
                 </div>
