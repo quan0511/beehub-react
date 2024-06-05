@@ -5,7 +5,10 @@ import Post from "../../components/Post";
 import APIService from "../../features/APIService";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
-function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
+import {  useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import AddPost from "../../components/AddPost";
+function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
     const appUser = useSelector(selectCurrentUser);
     useEffect(() => {
         const onScroll = () => {
@@ -24,13 +27,16 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
           document.removeEventListener("scroll", onScroll);
         };
       }, [page, isFetching]);
+      const [showInputModal, setShowInputModal] = useState(false);
+        const handleOpenInputModal = () => setShowInputModal(true);
+        const handleCloseInputModal = () => setShowInputModal(false);
     return <Container fluid>
         <Row className="group-section">
             <Col xl={7} lg={8} md={10} sm={10} className="mx-sm-auto ms-lg-auto ms-sm-0 mx-md-auto " >
                 {
                     joined?
-                        <div className="border-1 rounded-2 border pe-2 text-start" style={{paddingTop:"10px", paddingLeft: "1px",boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
-                            <Form className="row" style={{padding: "10px 20px "}}>
+                        <div className="border-1 rounded-2 border pe-2 text-start" onClick={handleOpenInputModal} style={{paddingTop:"10px", paddingLeft: "1px",boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
+                            <div className="row" style={{padding: "10px 20px "}}>
                                 <label className="col-1 ms-2 me-1 col-form-label">
                                     {appUser.image!=null?
                                     <Image src={appUser.image} style={{width:"50px",height: "50px"}}roundedCircle />
@@ -41,10 +47,10 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                                     }
                                 </label>
                                 <div className='col-10 d-flex flex-row justify-content-center align-items-center'>
-                                    <input type="text" className="mx-auto form-control " style={{borderRadius: "30px", height:"35px"}} placeholder="Write something..."/>
+                                    <div type="text" className="mx-auto form-control " style={{borderRadius: "30px", height:"35px"}} >Write something...</div>
                                 </div>
                                 <div className='col-1'></div>
-                            </Form>
+                            </div>
                         </div>:<></>
                 }
                 {
@@ -55,6 +61,20 @@ function GroupDiscussion({posts, description, toAbout, toListMedia, list_media, 
                     :
                     <p className="text-black-50">There are no post in group</p>
                 }
+                <Modal className="postmodal" show={showInputModal} onHide={handleCloseInputModal} animation={false}>
+                    <div >
+                        <div >
+                        <Modal.Header className="classmodalheader"  closeButton>
+                            <Modal.Title className="modalpost-title">
+                                    Write New Post
+                            </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body >
+                            <AddPost group={group} handleCloseModal={handleCloseInputModal} />
+                            </Modal.Body>
+                            </div>
+                        </div>
+                    </Modal>
             </Col>
             <Col xl={4} lg={4} className="d-lg-none d-none d-xl-block me-xl-auto " >
                 <div className="border rounded-2 text-start px-4 mb-3" style={{paddingTop:"10px", paddingLeft: "15px",marginTop: "200px", boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
-import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
+import {Col, Image} from "react-bootstrap";
+import {Dot} from 'react-bootstrap-icons';
 import '../css/post.css';
 import { Link } from "react-router-dom";
 import APIService from "../features/APIService";

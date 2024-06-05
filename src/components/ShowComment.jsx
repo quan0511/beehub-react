@@ -7,10 +7,12 @@ import { PiShareFat} from "react-icons/pi";
 import '../css/showcomment.css';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
-import {  useAddLikePostMutation, useCommentQuery, useDeleteLikeMutation, useGetUserQuery, usePostCommentMutation, useUpdateLikePostMutation } from '../post/postApiSlice';
+import {  useAddLikePostMutation, useCommentQuery, useDeleteLikeMutation, useGetUserFriendQuery, useGetUserQuery, usePostCommentMutation, useUpdateLikePostMutation } from '../post/postApiSlice';
 import Comment from './Comment';
 import ShareForm from './ShareForm';
 import Showcommentshare from './Showcomentshare';
+import {Image} from "react-bootstrap";
+import APIService from '../features/APIService';
 function ShowComment({
   setFromSharePost,formSharePost,getPostById,
   postIdco,getLikeUser,countLike,checkLike,getEnumEmo,refetchCountComment,refetchGetLikeUser,refetchCountLike,refetchCheckLike,refetchGetEnumEmo
@@ -18,6 +20,7 @@ function ShowComment({
   const {data:getComment,refetch:refetchGetComment} = useCommentQuery({id:postIdco.id})
   const [createComment] = usePostCommentMutation();
   const user = useSelector(selectCurrentUser);
+  const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
   const [addLike] = useAddLikePostMutation();
   const [deleteLike] = useDeleteLikeMutation();
   const [updateLike] = useUpdateLikePostMutation();
@@ -42,6 +45,7 @@ function ShowComment({
       return `${secondsDifference} seconds ago`;
     }
   };
+  console.log("post",postIdco);
   const [showShareModal, setShowShareModal] = useState({});
     const handleShareClose = (id) => {
       setShowShareModal((prevState) => ({
@@ -97,35 +101,38 @@ function ShowComment({
   const commentTagLink = (comments) => {
     return /tag=.*&link=/.test(comments);
   };
-  const renderCommentWithLink = (comments) => {
-    let result = [];
-    let startIndex = 0;
-    const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
-    let match;
-    while((match = regex.exec(comments)) != null){
-      const tagName = match[1].trim();
-      const link = match[2].trim();
-      result.push(comment.substring(startIndex, match.index));
-      result.push(
-        <span key={startIndex}>
-          <Link to={link}>{tagName}</Link>
-        </span>
-      );
-      startIndex = match.index + match[0].length;
+  const renderCommentWithLink = (comment) => {
+    if (typeof comment === 'string') {
+      const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+      let match;
+      const result = [];
+      let lastIndex = 0;
+      while ((match = regex.exec(comment)) !== null) {
+        const [fullMatch, tagName, link] = match;
+        const beforeTag = comment.substring(lastIndex, match.index);
+        result.push(beforeTag, (
+          <Link key={match.index} to={"/member/profile/" + link}>
+            {tagName}
+          </Link>
+        ));
+        lastIndex = regex.lastIndex;
+      }
+      const restOfString = comment.substring(lastIndex);
+      result.push(restOfString);
+      return result;
+    } else {
+      return comment;
     }
-    result.push(comment.substring(startIndex));
-    return <>{result}</>;
   }; 
+  
   function handleInput(inputId, divId, formType) {
     const inputElement = document.getElementById(divId);
     const ulElement = document.getElementById(`${divId}-ul`) ;
     let userInput = inputElement.textContent?.trim() || "";
     userInput = userInput.replace(/\s+/g, ' ');
-  
     setContent(userInput.length > 0);
     const caretPosition = getCaretPosition(inputElement);
     const filteredText = getFilterText(userInput);
-  
     Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
       const a = li.getElementsByTagName("a")[0];
       const txtValue = a.textContent || a.innerText;
@@ -135,7 +142,6 @@ function ShowComment({
         li.style.display = "none";
       }
     });
-  
     ulElement.style.display = userInput.includes("@") ? "block" : "none";
     const commentInputElement = document.getElementById(inputId) ;
     const allContent = Array.from(inputElement.childNodes).map(node => {
@@ -159,7 +165,6 @@ function ShowComment({
     } else if (formType === "reComment") {
       setFormReComment({ ...formReComment, reaction: allContent.trim() });
     }
-  
     commentInputElement.value = allContent.trim();
     setCaretPosition(inputElement, caretPosition);
   }
@@ -167,7 +172,6 @@ function ShowComment({
     // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
     const regex = /^@(.+)|\s@(.+)/;
     const match = inputValue.match(regex);
-  
     // Nếu có kết quả, trả về phần mong muốn, ngược lại trả về toàn bộ chuỗi
     return match ? match[1] || match[2] || "" : inputValue;
   }
@@ -187,10 +191,8 @@ function ShowComment({
         const textNode = document.createTextNode("");
         element.appendChild(textNode);
     }
-
     // Lấy nút con cuối cùng của element
     const lastChild = element.childNodes[element.childNodes.length - 1];
-
     // Kiểm tra xem lastChild có phải là nút văn bản không
     if (lastChild.nodeType === Node.TEXT_NODE) {
         // Đặt vị trí caret
@@ -205,22 +207,19 @@ function ShowComment({
         selection.removeAllRanges();
         selection.addRange(range);
     }
-}
-  
+}  
 function selectName(selectedName, inputId, divId) {
   const currentInput = document.getElementById(divId);
   let currentValue = currentInput.textContent?.trim() || "";
   currentValue = currentValue.replace(/&nbsp;/g, '');
   currentValue = currentValue.replace(/\s+/g, ' ');
   const newValue = getOverwrittenText(currentValue, selectedName);
-
   const commentInputElement = document.getElementById(inputId) ;
   if (commentInputElement) { // Kiểm tra phần tử trước khi đặt giá trị
     commentInputElement.value = newValue;
   } else {
     console.error(`Element with id ${inputId} not found`);
   }
-
   currentInput.innerHTML = "";
   newValue.split(" ").forEach((word, index, array) => {
     const span = document.createElement("span");
@@ -230,7 +229,7 @@ function selectName(selectedName, inputId, divId) {
     if (isInList(word, divId)) {
       span.contentEditable = "false";
       span.classList.add("selected");
-      const link = `http://${word}`;
+      const link = `${word}`;
       span.setAttribute("data-link", link);
     } else {
       span.contentEditable = "true";
@@ -334,11 +333,12 @@ const handleBlur = (e) => {
     post: postIdco.id,
     user:user?.id,
   })
+  console.log("user",getUserFriend);
     return(
         <div className="modalshowpostandcomment">
               <div key={postIdco.id} className="modelkhung">           
                 <div className="modalright-img ">
-                <Modal.Header  closeButton>
+                <Modal.Header className="classmodalheader" closeButton>
                   <Modal.Title className="modaltitleshowcomment">
                     Post
                   </Modal.Title>
@@ -346,6 +346,12 @@ const handleBlur = (e) => {
                 <Modal.Body className="modalbodyshowcomment">
                   <div className="modalshowcomment-anhtentime">
                     <div className="modalanhdaidien">
+                      {postIdco.user_gender=='female'?(
+                        <Link to={"/member/profile/"+postIdco.user_username}>
+                        <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                      ):(
+                        <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                      )}
                     </div>
                     <div className="modalnametime">
                       <div className="modalname">{postIdco.user_username}</div>
@@ -442,8 +448,8 @@ const handleBlur = (e) => {
                     </div>
                   </div>
                   <Modal show={showShareModal[postIdco.id]} onHide={() =>handleShareClose(postIdco.id)}>
-                      <Modal.Header closeButton>
-                          <Modal.Title>Chia sẻ bài viết</Modal.Title>
+                      <Modal.Header className="classmodalheader" closeButton>
+                          <Modal.Title >Share Post</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                       <ShareForm post={postIdco} handleShareClose={handleShareClose} setFromSharePost={setFromSharePost} formSharePost={formSharePost} show={showShareModal} handleClose={handleShareClose} />
@@ -463,16 +469,16 @@ const handleBlur = (e) => {
                       <input type="hidden" name="comment" value={formComment.comment} onChange={(e) => handleChangeComment(e)} id="newCommentInput" />
                       <div>
                       <div className="divcomment" id="newMyInput" contentEditable="true" onInput={() => handleInput('newCommentInput', 'newMyInput','comment')}data-text="Input Comment" onFocus={handleFocus} onBlur={handleBlur}></div>
-                      <ul id="newMyInput-ul" className="myul" >
-                      {/* {users.map((user) => (
-                        <li onClick={() => selectName(user.name, 'newCommentInput', 'newMyInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                      ))} */}
-                    </ul>
                       </div>
                       <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
                       <input type="hidden" name="createdAt" value={formComment.createdAt} onChange={(e) => handleChangeComment(e)} />
                       <button type="submit" className="commentpost" value="Comment"><IoMdSend className="iconcomment"/></button>
                     </form>
+                    <ul id="newMyInput-ul" className="myul" >
+                      {getUserFriend?.map((user) => (
+                        <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} ><a>{user.username}</a></li>
+                      ))}
+                    </ul>
                   </div>
                 </Modal.Body>
                 </div>

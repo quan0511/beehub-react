@@ -60,16 +60,17 @@
     border: none;
     outline: none;
 }
-#myUL {
+.myuladd {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    width: 30%;
+    width: 484px;
     position: absolute;
     z-index: 100;
-}
-
-#myUL li a {
+    display: none;
+    right: 8px;
+  }
+.myuladd  li a {
     border: 1px solid #ddd;
     margin-top: -1px; /* Prevent double borders */
     background-color: #f6f6f6;
@@ -79,17 +80,22 @@
     color: black;
     display: block;
 }
-.myul {
-    display: none;
+.myuladd li a:hover:not(.header) {
+    background-color: #8224e3;
+    color: white;
 }
-
-#myUL li a:hover:not(.header) {
-    background-color: #eee;
+.uladdpost{
+    position: relative;
+    margin-right: 20px;
+}
+.classmodalheader{
+    background-color: #8224e3;
+    color: white;
 }
 .modalpost-image{
     display: flex;
     position: relative;
-    top: 10px;
+    margin-top: 10px;
     border: 1px solid grey;
     border-radius: 5px;
 }
