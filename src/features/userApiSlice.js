@@ -111,6 +111,11 @@ export const userApiSlice = apiSlice.injectEndpoints({
             return currentArg !== previousArg
             },
         }),
+        getReportTypes: builder.query({
+            query: ()=>({
+                url: `/report-type`
+            })
+        }),
         searching: builder.query({
             query: ({id,search,reset})=>({
                 url: `/user/${id}/search_all?search=${search}`
@@ -182,6 +187,16 @@ export const userApiSlice = apiSlice.injectEndpoints({
                     formData: true
                 }
             }
+        }),
+        createReport: builder.mutation({
+            query: ({id,data})=>{
+                console.log(data);
+                return {
+                    url: "/user/create-report/"+id,
+                    method: "POST",
+                    body: data
+                }
+            }
         })
     })
 })
@@ -194,6 +209,7 @@ export const {
     useListgroupQuery,
     useGroupInfoQuery,
     useGroupPostsQuery,
+    useGetReportTypesQuery,
     useProfileQuery,
     useCheckUsernameQuery,
     useCheckSetUpPostsQuery,
@@ -204,5 +220,6 @@ export const {
     useUploadBackgroundProfileMutation,
     useUploadImageGroupMutation,
     useUploadBgGroupMutation,
-    useCreateGroupMutation
+    useCreateGroupMutation, 
+    useCreateReportMutation
 } = userApiSlice

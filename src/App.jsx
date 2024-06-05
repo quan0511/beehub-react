@@ -24,7 +24,7 @@ import { AccountSetting } from "./pages/Setting/AccountSetting"
 import { GroupCreatePage } from "./pages/Group/GroupCreatePage"
 import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
 import Shop from "./pages/Shop/Shop"
-
+import NotFoundGroup from "./pages/Group/NotFoundGroup"
 function App() {
   return (
     <Routes>
@@ -52,6 +52,7 @@ function App() {
           <Route path=':id' element={<Group />} />
           <Route path='manage/:id' element={<GroupManagementPage />} />
           <Route path="create-group" element={<GroupCreatePage />}/>
+          <Route  element={<NotFoundGroup/>} />
         </Route>
 
         <Route path='/shop' element={<Layout />} >

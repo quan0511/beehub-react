@@ -1,12 +1,11 @@
 import React from "react";
-import { Image, ListGroup } from "react-bootstrap";
+import { Badge, Image, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import APIService from "../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 function ListFriend ({friends}){
     const dispatch = useDispatch();
     const loading = useSelector(state=> state.friends);
-    console.log(friends);
     return (
         <ListGroup className=" w-100" >
             {friends.map((e,index)=>{
@@ -20,7 +19,14 @@ function ListFriend ({friends}){
                         fontWeight: "500"
                     }} to={"/member/profile/"+e.username}>
                         <Image src={imageSrc} style={{marginRight: "15px",width:"37px",height: "37px"}} roundedCircle />
-                        {e.fullname}
+                        {e.fullname} 
+                        {
+                            e._banned?
+                            <Badge pill bg="danger" className="ms-4">
+                                Banned
+                            </Badge>
+                            :<></>
+                        }
                     </Link>
                 </ListGroup.Item>
             })}

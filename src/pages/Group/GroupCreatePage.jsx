@@ -120,7 +120,7 @@ export const GroupCreatePage =()=>{
                                     <span className="text-danger">{errors.description}</span>
                                 )}  
                             </Form.Group>
-                            <Form.Select defaultValue={values.public} className="mb-3" >
+                            <Form.Select defaultValue={values.public} onChange={handleChange}   className="mb-3" >
                                 <option value="true">Public</option>
                                 <option value="false">Private</option>
                             </Form.Select>
