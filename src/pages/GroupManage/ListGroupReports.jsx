@@ -40,7 +40,7 @@ export const ListGroupReports =({reports,user_id,group_id})=>{
                             className="d-flex justify-content-between align-items-start"
                         >
                             <div className="ms-2 me-auto d-flex flex-column">
-                                <div className="fw-bold fs-5">From <Link to={"/member/profile/"+report.sender.username}>{report.sender.fullname}</Link></div>
+                                <div className="fs-5">From <Link className="fw-bold " to={"/member/profile/"+report.sender.username}>{report.sender.fullname}</Link> <span>report post </span> {report.type.title}</div>
                                 {report.target_post!=null?
                                     <div className="border-top-1">
                                         <Card className="px-0 pt-2 pb-3">

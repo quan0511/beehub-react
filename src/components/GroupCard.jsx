@@ -37,8 +37,8 @@ const GroupCard =({group,image})=>{
                         return (
                             <Col xl="4" lg={4} md={4} sm={4} xs={5}className="d-flex flex-row justify-content-start align-items-center">
                                 <Form.Select aria-label="Setting Phone number"  onChange={()=>{handleButton("TOGGLE_ACTIVE_GROUP",appUser.id)}} >
-                                    <option value="true">Active</option>
                                     <option value="false">Deactive</option>
+                                    <option value="true">Active</option>
                                 </Form.Select>
                             </Col>
                         );
