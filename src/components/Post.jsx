@@ -1,24 +1,30 @@
 import React, { useRef, useState } from "react";
-import { Button, Col, Image, ListGroup, Overlay, Row } from "react-bootstrap";
+import { Button, Col, Form, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
-import { Link } from "react-router-dom";
+import { Link, json } from "react-router-dom";
 import '../css/post.css';
 import { MdReport,MdModeEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { selectCurrentUser } from "../auth/authSlice";
+import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
 import { useAddLikePostMutation, useCheckLikeQuery, useCountCommentQuery, useCountLikeQuery, useDeleteLikeMutation, useDeletePostMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useSharePostMutation, useUpdateLikePostMutation } from "../post/postApiSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
+import { Formik } from "formik";
+import * as Yup from 'yup';
+import { refresh } from "../features/userSlice";
 import ListLike from "./ListLike";
 import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
+import { useCreateReportMutation, useGetReportTypesQuery } from "../features/userApiSlice";
+import axios from "axios";
 function Post ({post, page,refetchHomePage}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
   //const {data: post} = useFetchPostQuery({id:post.id})
+  const token = useSelector(selectCurrentToken);
     const [addLike] = useAddLikePostMutation();
     const [deleteLike] = useDeleteLikeMutation();
     const [updateLike] = useUpdateLikePostMutation();
@@ -30,9 +36,14 @@ function Post ({post, page,refetchHomePage}){
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
+    const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
+    const {data: reportTypes} = useGetReportTypesQuery();
     const [movePostId,setMovePostId] = useState(null);
+    const [showReport,setShowReport] = useState(false);
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
+    const [targetReport, setTargetReport] = useState(null);
+    const dispatch = useDispatch();
     const handleCloseEditPost = (id) => {
       setShowEditPost((prevState) => ({
         ...prevState,
@@ -284,10 +295,13 @@ function Post ({post, page,refetchHomePage}){
                      </div>
                    ):(
                      <div className="togglePost">
-                       <div className="selectedfunction" >
-                         <div><MdReport className="iconefunctionpost" /></div>
-                         <div className="fonttextfunctionpost">Report</div>
-                       </div>
+                       {post.user_id != user.id?
+                        <div className="selectedfunction" onClick={()=> setShowReport(true)}>
+                          <div><MdReport className="iconefunctionpost" /></div>
+                          <div className="fonttextfunctionpost">Report</div>
+                        </div>
+                         :<></>
+                       }
                        <div className="selectedfunction" >
                          <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
                          <div className="fonttextfunctionpost">chưa biết</div>
@@ -428,9 +442,74 @@ function Post ({post, page,refetchHomePage}){
                           [post.id]: false,
                         }))
                       } animation={false}>
-                      <ShowComment setFromSharePost={setFromSharePost} getPostById={getPostById} formSharePost={formSharePost} refetchGetLikeUser={refetchGetLikeUser} refetchCountLike={refetchCountLike} refetchCheckLike={refetchCheckLike} refetchGetEnumEmo={refetchGetEnumEmo}
-                      refetchCountComment={refetchCountComment}
-                      postIdco={post} getEnumEmo={getEnumEmo} getLikeUser={getLikeUser} countLike={countLike} checkLike={checkLike}/>
+                      <ShowComment postIdco={post}/>
+                    </Modal>
+                    <Modal show={showReport} onHide={()=>setShowReport(false)}>
+                      <Modal.Header className="text-center" closeButton>
+                        <Modal.Title>Report</Modal.Title>
+                      </Modal.Header>
+                    <Formik
+                        initialValues={{
+                          sender_id: user.id,
+                          user_username: post.user_username,
+                          target_group_id: post.group_id,
+                          target_post_id: post.id,
+                          type_id: targetReport,
+                          add_description: ""
+                        }}
+                        onSubmit={async (values, { ...props }) => {
+                            try {
+                                if(targetReport==null){
+                                  props.setErrors({type_id : "Type Report is required"});
+                                }else{
+                                  values.type_id = targetReport;
+                                  console.log(JSON.stringify(values));
+                                  let respon= await createReport({id:user.id,data:values });
+                                  dispatch(refresh());
+                                  setShowReport(false);
+                                }
+                            } catch (error) {
+                                console.error('An error occurred while submitting the form.', error);
+                            }
+                        }}
+                    > {({ handleSubmit, handleChange, values, touched, errors }) => (
+                      <Form noValidate onSubmit={handleSubmit}>
+                      <Modal.Body>
+                             <Form.Label>Please select a problem</Form.Label>
+                             <Form.Select name="report_type" aria-label="select report type" defaultValue={values.type_id} className="mb-3"
+                                isInvalid={!!errors.type_id}
+                              onChange={(e)=>{
+                                let valueId = e.target.value;
+                                let des = reportTypes.find((element) => element.id == valueId);
+                                document.getElementById("descriptionReport").innerText = des.description;
+                                setTargetReport(valueId);
+                             }}>
+                              <option>Open this select menu</option>
+                              { reportTypes!=null && reportTypes.length !=0?
+                                reportTypes.map((re, index)=>{
+                                  return <option key={re.id} value={re.id}>{re.title}</option>
+                                })
+                                :<></>
+                              }
+                            </Form.Select>
+                            {errors.type_id && touched.type_id && (
+                                  <span className="text-danger">{errors.type_id}</span>
+                              )}
+                            <div id="descriptionReport" className="mb-3"></div>
+                            <Form.Control as="textarea" rows={3}  name="add_description"  className="mb-3"
+                                defaultValue={values.add_description} onChange={handleChange} />
+                          
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={()=>setShowReport(false)}>
+                          Close
+                        </Button>
+                        <Button variant="primary" type="submit">
+                          Send Report
+                        </Button>
+                      </Modal.Footer>
+                      </Form>
+                      )}</Formik>
                     </Modal>
                 </Col>
             </Row>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {  Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { GeneralSetting } from "./GeneralSetting";
 import { ListMember } from "./ListMember";
@@ -18,13 +18,18 @@ export const GroupManagementPage=()=>{
     const token = useSelector(selectCurrentToken);
     const {id} =useParams();
     const dispatch = useDispatch();
+    const navigator = useNavigate();
     const reset = useSelector((state)=>state.user.reset);
     const {data: group} =useGroupInfoQuery({id_user: appUser.id, id_group: id,reset: reset});
     const [checkMember ,setCheckMember] =useState(false);
    
     const handleButton= async(typeClick,user_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {receiver_id: user_id, group_id: group.id, type: typeClick },token);
+        console.log(resp.response);
         if(resp.result!='unsuccess'||resp.result != 'error'){
+            if(resp.response=="RETIRE"){
+                navigator("/group/"+id);
+            }
             dispatch(refresh())
         }
     }
