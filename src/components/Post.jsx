@@ -384,7 +384,7 @@ function Post ({post, page,refetchHomePage}){
                 </Modal>
                 <Col md={8} lg={8} xl={8} sm={8} xs={6} className="d-flex flex-row justify-content-end align-items-center">
                     <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>{countComment} <span className="d-none d-md-block ">comments</span><span className="d-md-none"><ChatLeft/></span></p>
-                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">23 <span className="d-none d-md-block ">shares</span><span className="d-md-none"><Shuffle/></span></p>                
+                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">0 <span className="d-none d-md-block ">shares</span><span className="d-md-none"><Shuffle/></span></p>                
                 </Col>
                 <hr className="mx-auto"style={{ width:"90%"}} />
                 <Col xl={12} className="row pb-2 posticonbinhluan-all">
