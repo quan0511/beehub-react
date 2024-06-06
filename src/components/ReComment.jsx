@@ -100,8 +100,8 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
     }
     const handleSubmitEditReComment = async(e) =>{
       e.preventDefault();
-      const inputElement = document.getElementById(`editReMyInput-${formEditReComment.id}`);
-      const userInput = formEditReComment.reaction;
+      const inputElement = document.getElementById(`editReCommentInput-${recomment.id}`);
+      const userInput = inputElement.value;
       const updateReComment = {
         ...formEditReComment,
         reaction:userInput
@@ -142,47 +142,47 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       }, []);
       function handleInput(inputId, divId, formType) {
         const inputElement = document.getElementById(divId);
-        const ulElement = document.getElementById(`${divId}-ul`) ;
+        const ulElement = document.getElementById(`${divId}-ul`);
         let userInput = inputElement.textContent?.trim() || "";
         userInput = userInput.replace(/\s+/g, ' ');
-      
         setContent(userInput.length > 0);
         const caretPosition = getCaretPosition(inputElement);
         const filteredText = getFilterText(userInput);
-      
         Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
-          const a = li.getElementsByTagName("a")[0];
-          const txtValue = a.textContent || a.innerText;
-          if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
-            li.style.display = "";
-          } else {
-            li.style.display = "none";
-          }
-        });   
-        ulElement.style.display = userInput.includes("@") ? "block" : "none";
-        const commentInputElement = document.getElementById(inputId) ;
-        const allContent = Array.from(inputElement.childNodes).map(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent?.trim() || "";
-          } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
-            const span = node ;
-            if (span.classList.contains("selected")) {
-              const spanText = span.textContent?.trim() || "";
-              const link = span.getAttribute("data-link") || "";
-              return `tag=${spanText}&link=${link}`;
+            const a = li.getElementsByTagName("a")[0];
+            const txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
+                li.style.display = "";
             } else {
-              return span.textContent?.trim() || "";
+                li.style.display = "none";
             }
-          }
-          return "";
+        });
+        ulElement.style.display = userInput.includes("@") ? "block" : "none";
+        const commentInputElement = document.getElementById(inputId);
+        const allContent = Array.from(inputElement.childNodes).map(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                return node.textContent?.trim() || "";
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
+                const span = node;
+                if (span.classList.contains("selected")) {
+                    const spanText = span.textContent?.trim() || "";
+                    const link = span.getAttribute("data-link") || "";
+                    return `tag=${spanText}&link=${link}`;
+                } else {
+                    return span.textContent?.trim() || "";
+                }
+            }
+            return "";
         }).join(" ");
-      
-        if (formType === "reComment") {
-          setFormComment({ ...formEditReComment, reaction: allContent.trim() });
-        } 
+        console.log("allContent:", allContent);
+        if (formType === "comment") {
+            setFormComment({ ...formComment, comment: allContent.trim() });
+        } else if (formType === "reComment") {
+            setFormReComment({ ...formReComment, reaction: allContent.trim() });
+        }
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
-      }
+    }
       function getFilterText(inputValue) {
         // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
         const regex = /^@(.+)|\s@(.+)/;
@@ -225,6 +225,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
+  
       const newValue = getOverwrittenText(currentValue, selectedName);
       const commentInputElement = document.getElementById(inputId);
       if (!commentInputElement) {
@@ -232,32 +233,27 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
           return;
       }
       commentInputElement.value = newValue;
-      currentInput.innerHTML = "";
+      currentInput.innerHTML = ""; // Xóa nội dung hiện tại
       newValue.split(" ").forEach((word, index, array) => {
-          const span = document.createElement("span");
-          const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-          span.textContent = wordWithSpaces;
-          if (isInList(word, divId)) {
-              span.contentEditable = "false";
-              span.classList.add("selected");
-              const link = `http://${word}`;
-              span.setAttribute("data-link", link);
-          } else {
-              span.contentEditable = "true";
-          }
-          currentInput.appendChild(span);
-          if (index < array.length - 1) {
-              const space = document.createTextNode(" ");
-              currentInput.appendChild(space);
-          }
-      });
-      const spans = currentInput.querySelectorAll("span");
-      spans.forEach(span => {
-          if (span.textContent?.trim() === selectedName.trim()) {
-              span.contentEditable = "false";
-              span.classList.add("selected");
-              const link = `http://${selectedName}`;
-              span.setAttribute("data-link", link);
+          if (word.trim() !== "") {
+              const span = document.createElement("span");
+              const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+              span.textContent = wordWithSpaces;
+  
+              // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+              if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+                  span.contentEditable = "false";
+                  span.classList.add("selected");
+                  const link = `${word.trim()}`;
+                  span.setAttribute("data-link", link);
+              } else {
+                  span.contentEditable = "true";
+              }
+              currentInput.appendChild(span);
+              if (index < array.length - 1) {
+                  const space = document.createTextNode(" ");
+                  currentInput.appendChild(space);
+              }
           }
       });
       const event = new Event('input', {
@@ -331,7 +327,22 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
                   </div>
                 <ul id={`editReMyInput-${recomment.id}-ul`} className="myul" >
                     {getUserFriend?.map((user) => (
-                      <li onClick={() => selectName(user.username, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)} ><a>{user.fullname}</a></li>
+                      <li  onClick={() => selectName(user.username, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)}>
+                        <a>
+                          <div className="showuserlicomment">
+                            <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                            <Link className="showuserlianhrecomment"  to={"/member/profile/"+postIdco.user_username}>
+                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            ):(
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            )}
+                            </div>
+                            <div className="showuserliname">
+                              {user.fullname}
+                            </div>
+                          </div>
+                        </a>
+                      </li>
                     ))}
                 </ul>
                 </div>

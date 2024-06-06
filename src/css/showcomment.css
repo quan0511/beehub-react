@@ -180,6 +180,7 @@
     background-color: #F0F2F5;
     border-radius: 10px;
     height: 80%;
+    max-width: 530px;
 }
 .modal-showbinhluanname{
     position: relative;
@@ -557,5 +558,30 @@
   .selected {
     pointer-events: none; /* Ngăn chặn sự kiện click */
     background-color: #ccc; /* Đặt màu nền */
+  }
+  .showuserli{
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .showuserlicomment{
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 20px;
+  }
+  .showuserlianhcomment{
+    position: relative;
+    /* border: none; */
+    background-color: transparent !important;
+    border: none !important;
+  }
+  .showuserlianhrecomment{
+    position: relative;
+    height: -11px;
+    bottom: 0px;
+    /* border: none; */
+    background-color: transparent !important;
+    border: none !important;
   }
 

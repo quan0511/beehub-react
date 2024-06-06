@@ -313,7 +313,9 @@ function getOverwrittenText(currentInput, selectedName){
         </div>    
         <ul id="myUL" className="myuladd " >
           {getUserFriend?.map((user) => (
-            <li onClick={() => selectName(user.username)}><a >{user.fullname}</a></li>
+            <li onClick={() => selectName(user.username)}>
+              <a >{user.fullname}</a>
+            </li>
           ))}
         </ul>
         

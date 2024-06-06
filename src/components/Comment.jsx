@@ -88,11 +88,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         }
         const handleSubmitEditComment = async(e) =>{
           e.preventDefault();
-          const inputElement = document.getElementById(`editMyInput-${formEditComment.id}`) ;
-          const userInput = inputElement.textContent?.trim() || "";
+          const inputElement = document.getElementById(`editCommentInput-${comment.id}`);
+          const userInput = inputElement.value;
           const updateComment = {
             ...formEditComment,
-            comment:userInput
+            comment: userInput
           };
           console.log("edit",updateComment)
           try{
@@ -202,23 +202,15 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           console.error(error)
         }
       };
-    useEffect(() => {
-        const inputElement = document.getElementById("myInput") ;
-        if (inputElement) {
-          const initialContent = inputElement.textContent?.trim() || "";
-          setContent(initialContent.length > 0);
-        }
-      }, []);
+
       function handleInput(inputId, divId, formType) {
         const inputElement = document.getElementById(divId);
         const ulElement = document.getElementById(`${divId}-ul`);
-        let userInput = inputElement.textContent?.trim() || "";
+        let userInput = inputElement.innerHTML.trim() || "";
         userInput = userInput.replace(/\s+/g, ' ');
-    
         setContent(userInput.length > 0);
         const caretPosition = getCaretPosition(inputElement);
         const filteredText = getFilterText(userInput);
-    
         Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
             const a = li.getElementsByTagName("a")[0];
             const txtValue = a.textContent || a.innerText;
@@ -228,9 +220,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                 li.style.display = "none";
             }
         });
-    
         ulElement.style.display = userInput.includes("@") ? "block" : "none";
-    
         const commentInputElement = document.getElementById(inputId);
         const allContent = Array.from(inputElement.childNodes).map(node => {
             if (node.nodeType === Node.TEXT_NODE) {
@@ -247,15 +237,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             }
             return "";
         }).join(" ");
-    
-        console.log("allContent:", allContent);
-    
         if (formType === "comment") {
             setFormComment({ ...formComment, comment: allContent.trim() });
         } else if (formType === "reComment") {
             setFormReComment({ ...formReComment, reaction: allContent.trim() });
         }
-    
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
     }
@@ -281,7 +267,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             const textNode = document.createTextNode("");
             element.appendChild(textNode);
         }
-    
         const lastChild = element.childNodes[element.childNodes.length - 1];
     
         // Kiểm tra xem lastChild có phải là nút văn bản không
@@ -304,48 +289,44 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
+  
       const newValue = getOverwrittenText(currentValue, selectedName);
       const commentInputElement = document.getElementById(inputId);
       if (!commentInputElement) {
-        console.error(`Element with id ${inputId} not found`);
-        return;
+          console.error(`Element with id ${inputId} not found`);
+          return;
       }
       commentInputElement.value = newValue;
-      currentInput.innerHTML = "";
+      currentInput.innerHTML = ""; // Xóa nội dung hiện tại
       newValue.split(" ").forEach((word, index, array) => {
-        const span = document.createElement("span");
-        const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-        span.textContent = wordWithSpaces;
-        if (isInList(word, divId)) {
-          span.contentEditable = "false";
-          span.classList.add("selected");
-          const link = `http://${word}`;
-          span.setAttribute("data-link", link);
-        } else {
-          span.contentEditable = "true";
-        }
-        currentInput.appendChild(span);
-        if (index < array.length - 1) {
-          const space = document.createTextNode(" ");
-          currentInput.appendChild(space);
-        }
-      });
-      const spans = currentInput.querySelectorAll("span");
-      spans.forEach(span => {
-        if (span.textContent?.trim() === selectedName.trim()) {
-          span.contentEditable = "false";
-          span.classList.add("selected");
-          const link = `http://${selectedName}`;
-          span.setAttribute("data-link", link);
-        }
+          if (word.trim() !== "") {
+              const span = document.createElement("span");
+              const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+              span.textContent = wordWithSpaces;
+  
+              // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+              if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+                  span.contentEditable = "false";
+                  span.classList.add("selected");
+                  const link = `${word.trim()}`;
+                  span.setAttribute("data-link", link);
+              } else {
+                  span.contentEditable = "true";
+              }
+              currentInput.appendChild(span);
+              if (index < array.length - 1) {
+                  const space = document.createTextNode(" ");
+                  currentInput.appendChild(space);
+              }
+          }
       });
       const event = new Event('input', {
-        bubbles: true,
-        cancelable: true,
+          bubbles: true,
+          cancelable: true,
       });
       currentInput.dispatchEvent(event);
       (document.getElementById(`${divId}-ul`)).style.display = "none";
-    }
+  }
     function isInList(word, divId) {
       const ulElement = document.getElementById(`${divId}-ul`) ;
       const listItems = ulElement.getElementsByTagName("li");
@@ -414,7 +395,22 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                 </div>
                 <ul id={`editMyInput-${comment.id}-ul`} className="myul" >
                   {getUserFriend?.map((user) => (
-                    <li onClick={() => selectName(user.username, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}><a>{user.fullname}</a></li>
+                    <li onClick={() => selectName(user.username, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}>
+                      <a>
+                        <div className="showuserlicomment">
+                          <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                          <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          ):(
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          )}
+                          </div>
+                          <div className="showuserliname">
+                            {user.fullname}
+                          </div>
+                        </div>
+                      </a>
+                    </li>
                   ))}
                 </ul>
                 </div>
@@ -460,7 +456,22 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           <div className="divRecomment" id="RemyInput" contentEditable="true" onInput={() => handleInput('RecommentInput', 'RemyInput', 'reComment')}></div>
           <ul id="RemyInput-ul" className="myul ulrecoment" >
             {getUserFriend?.map((user) => (
-              <li onClick={() => selectName(user.username, 'RecommentInput', 'RemyInput')}><a>{user.username}</a></li>
+              <li onClick={() => selectName(user.username, 'RecommentInput', 'RemyInput')}>
+                <a>
+                  <div className="showuserlicomment">
+                    <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                    <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                    ):(
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                </a>
+              </li>
             ))}
           </ul>
           </div>

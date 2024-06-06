@@ -45,7 +45,6 @@ function ShowComment({
       return `${secondsDifference} seconds ago`;
     }
   };
-  console.log("post",postIdco);
   const [showShareModal, setShowShareModal] = useState({});
     const handleShareClose = (id) => {
       setShowShareModal((prevState) => ({
@@ -91,13 +90,7 @@ function ShowComment({
         console.error(error)
       }
     };
-  useEffect(() => {
-    const inputElement = document.getElementById("myInput") ;
-    if (inputElement) {
-      const initialContent = inputElement.textContent?.trim() || "";
-      setContent(initialContent.length > 0);
-    }
-  }, []);
+
   const commentTagLink = (comments) => {
     return /tag=.*&link=/.test(comments);
   };
@@ -333,7 +326,6 @@ const handleBlur = (e) => {
     post: postIdco.id,
     user:user?.id,
   })
-  console.log("user",getUserFriend);
     return(
         <div className="modalshowpostandcomment">
               <div key={postIdco.id} className="modelkhung">           
@@ -476,7 +468,24 @@ const handleBlur = (e) => {
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
-                        <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} ><a>{user.username}</a></li>
+                        <div>
+                        <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                          <a>
+                            <div className="showuserli">
+                              <div className="showuserlianhcomment"> {postIdco.user_gender=='female'?(
+                              <Link to={"/member/profile/"+postIdco.user_username}>
+                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              ):(
+                                <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              )}
+                              </div>
+                              <div className="showuserliname">
+                                {user.fullname}
+                              </div>
+                            </div>
+                            </a>
+                          </li>
+                        </div>
                       ))}
                     </ul>
                   </div>
