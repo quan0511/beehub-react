@@ -51,7 +51,8 @@ function Group (){
                                             isActive={group.active} 
                                             page={page}
                                             setPage={setPage}
-                                            isFetching={isFetching}/>;
+                                            isFetching={isFetching}
+                                            group={group}/>;
                 }
                 return <GroupError/>
             case "people":

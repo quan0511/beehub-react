@@ -104,10 +104,28 @@ export const postApiSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ['CountLike']
         }),
+        countShare:builder.query({
+            query:({id}) =>({
+                url:POST_URL + '/countshare' + `/${id}`
+            }),
+            providesTags: ['CountShare']
+        }),
         countReaction:builder.query({
             query:({id}) =>({
                 url: POST_URL + '/recomment/comment' + `/${id}`,
-            })
+            }),
+            providesTags: ['CountReaction']
+        }),
+        countReactionByPost:builder.query({
+            query:({id}) =>({
+                url: POST_URL + '/reaction/post' + `/${id}`,
+            }),
+            providesTags: ['CountReactionByPost']
+        }),
+        getUserFriend:builder.query({
+            query:({id}) =>({
+                url: POST_URL + '/user/friend' + `/${id}`,
+            }),
         }),
         getLikeUser:builder.query({
             query:({id})=>({
@@ -252,6 +270,9 @@ export const {
     useGetLikeUserQuery,
     useGetUserQuery,
     useCountCommentQuery,
+    useCountShareQuery,
+    useCountReactionByPostQuery,
+    useGetUserFriendQuery,
 
     usePostMutation,
     useUpdatePostMutation,

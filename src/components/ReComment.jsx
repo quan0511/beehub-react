@@ -3,10 +3,13 @@ import '../css/showcomment.css';
 import { useState,useRef, ChangeEvent,useEffect } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentUser } from '../auth/authSlice';
-import { useCommentByIdQuery, useCountReactionQuery, useDeletePostCommentMutation, useDeletePostReCommentMutation, usePostReCommentMutation, useRecommentPostQuery, useRecommentQuery, useUpdateCommentMutation, useUpdateReCommentMutation } from '../post/postApiSlice';
-import { MdGroups2,MdModeEdit,MdReport } from "react-icons/md";
+import { useDeletePostReCommentMutation,  useRecommentPostQuery, useUpdateReCommentMutation } from '../post/postApiSlice';
+import { MdModeEdit } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-function ReComment({postIdco,recomment,comment,refetchGetReComment}){
+import {Link} from "react-router-dom";
+import {Image } from "react-bootstrap";
+import APIService from '../features/APIService';
+function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend,refetchCountReComment}){
     const user = useSelector(selectCurrentUser);
     const [editReComment] = useUpdateReCommentMutation();
     const [deleteReComment] = useDeletePostReCommentMutation();
@@ -42,24 +45,28 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
           return `${secondsDifference} seconds ago`;
         }
       };
-      const renderCommentWithLink = (comments) => {
-        let result = [];
-        let startIndex = 0;
-        const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
-        let match;
-        while((match = regex.exec(comments)) != null){
-          const tagName = match[1].trim();
-          const link = match[2].trim();
-          result.push(comment.substring(startIndex, match.index));
-          result.push(
-            <span key={startIndex}>
-              <Link to={link}>{tagName}</Link>
-            </span>
-          );
-          startIndex = match.index + match[0].length;
+      const renderCommentWithLink = (comment) => {
+        if (typeof comment === 'string') {
+          const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+          let match;
+          const result = [];
+          let lastIndex = 0;
+          while ((match = regex.exec(comment)) !== null) {
+            const [fullMatch, tagName, link] = match;
+            const beforeTag = comment.substring(lastIndex, match.index);
+            result.push(beforeTag, (
+              <Link key={match.index} to={"/member/profile/" + link}>
+                {tagName}
+              </Link>
+            ));
+            lastIndex = regex.lastIndex;
+          }
+          const restOfString = comment.substring(lastIndex);
+          result.push(restOfString);
+          return result;
+        } else {
+          return comment;
         }
-        result.push(comment.substring(startIndex));
-        return <>{result}</>;
       };
       const handleShowEditReComment = (reCommentId) => {
         setEditReCommentId((prevEditReComment) => (
@@ -93,8 +100,8 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
     }
     const handleSubmitEditReComment = async(e) =>{
       e.preventDefault();
-      const inputElement = document.getElementById(`editReMyInput-${formEditReComment.id}`);
-      const userInput = inputElement.textContent?.trim() || "";
+      const inputElement = document.getElementById(`editReCommentInput-${recomment.id}`);
+      const userInput = inputElement.value;
       const updateReComment = {
         ...formEditReComment,
         reaction:userInput
@@ -118,6 +125,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
         if (isConfirmed) {
           try {
             await deleteReComment({id});
+            refetchCountReComment();
             refetchGetReComment();
             //toast.success("Bài đăng đã được xóa thành công!");
           } catch (error) {
@@ -134,61 +142,54 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
       }, []);
       function handleInput(inputId, divId, formType) {
         const inputElement = document.getElementById(divId);
-        const ulElement = document.getElementById(`${divId}-ul`) ;
+        const ulElement = document.getElementById(`${divId}-ul`);
         let userInput = inputElement.textContent?.trim() || "";
         userInput = userInput.replace(/\s+/g, ' ');
-      
         setContent(userInput.length > 0);
         const caretPosition = getCaretPosition(inputElement);
         const filteredText = getFilterText(userInput);
-      
         Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
-          const a = li.getElementsByTagName("a")[0];
-          const txtValue = a.textContent || a.innerText;
-          if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
-            li.style.display = "";
-          } else {
-            li.style.display = "none";
-          }
-        });
-      
-        ulElement.style.display = userInput.includes("@") ? "block" : "none";
-      
-        const commentInputElement = document.getElementById(inputId) ;
-        const allContent = Array.from(inputElement.childNodes).map(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent?.trim() || "";
-          } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
-            const span = node ;
-            if (span.classList.contains("selected")) {
-              const spanText = span.textContent?.trim() || "";
-              const link = span.getAttribute("data-link") || "";
-              return `tag=${spanText}&link=${link}`;
+            const a = li.getElementsByTagName("a")[0];
+            const txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
+                li.style.display = "";
             } else {
-              return span.textContent?.trim() || "";
+                li.style.display = "none";
             }
-          }
-          return "";
+        });
+        ulElement.style.display = userInput.includes("@") ? "block" : "none";
+        const commentInputElement = document.getElementById(inputId);
+        const allContent = Array.from(inputElement.childNodes).map(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                return node.textContent?.trim() || "";
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
+                const span = node;
+                if (span.classList.contains("selected")) {
+                    const spanText = span.textContent?.trim() || "";
+                    const link = span.getAttribute("data-link") || "";
+                    return `tag=${spanText}&link=${link}`;
+                } else {
+                    return span.textContent?.trim() || "";
+                }
+            }
+            return "";
         }).join(" ");
-      
+        console.log("allContent:", allContent);
         if (formType === "comment") {
-          setFormComment({ ...formComment, comment: allContent.trim() });
+            setFormComment({ ...formComment, comment: allContent.trim() });
         } else if (formType === "reComment") {
-          setFormReComment({ ...formReComment, reaction: allContent.trim() });
+            setFormReComment({ ...formReComment, reaction: allContent.trim() });
         }
-      
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
-      }
+    }
       function getFilterText(inputValue) {
         // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
         const regex = /^@(.+)|\s@(.+)/;
         const match = inputValue.match(regex);
-      
         // Nếu có kết quả, trả về phần mong muốn, ngược lại trả về toàn bộ chuỗi
         return match ? match[1] || match[2] || "" : inputValue;
-      }
-      
+      }   
       function getCaretPosition(element) {
         const selection = window.getSelection();
         const range = selection?.getRangeAt(0);
@@ -197,17 +198,14 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
       function setCaretPosition(element, position) {
         const selection = window.getSelection();
         const range = document.createRange();
-    
         // Kiểm tra xem element có nút con hay không
         if (element.childNodes.length === 0) {
             // Tạo một nút văn bản mới nếu không có nút con nào tồn tại
             const textNode = document.createTextNode("");
             element.appendChild(textNode);
         }
-    
         // Lấy nút con cuối cùng của element
         const lastChild = element.childNodes[element.childNodes.length - 1];
-    
         // Kiểm tra xem lastChild có phải là nút văn bản không
         if (lastChild.nodeType === Node.TEXT_NODE) {
             // Đặt vị trí caret
@@ -218,54 +216,53 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
                 range.setStart(lastChild, position);
             }
             range.collapse(true);
-    
             selection.removeAllRanges();
             selection.addRange(range);
         }
-    }
-      
+    } 
     function selectName(selectedName, inputId, divId) {
       const currentInput = document.getElementById(divId);
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
+  
       const newValue = getOverwrittenText(currentValue, selectedName);
-    
-      const commentInputElement = document.getElementById(inputId) ;
-      if (commentInputElement) { // Kiểm tra phần tử trước khi đặt giá trị
-        commentInputElement.value = newValue;
-      } else {
-        console.error(`Element with id ${inputId} not found`);
+      const commentInputElement = document.getElementById(inputId);
+      if (!commentInputElement) {
+          console.error(`Element with id ${inputId} not found`);
+          return;
       }
-    
-      currentInput.innerHTML = "";
+      commentInputElement.value = newValue;
+      currentInput.innerHTML = ""; // Xóa nội dung hiện tại
       newValue.split(" ").forEach((word, index, array) => {
-        const span = document.createElement("span");
-        const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-        span.textContent = wordWithSpaces;
-    
-        if (isInList(word, divId)) {
-          span.contentEditable = "false";
-          span.classList.add("selected");
-          const link = `http://${word}`;
-          span.setAttribute("data-link", link);
-        } else {
-          span.contentEditable = "true";
-        }
-        currentInput.appendChild(span);
-        if (index < array.length - 1) {
-          const space = document.createTextNode(" ");
-          currentInput.appendChild(space);
-        }
+          if (word.trim() !== "") {
+              const span = document.createElement("span");
+              const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+              span.textContent = wordWithSpaces;
+  
+              // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+              if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+                  span.contentEditable = "false";
+                  span.classList.add("selected");
+                  const link = `${word.trim()}`;
+                  span.setAttribute("data-link", link);
+              } else {
+                  span.contentEditable = "true";
+              }
+              currentInput.appendChild(span);
+              if (index < array.length - 1) {
+                  const space = document.createTextNode(" ");
+                  currentInput.appendChild(space);
+              }
+          }
       });
-    
       const event = new Event('input', {
-        bubbles: true,
-        cancelable: true,
+          bubbles: true,
+          cancelable: true,
       });
       currentInput.dispatchEvent(event);
-      (document.getElementById(`${divId}-ul`) ).style.display = "none";
-    }
+      (document.getElementById(`${divId}-ul`)).style.display = "none";
+  }
     function isInList(word, divId) {
       const ulElement = document.getElementById(`${divId}-ul`) ;
       const listItems = ulElement.getElementsByTagName("li");
@@ -277,7 +274,6 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
       }
       return false;
     }
-      
     function getOverwrittenText(currentInput, selectedName) {
       const regex = /^@(.+)|\s@(.+)/;
       const match = currentInput.match(regex);
@@ -293,7 +289,14 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
     <div className="model-showrecomment">
         <div className="modalthreedotrecomment">
             <div className="modal-showrecommentkhungcon">
-            <div className="model-showrecommentanhdaidien"></div>
+            <div className="model-showrecommentanhdaidien">
+            {postIdco.user_gender=='female'?(
+            <Link to={"/member/profile/"+postIdco.user_username}>
+              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+            ):(
+              <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+            )}
+            </div>
             <div className="modarecommetthreedottraloi" style={{display:editReCommentId !== recomment.id ? 'block':'none'}}>
                 <div className="modalanhrecommentthreedot">
                 <div className="modal-showrecommenttencomment">
@@ -311,7 +314,6 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
                 </div>
                 <div className="model-showrecommentTimetraloi">
                 <div className="modal-showrecommentTime">{calculateTimeDifference(recomment.createdAt)}</div>
-                {/* <div className="modal-showrecommenttraloi">Trả lời</div> */}
                 </div>
             </div>
             {editReCommentId === recomment.id && (
@@ -320,11 +322,28 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment}){
                 <input type="hidden" name="id" value={formEditReComment.id} onChange={(e) => handleChangeEditReComment(e)} />
                 <input type="hidden" name="reaction" value={formEditReComment.reaction} onChange={(e) => handleChangeEditReComment(e)}  id={`editReCommentInput-${recomment.id}`} />
                 <div>
-                <div className="divEditRecomment" id={`editReMyInput-${recomment.id}`} contentEditable="true"  onInput={() => handleInput(`editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`,`reComment-${recomment.id}`)}>{formEditReComment.reaction}</div>
+                <div className="divEditRecomment" id={`editReMyInput-${recomment.id}`} contentEditable="true"  onInput={() => handleInput(`editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`,`reComment-${recomment.id}`)}>
+                  {renderCommentWithLink(formEditReComment.reaction)}
+                  </div>
                 <ul id={`editReMyInput-${recomment.id}-ul`} className="myul" >
-                    {/* {users.map((user) => (
-                    <li onClick={() => selectName(user.name, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)}  data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                    ))} */}
+                    {getUserFriend?.map((user) => (
+                      <li  onClick={() => selectName(user.username, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)}>
+                        <a>
+                          <div className="showuserlicomment">
+                            <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                            <Link className="showuserlianhrecomment"  to={"/member/profile/"+postIdco.user_username}>
+                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            ):(
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            )}
+                            </div>
+                            <div className="showuserliname">
+                              {user.fullname}
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                    ))}
                 </ul>
                 </div>
                 <input type="button" className="commentEditRecomment" value="Save" onClick={(e) => handleSubmitEditReComment(e)}/>
