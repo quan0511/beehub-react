@@ -69,9 +69,7 @@ function App() {
             <Route path='shop' element={<ShopManagement />} />
           </Route>
         </Route>
-
       </Route>
-
     </Routes>
   )
 }

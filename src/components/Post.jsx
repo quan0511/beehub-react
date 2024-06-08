@@ -311,19 +311,19 @@ function Post ({post, page,refetchHomePage}){
                  </div>
                 )}
                 <Modal className="postmodaleditpost" show={showEditPost[post.id]} onHide={() =>handleCloseEditPost(post.id)} animation={false}>
-              <div >
-                <div >
-                <Modal.Header  closeButton>
-                  <Modal.Title className="modalpost-title">
-                        Edit Post
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body >
-                  <EditPost post={post} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
-                </Modal.Body>
-                </div>
-              </div>
-            </Modal>
+                  <div >
+                    <div >
+                    <Modal.Header  closeButton>
+                      <Modal.Title className="modalpost-title">
+                            Edit Post
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body >
+                      <EditPost post={post} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
+                    </Modal.Body>
+                    </div>
+                  </div>
+                </Modal>
                 {post.share === true ?(
                   <SharePost getSettingType={getSettingType} post={post}/>
                 ):(
