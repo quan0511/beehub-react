@@ -1,6 +1,6 @@
 import React from "react";
 import {Col, Row,Card, Form, InputGroup, Button, Image, Spinner, Dropdown } from "react-bootstrap";
-import { Search, ThreeDots, } from "react-bootstrap-icons";
+import { Ban, Search, ThreeDots, } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -53,12 +53,22 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                                                     <Link to={`/member/profile/${friend.username}`}><Image src={urlImage} fluid rounded /></Link>
                                                     </Col>
                                                     <Col xl={5} md={5} sm={6} className="d-flex flex-column ms-auto justify-content-center align-items-start ps-4">
-                                                        <h4><Link to={`/member/profile/${friend.username}`} className="text-decoration-none text-black">{friend.fullname}</Link></h4>
+                                                        <h4>
+                                                            <Link to={`/member/profile/${friend.username}`} className="text-decoration-none text-black">{friend.fullname} 
+                                                            {
+                                                                friend._banned?
+                                                                <Ban color="red" className="ms-4"/>    
+                                                                :<></>
+                                                            }
+                                                            </Link>
+                                                        </h4>
                                                         <p>Friends: {friend.friend_counter}</p>
                                                     </Col>
                                                     {
-                                                        user_id != appUser.id?
-                                                        <></>
+                                                        user_id != appUser.id || friend._banned?
+                                                        <Col xl={4} md={4} sm={3} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
+                                                            
+                                                        </Col>
                                                         :
                                                         <Col xl={4} md={4} sm={3} className="d-flex flex-row justify-content-start align-items-start pt-2 pe-2">
                                                             <Dropdown>

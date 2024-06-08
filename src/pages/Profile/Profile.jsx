@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
+import { Badge, Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
 import { Ban, CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
 import "./Profile.css"
@@ -38,11 +38,8 @@ function Profile (){
     }
     const hideFriendCheck = ()=>{
         let check = false;
-        console.log(user);
         if(isSuccess && (user.id != appUser.id)){
             user.user_settings.forEach((e)=>{
-                console.log(e["setting_item"] == 'list_friend' && e["setting_type"] == "HIDDEN" );
-                console.log((user.relationship_with_user != "FRIEND"||user.relationship_with_user == null) && e["setting_type"] == "FOR_FRIEND");
                 if((e["setting_item"] == 'list_friend' && e["setting_type"] == "HIDDEN" )||((user.relationship_with_user != "FRIEND"||user.relationship_with_user == null) && e["setting_type"] == "FOR_FRIEND")){
                     check = true;
                 }
@@ -64,7 +61,7 @@ function Profile (){
             case "setting":
                 return <ProfileSetting user={user} />;
             default:
-                return  <ProfilePost  user={user}/>;
+                return  <ProfilePost appUser={appUser} user={user}/>;
         }
     }
     const handleClick= async (typeClick)=>{
@@ -85,8 +82,14 @@ function Profile (){
                 case "SENT_REQUEST":
                     return <Button variant="outline-warning" onClick={()=>{ handleClick("CANCEL_REQUEST")}}>Cancel Request</Button>
                 case "NOT_ACCEPT":
+                    if(user._banned){
+                        return<></>
+                    }
                     return <Button variant="outline-success"  onClick={()=>{ handleClick("ACCEPT")}}>Accept</Button>
                 default:
+                    if(user._banned){
+                        return<></>
+                    }
                     return (
                     <div>
                         <Button variant="primary"  onClick={()=>{ handleClick("ADD_FRIEND")}}>Add Friend</Button>
@@ -147,6 +150,9 @@ function Profile (){
             console.log(error);
         }
     }
+    useEffect(()=>{
+        setTab("posts");
+    },[username])
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -262,6 +268,13 @@ function Profile (){
                                     <div className="mb-sm-3 position-relative" >
                                         <h2>{user.fullname}</h2>
                                         <span className="d-block text-black-50">@{user.username}</span>
+                                        {
+                                            user._banned?
+                                            <Badge pill bg="danger" className="position-absolute top-0" style={{right: "-70px"}}>
+                                                Banned
+                                            </Badge>
+                                            :<></>
+                                        }
                                     </div>
                                     <div>
                                         {getButton()}
@@ -286,7 +299,7 @@ function Profile (){
                                         </ListGroup>
                                     </Col>
                                     <Col xl={8} lg={8} md={9} sm={12} className="mx-lg-auto ms-md-auto " >
-                                        <Nav horizontal="md"  variant="tabs" defaultActiveKey="posts" className="my-2 flex-wrap justify-content-start align-items-center" onSelect={handelSelectTab}>
+                                        <Nav horizontal="md"  variant="tabs" defaultActiveKey={tab} className="my-2 flex-wrap justify-content-start align-items-center" onSelect={handelSelectTab}>
                                             <Nav.Item>
                                                 <Nav.Link eventKey="posts"  style={{width: "80px"}} className=" d-flex flex-column align-items-center justify-content-between text-light p-2 text-dark">
                                                     <ColumnsGap size={20}/>

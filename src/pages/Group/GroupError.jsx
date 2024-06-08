@@ -6,7 +6,7 @@ export const GroupError = ()=>{
         <Col xl={5} lg={6} md={8} sm={10}  className="mx-md-auto me-sm-auto p-0">
             <Card  className="text-start shadow" >
                 <Card.Header>Sugguestion</Card.Header>
-                <Card.Body>
+                <Card.Body class="d-flex flex-column p-5">
                     <Card.Title className="fw-bold">Let Join Group</Card.Title>
                     <Card.Text>
                     I see, You haven's joined this group.
