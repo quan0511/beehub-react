@@ -1,5 +1,5 @@
 import { Col, Container, Row, Form, Image, Spinner, Button  } from 'react-bootstrap';
-import { useHomepageQuery } from '../features/userApiSlice';
+import { useGroupInfoQuery, useHomepageQuery } from '../features/userApiSlice';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';
@@ -8,6 +8,7 @@ import Post from '../components/Post';
 import { useEffect, useState } from 'react';
 import AddPost from '../components/AddPost';
 import Modal from 'react-bootstrap/Modal';
+import '../css/addPost.css';
 function Homepage() {
     const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
@@ -56,7 +57,7 @@ function Homepage() {
                     <Modal className="postmodal" show={showInputModal} onHide={handleCloseInputModal} animation={false}>
                     <div >
                         <div >
-                        <Modal.Header  closeButton>
+                        <Modal.Header className="classmodalheader"  closeButton>
                             <Modal.Title className="modalpost-title">
                                     Write New Post
                             </Modal.Title>
@@ -70,7 +71,7 @@ function Homepage() {
                     {isLoading && posts==null?
                        <></>
                         :
-                        posts.map((post, index)=>{
+                        posts?.map((post, index)=>{
                             return <Post key={index} post={post} refetchHomePage={refetchHomePage} page="activity" />;
                         })    
                     }

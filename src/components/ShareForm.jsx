@@ -1,42 +1,42 @@
 import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
 import { useSharePostMutation } from "../post/postApiSlice";
 import '../css/post.css';
-import { SlArrowLeft } from "react-icons/sl";
-import { LuLink } from "react-icons/lu";
-import { FaXmark  } from "react-icons/fa6";
+import {Link} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
+import APIService from '../features/APIService';
+import {Image} from "react-bootstrap";
 function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
     const [share] = useSharePostMutation();
     const user = useSelector(selectCurrentUser);
-    const [selectedFiles, setSelectedFiles] = useState([]);
-    const [viewFoundBackground, setViewFoundBackground] = useState(false);
-    const [content, setContent] = useState(false);
     const [divClass, setDivClass] = useState({color: 'inherit', background: 'inherit'});
     const [selectedStyle, setSelectedStyle] = useState({ color: '', background: '' });
     const commentTagLink = (comment) => {
         return /tag=.*&link=/.test(comment);
       };
-      const renderCommentWithLink = (comment) => {
-        let result = [];
-        let startIndex = 0;
+    const renderCommentWithLink = (comment) => {
+      if (typeof comment === 'string') {
         const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
         let match;
-        while((match = regex.exec(comment)) != null){
-          const tagName = match[1].trim();
-          const link = match[2].trim();
-          result.push(comment.substring(startIndex, match.index));
-          result.push(
-            <span key={startIndex}>
-              <Link to={link}>{tagName}</Link>
-            </span>
-          );
-          startIndex = match.index + match[0].length;
+        const result = [];
+        let lastIndex = 0;
+        while ((match = regex.exec(comment)) !== null) {
+          const [fullMatch, tagName, link] = match;
+          const beforeTag = comment.substring(lastIndex, match.index);
+          result.push(beforeTag, (
+            <Link key={match.index} to={"/member/profile/" + link}>
+              {tagName}
+            </Link>
+          ));
+          lastIndex = regex.lastIndex;
         }
-        result.push(comment.substring(startIndex));
-        return <>{result}</>;
-      };
+        const restOfString = comment.substring(lastIndex);
+        result.push(restOfString);
+        return result;
+      } else {
+        return comment;
+      }
+    };
       const handleSubmitSharePost = async(e) =>{
         e.preventDefault();
         //setLoadingEditPost(true);
@@ -65,7 +65,14 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
     <div key={post.id} >
         <form onSubmit={handleSubmitSharePost} >
             <div className="modalpost-nameanh">
-                <div className="model-showbinhluananhdaidien"></div>
+                <div className="model-showbinhluananhdaidien">
+                {post.user_gender=='female'?(
+                  <Link to={"/member/profile/"+post.user_username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                  ):(
+                    <Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                  )}
+                </div>
                 <div className="modalpost-name">Name</div>
             </div>
                 <div>
@@ -77,11 +84,6 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
                         {commentTagLink(formSharePost.text) ? renderCommentWithLink(formSharePost.text) : formSharePost.text}
                         </div>
                     </div>
-                    <ul id="myInput-ul" className="myul" >
-                        {/* {users.map((user) => (
-                        <li onClick={() => selectName(user.name, 'editPostInput', 'myInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                        ))} */}
-                    </ul>
                     <div className="modalpost-image">
                         <div className="modalpost-imagechil" >
                             <img src={formSharePost.medias} alt="" width="100%" height="100%"/> 
@@ -95,11 +97,6 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
                         {commentTagLink(formSharePost.text) ? renderCommentWithLink(formSharePost.text) : formSharePost.text}
                         </div>
                     </div>
-                    <ul id="myInput-ul" className="myul" >
-                        {/* {users.map((user) => (
-                        <li onClick={() => selectName(user.name, 'editPostInput', 'myInput')}data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                        ))} */}
-                    </ul>
                     </div>
                 )}                    
                 </div>

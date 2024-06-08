@@ -1,18 +1,23 @@
-import React, { useRef, useState,useEffect  } from "react";
-import '../css/post.css';
-import { SlArrowLeft } from "react-icons/sl";
-import { LuLink } from "react-icons/lu";
-import { FaXmark  } from "react-icons/fa6";
-import { useUpdatePostMutation } from "../post/postApiSlice";
+import { useState, useRef } from 'react';
+import {Link} from "react-router-dom";
+import '../css/showcomment.css';
+import {Image } from "react-bootstrap";
+import APIService from '../features/APIService';
+import { useGetUserFriendQuery, useUpdatePostMutation } from "../post/postApiSlice";
+import { FaXmark } from 'react-icons/fa6';
+import { LuLink } from 'react-icons/lu';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../auth/authSlice';
+import { SlArrowLeft } from 'react-icons/sl';
 function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost}){
     const [viewFoundBackground, setViewFoundBackground] = useState(false);
     const [editPost] = useUpdatePostMutation();
-    console.log("form",formUpdatePost);
-    console.log("setform",setFromUpdatePost);
     const handleToggleBackground= () =>{
       setViewFoundBackground((prevSate) => !prevSate);
     }
-    const [divClass, setDivClass] = useState({color: 'inherit', background: 'inherit'});
+    const user = useSelector(selectCurrentUser);
+    const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
+    const [divClass, setDivClass] = useState({color: formUpdatePost.color, background: formUpdatePost.background});
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState({ color: '', background: '' });
 
@@ -262,12 +267,20 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
           e.target.setAttribute("data-text", "What do you think ?");
         }
       };
+      console.log("post",post)
     return(
         <div key={post.id} >
                 <form onSubmit={handleSubmitEditPost} encType="multipart/form-data">
                 <input type="hidden" name="id" value={formUpdatePost.id} onChange={(e) => handleChangeEditPost(e)}/>
                     <div className="modalpost-nameanh">
-                        <div className="model-showbinhluananhdaidien"></div>
+                        <div className="model-showbinhluananhdaidien">
+                        {post.user_gender=='female'?(
+                        <Link to={"/member/profile/"+post.user_username}>
+                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        ):(
+                          <Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        )}
+                        </div>
                         <div className="modalpost-name">Name</div>
                     </div>
                     {selectedFiles.length ?(
@@ -279,9 +292,9 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                           </div>
                         </div>
                         <ul id="myInput-ul" className="myul" >
-                          {/* {users.map((user) => (
-                            <li onClick={() => selectName(user.name, 'editPostInput', 'myInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                          ))} */}
+                          {getUserFriend?.map((user) => (
+                            <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}><a>{user.username}</a></li>
+                          ))}
                         </ul>
                         {selectedFiles.length > 0 && (
                           <div className="modalpost-image">
@@ -305,9 +318,9 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                               </div>
                             </div>
                             <ul id="myInput-ul" className="myul" >
-                              {/* {users.map((user) => (
-                                <li onClick={() => selectName(user.name, 'editPostInput', 'myInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                              ))} */}
+                              {getUserFriend?.map((user) => (
+                                <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}><a href="#">{user.username}</a></li>
+                              ))}
                             </ul>
                             <div className="modalpost-image">
                             <div aria-label="file" className="modalpost-xoafile" ><FaXmark className="modalpost-iconxoafile" /></div>
@@ -325,9 +338,9 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                               </div>
                             </div>
                             <ul id="myInput-ul" className="myul" >
-                              {/* {users.map((user) => (
-                                <li onClick={() => selectName(user.name, 'editPostInput', 'myInput')}data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                              ))} */}
+                              {getUserFriend?.map((user) => (
+                                <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}><a>{user.username}</a></li>
+                              ))}
                             </ul>
                           </div>
                         )}                    
@@ -355,8 +368,7 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                             { color: '#fff', background: 'rgb(33, 68, 91)' }
                           ].map((colorObj,index)=>(
                             <div key={index} className={`modalpost-fountcolor${index + 1}${selectedColor === index ? ' borderpostcolor': ''}`}
-                            onClick={() => handleClassChange(index,colorObj)}>
-                              1
+                            onClick={() => handleClassChange(index,colorObj)}>        
                             </div>
                           ))}
                         </div>
@@ -391,15 +403,23 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                         
                       </div>
                     )}
-                    
                     <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple hidden/>
                     <input type="hidden" name="color" value={formUpdatePost.color} onChange={(e) => handleChangeEditPost(e)}/>
                     <input type="hidden" name="background" value={formUpdatePost.background} onChange={(e) => handleChangeEditPost(e)}/>
-                    <div className="modalpost-postst ">
+                    <input type="hidden" name="group" value={formUpdatePost.group} onChange={(e) => handleChangeEditPost(e)}/>
+                    {selectedFiles.length?(
+                      <div className="modalpost-postst ">
+                        <div className="modalpost-poststright">
+                        <input className={`modalpost-buttonpost`} type="submit"  value="Post"/>
+                        </div>
+                     </div>
+                    ):(
+                      <div className="modalpost-postst ">
                         <div className="modalpost-poststright">
                         <input className={`modalpost-buttonpost${!content  ? 'disable' : ''}`} type="submit" disabled={!content} value="Post"/>
                         </div>
-                    </div>
+                      </div>
+                    )}  
                 </form>
                 </div>
     )

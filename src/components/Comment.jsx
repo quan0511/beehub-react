@@ -1,16 +1,21 @@
+
+import {Link} from "react-router-dom";
+import {Image } from "react-bootstrap";
+import APIService from '../features/APIService';
 import { useSelector } from 'react-redux';
 import '../css/showcomment.css';
-import { useState,useRef, ChangeEvent,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentUser } from '../auth/authSlice';
-import { useCommentByIdQuery, useCommentQuery, useCountReactionQuery, useDeletePostCommentMutation, useDeletePostReCommentMutation, usePostReCommentMutation, useRecommentPostQuery, useRecommentQuery, useUpdateCommentMutation, useUpdateReCommentMutation } from '../post/postApiSlice';
-import { MdGroups2,MdModeEdit,MdReport } from "react-icons/md";
+import { useCommentByIdQuery,  useCountReactionQuery, useDeletePostCommentMutation, useGetUserFriendQuery, usePostReCommentMutation, useRecommentQuery, useUpdateCommentMutation } from '../post/postApiSlice';
+import { MdModeEdit } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
 import ReComment from './ReComment';
 function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
     const user = useSelector(selectCurrentUser);
     const [toggleComment, setToggleComment] = useState({});
-    const {data:countReComment} = useCountReactionQuery({id:comment.id})
+    const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
+    const {data:countReComment,refetch:refetchCountReComment} = useCountReactionQuery({id:comment.id})
     const {data:getReComment,refetch:refetchGetReComment} = useRecommentQuery({id:comment.id})
     const {data:getCommentById,refetch:refetchGetCommentById} = useCommentByIdQuery({id:comment.id})
     const [editComment] = useUpdateCommentMutation();
@@ -32,7 +37,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       const minutesDifference = Math.floor(secondsDifference / 60);
       const hoursDifference = Math.floor(minutesDifference / 60);
       const daysDifference = Math.floor(hoursDifference / 24);
-    
       if (daysDifference > 0) {
         return `${daysDifference} days ago`;
       } else if (hoursDifference > 0) {
@@ -76,7 +80,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           post:postIdco.id,
           user:user?.id
         })
-
         const handleChangeEditComment = (e) => {
           const value = e.target.value;
           setFormEditComment({
@@ -85,11 +88,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         }
         const handleSubmitEditComment = async(e) =>{
           e.preventDefault();
-          const inputElement = document.getElementById(`editMyInput-${formEditComment.id}`) ;
-          const userInput = inputElement.textContent?.trim() || "";
+          const inputElement = document.getElementById(`editCommentInput-${comment.id}`);
+          const userInput = inputElement.value;
           const updateComment = {
             ...formEditComment,
-            comment:userInput
+            comment: userInput
           };
           console.log("edit",updateComment)
           try{
@@ -124,25 +127,29 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         const commentTagLink = (comments) => {
           return /tag=.*&link=/.test(comments);
         };
-        const renderCommentWithLink = (comments) => {
-          let result = [];
-          let startIndex = 0;
-          const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
-          let match;
-          while((match = regex.exec(comments)) != null){
-            const tagName = match[1].trim();
-            const link = match[2].trim();
-            result.push(comment.substring(startIndex, match.index));
-            result.push(
-              <span key={startIndex}>
-                <Link to={link}>{tagName}</Link>
-              </span>
-            );
-            startIndex = match.index + match[0].length;
+        const renderCommentWithLink = (comment) => {
+          if (typeof comment === 'string') {
+            const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+            let match;
+            const result = [];
+            let lastIndex = 0;
+            while ((match = regex.exec(comment)) !== null) {
+              const [fullMatch, tagName, link] = match;
+              const beforeTag = comment.substring(lastIndex, match.index);
+              result.push(beforeTag, (
+                <Link key={match.index} to={"/member/profile/" + link}>
+                  {tagName}
+                </Link>
+              ));
+              lastIndex = regex.lastIndex;
+            }
+            const restOfString = comment.substring(lastIndex);
+            result.push(restOfString);
+            return result;
+          } else {
+            return comment;
           }
-          result.push(comment.substring(startIndex));
-          return <>{result}</>;
-        };   
+        }; 
     
     const [viewReplies, setViewReplies] = useState({});
       const handleViewReComments = (commentId) => {
@@ -172,7 +179,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       const handleSubmitReComment = async (e, post, comment) => {
         e.preventDefault();
         const inputElement = document.getElementById("RemyInput");
-        const userInput = inputElement.textContent?.trim() || "";
+        const userInput = formReComment.reaction;
              
         // Tạo một bản sao của formReComment và cập nhật reaction và các trường khác
         const updatedFormReComment = {
@@ -183,6 +190,8 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         };
         try {
           await createReComment(updatedFormReComment);
+          refetchCountReComment();
+          refetchGetComment();
           refetchGetReComment();
           setFormReComment((prevState) => ({
             ...prevState,
@@ -193,61 +202,49 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           console.error(error)
         }
       };
-    useEffect(() => {
-        const inputElement = document.getElementById("myInput") ;
-        if (inputElement) {
-          const initialContent = inputElement.textContent?.trim() || "";
-          setContent(initialContent.length > 0);
-        }
-      }, []);
+
       function handleInput(inputId, divId, formType) {
         const inputElement = document.getElementById(divId);
-        const ulElement = document.getElementById(`${divId}-ul`) ;
-        let userInput = inputElement.textContent?.trim() || "";
+        const ulElement = document.getElementById(`${divId}-ul`);
+        let userInput = inputElement.innerHTML.trim() || "";
         userInput = userInput.replace(/\s+/g, ' ');
-      
         setContent(userInput.length > 0);
         const caretPosition = getCaretPosition(inputElement);
         const filteredText = getFilterText(userInput);
-      
         Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
-          const a = li.getElementsByTagName("a")[0];
-          const txtValue = a.textContent || a.innerText;
-          if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
-            li.style.display = "";
-          } else {
-            li.style.display = "none";
-          }
-        });
-      
-        ulElement.style.display = userInput.includes("@") ? "block" : "none";
-      
-        const commentInputElement = document.getElementById(inputId) ;
-        const allContent = Array.from(inputElement.childNodes).map(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent?.trim() || "";
-          } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
-            const span = node ;
-            if (span.classList.contains("selected")) {
-              const spanText = span.textContent?.trim() || "";
-              const link = span.getAttribute("data-link") || "";
-              return `tag=${spanText}&link=${link}`;
+            const a = li.getElementsByTagName("a")[0];
+            const txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
+                li.style.display = "";
             } else {
-              return span.textContent?.trim() || "";
+                li.style.display = "none";
             }
-          }
-          return "";
+        });
+        ulElement.style.display = userInput.includes("@") ? "block" : "none";
+        const commentInputElement = document.getElementById(inputId);
+        const allContent = Array.from(inputElement.childNodes).map(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                return node.textContent?.trim() || "";
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
+                const span = node;
+                if (span.classList.contains("selected")) {
+                    const spanText = span.textContent?.trim() || "";
+                    const link = span.getAttribute("data-link") || "";
+                    return `tag=${spanText}&link=${link}`;
+                } else {
+                    return span.textContent?.trim() || "";
+                }
+            }
+            return "";
         }).join(" ");
-      
         if (formType === "comment") {
-          setFormComment({ ...formComment, comment: allContent.trim() });
+            setFormComment({ ...formComment, comment: allContent.trim() });
         } else if (formType === "reComment") {
-          setFormReComment({ ...formReComment, reaction: allContent.trim() });
+            setFormReComment({ ...formReComment, reaction: allContent.trim() });
         }
-      
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
-      }
+    }
       function getFilterText(inputValue) {
         // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
         const regex = /^@(.+)|\s@(.+)/;
@@ -270,7 +267,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             const textNode = document.createTextNode("");
             element.appendChild(textNode);
         }
-    
         const lastChild = element.childNodes[element.childNodes.length - 1];
     
         // Kiểm tra xem lastChild có phải là nút văn bản không
@@ -293,43 +289,44 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
+  
       const newValue = getOverwrittenText(currentValue, selectedName);
-    
-      const commentInputElement = document.getElementById(inputId) ;
-      if (commentInputElement) { // Kiểm tra phần tử trước khi đặt giá trị
-        commentInputElement.value = newValue;
-      } else {
-        console.error(`Element with id ${inputId} not found`);
+      const commentInputElement = document.getElementById(inputId);
+      if (!commentInputElement) {
+          console.error(`Element with id ${inputId} not found`);
+          return;
       }
-    
-      currentInput.innerHTML = "";
+      commentInputElement.value = newValue;
+      currentInput.innerHTML = ""; // Xóa nội dung hiện tại
       newValue.split(" ").forEach((word, index, array) => {
-        const span = document.createElement("span");
-        const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-        span.textContent = wordWithSpaces;
-    
-        if (isInList(word, divId)) {
-          span.contentEditable = "false";
-          span.classList.add("selected");
-          const link = `http://${word}`;
-          span.setAttribute("data-link", link);
-        } else {
-          span.contentEditable = "true";
-        }
-        currentInput.appendChild(span);
-        if (index < array.length - 1) {
-          const space = document.createTextNode(" ");
-          currentInput.appendChild(space);
-        }
+          if (word.trim() !== "") {
+              const span = document.createElement("span");
+              const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+              span.textContent = wordWithSpaces;
+  
+              // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+              if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+                  span.contentEditable = "false";
+                  span.classList.add("selected");
+                  const link = `${word.trim()}`;
+                  span.setAttribute("data-link", link);
+              } else {
+                  span.contentEditable = "true";
+              }
+              currentInput.appendChild(span);
+              if (index < array.length - 1) {
+                  const space = document.createTextNode(" ");
+                  currentInput.appendChild(space);
+              }
+          }
       });
-    
       const event = new Event('input', {
-        bubbles: true,
-        cancelable: true,
+          bubbles: true,
+          cancelable: true,
       });
       currentInput.dispatchEvent(event);
-      (document.getElementById(`${divId}-ul`) ).style.display = "none";
-    }
+      (document.getElementById(`${divId}-ul`)).style.display = "none";
+  }
     function isInList(word, divId) {
       const ulElement = document.getElementById(`${divId}-ul`) ;
       const listItems = ulElement.getElementsByTagName("li");
@@ -341,11 +338,9 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       }
       return false;
     }
-      
     function getOverwrittenText(currentInput, selectedName) {
       const regex = /^@(.+)|\s@(.+)/;
       const match = currentInput.match(regex);
-    
       if (match) {
         const prefix = match[1] || match[2] || "";
         return currentInput.replace("@" + prefix, selectedName);
@@ -357,13 +352,20 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
     <div  className="modal-showbinhluankhung">
       <div className="modalthreedotcomment">
         <div className="modal-showbinhluankhungcon">
-          <div className="model-showbinhluananhdaidien"></div>
+          <div className="model-showbinhluananhdaidien">
+          {postIdco.user_gender=='female'?(
+            <Link to={"/member/profile/"+postIdco.user_username}>
+              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+            ):(
+              <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+            )}
+          </div>
           <div className="modalbinhluanthreedottraloi" style={{display:editCommentId !== comment.id ? 'block':'none'}}>
             <div className="modalanhbinhluanithreedot">
               <div className="modal-showbinhluantencomment" >
                   <div className="modal-showbinhluanname">{comment.username}</div>
                   <div className="modal-showbinhluancomment">
-                    {commentTagLink(comment.comment) ? renderCommentWithLink(comment.comment) : comment.comment}
+                    {renderCommentWithLink(comment.comment)}
                   </div>
               </div>
               {comment.user === user?.id &&(
@@ -386,13 +388,30 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             <div className="div-EditComment">
               <form onSubmit={handleSubmitEditComment}>
                 <input type="hidden" name="id" value={formEditComment.id} onChange={(e) => handleChangeEditComment(e)} />
-                <input type="hidden" name="reaction" value={formEditComment.comment} onChange={(e) => handleChangeEditComment(e)}  id={`editCommentInput-${comment.id}`} />
+                <input type="hidden" name="comment" value={formEditComment.comment} onChange={(e) => handleChangeEditComment(e)}  id={`editCommentInput-${comment.id}`} />
                 <div>
-                <div className="divEditcomment" id={`editMyInput-${comment.id}`} contentEditable="true"  onInput={() => handleInput(`editCommentInput-${comment.id}`, `editMyInput-${comment.id}`,`comment-${comment.id}`)}>{formEditComment.comment}</div>
+                <div className="divEditcomment" id={`editMyInput-${comment.id}`} contentEditable="true"  onInput={() => handleInput(`editCommentInput-${comment.id}`, `editMyInput-${comment.id}`,`comment-${comment.id}`)}>
+                  {renderCommentWithLink(formEditComment.comment)}
+                </div>
                 <ul id={`editMyInput-${comment.id}-ul`} className="myul" >
-                  {/* {users.map((user) => (
-                    <li onClick={() => selectName(user.name, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}  data-link="http://abakiller"><a href="#">{user.name}</a></li>
-                  ))} */}
+                  {getUserFriend?.map((user) => (
+                    <li onClick={() => selectName(user.username, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}>
+                      <a>
+                        <div className="showuserlicomment">
+                          <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                          <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          ):(
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          )}
+                          </div>
+                          <div className="showuserliname">
+                            {user.fullname}
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                  ))}
                 </ul>
                 </div>
                 <input type="submit" className="commentRecommentmodal" value="Save"/>
@@ -427,7 +446,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       )}
       
       {viewReplies[comment.id] && getReComment && getReComment.map((recomment)=>(
-      <ReComment postIdco={postIdco} recomment={recomment} comment={comment} refetchGetReComment={refetchGetReComment} />
+      <ReComment refetchCountReComment={refetchCountReComment} getUserFriend={getUserFriend} postIdco={postIdco} recomment={recomment} comment={comment} refetchGetReComment={refetchGetReComment} />
       ))}
       {replyStates[comment.id] &&  (
       <div className="div-ReComment">
@@ -435,11 +454,26 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           <input type="hidden" name="reaction" value={formReComment.reaction} onChange={(e) => handleChangeReComment(e)} id="RecommentInput" />
           <div>
           <div className="divRecomment" id="RemyInput" contentEditable="true" onInput={() => handleInput('RecommentInput', 'RemyInput', 'reComment')}></div>
-          {/* <ul id="RemyInput-ul" className="myul" >
-            {users.map((user) => (
-              <li onClick={() => selectName(user.name, 'RecommentInput', 'RemyInput')} data-link="http://abakiller"><a href="#">{user.name}</a></li>
+          <ul id="RemyInput-ul" className="myul ulrecoment" >
+            {getUserFriend?.map((user) => (
+              <li onClick={() => selectName(user.username, 'RecommentInput', 'RemyInput')}>
+                <a>
+                  <div className="showuserlicomment">
+                    <div className="showuserlianh"> {postIdco.user_gender=='female'?(
+                    <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                    ):(
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                </a>
+              </li>
             ))}
-          </ul> */}
+          </ul>
           </div>
           <input type="hidden" name="createdAt" value={formReComment.createdAt} onChange={(e) => handleChangeReComment(e)} />
           <input type="button" className="commentRecomment" value="Reply" onClick={(e) => handleSubmitReComment(e, postIdco, comment)} />

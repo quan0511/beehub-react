@@ -127,6 +127,10 @@
 .sharekhungchill{
     width: 100%;
 }
+.classmodalheader{
+    background-color: #8224e3;
+    color: white;
+}
 .postuser-showcommentBackgroundcolorshare{
     border-radius: 10px;
     background-color: var(--showpostbackground);

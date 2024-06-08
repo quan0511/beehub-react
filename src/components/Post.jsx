@@ -8,7 +8,7 @@ import '../css/post.css';
 import { MdReport,MdModeEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
-import { useAddLikePostMutation, useCheckLikeQuery, useCountCommentQuery, useCountLikeQuery, useDeleteLikeMutation, useDeletePostMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useSharePostMutation, useUpdateLikePostMutation } from "../post/postApiSlice";
+import { useAddLikePostMutation, useCheckLikeQuery, useCountCommentQuery, useCountLikeQuery, useCountReactionByPostQuery, useCountShareQuery, useDeleteLikeMutation, useDeletePostMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useSharePostMutation, useUpdateLikePostMutation } from "../post/postApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
 import { Formik } from "formik";
@@ -26,16 +26,20 @@ function Post ({post, page,refetchHomePage}){
   //const {data: post} = useFetchPostQuery({id:post.id})
   const token = useSelector(selectCurrentToken);
     const [addLike] = useAddLikePostMutation();
+    const dispatch = useDispatch();
     const [deleteLike] = useDeleteLikeMutation();
     const [updateLike] = useUpdateLikePostMutation();
     const [deletePost] = useDeletePostMutation();
     const [sharePost] = useSharePostMutation();
+    const {data: countShare} = useCountShareQuery({id:post.id}) 
     const {data:getPostById} = useFetchPostQuery({id:post.id});
     const {data:countComment,refetch:refetchCountComment} = useCountCommentQuery({id:post.id});
+    const {data:countReacitonByPost,refetch:refetchCountReactionByPost} = useCountReactionByPostQuery({id:post.id});
     const { data: getLikeUser, refetch: refetchGetLikeUser } = useGetLikeUserQuery({ id: post.id });
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
+    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const {data: reportTypes} = useGetReportTypesQuery();
     const [movePostId,setMovePostId] = useState(null);
@@ -43,7 +47,6 @@ function Post ({post, page,refetchHomePage}){
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
     const [targetReport, setTargetReport] = useState(null);
-    const dispatch = useDispatch();
     const handleCloseEditPost = (id) => {
       setShowEditPost((prevState) => ({
         ...prevState,
@@ -117,6 +120,32 @@ function Post ({post, page,refetchHomePage}){
                 </span>
         }
     }
+    const commentTagLink = (comments) => {
+      return /tag=.*&link=/.test(comments);
+    };
+    const renderCommentWithLink = (comment) => {
+      if (typeof comment === 'string') {
+        const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+        let match;
+        const result = [];
+        let lastIndex = 0;
+        while ((match = regex.exec(comment)) !== null) {
+          const [fullMatch, tagName, link] = match;
+          const beforeTag = comment.substring(lastIndex, match.index);
+          result.push(beforeTag, (
+            <Link key={match.index} to={"/member/profile/" + link}>
+              {tagName}
+            </Link>
+          ));
+          lastIndex = regex.lastIndex;
+        }
+        const restOfString = comment.substring(lastIndex);
+        result.push(restOfString);
+        return result;
+      } else {
+        return comment;
+      }
+    };
     const getTimeOfPost = ()=>{
         let datePost = new Date(post.create_at);
         let diffDay = Math.round(Math.abs(new Date() - datePost)/ 86400000);
@@ -136,6 +165,7 @@ function Post ({post, page,refetchHomePage}){
       user:user?.id,
       usershare:"",
     });
+    console.log("post",getPostById)
     const handleShowEditPost = (id) =>{
       setFromUpdatePost({
         id:getPostById.id,
@@ -144,7 +174,8 @@ function Post ({post, page,refetchHomePage}){
         createdAt: getPostById.createdAt,
         background: getPostById.background,
         color: getPostById.color,
-        user:getPostById.user
+        user:getPostById.user,
+        group:getPostById.group
       });
     setShowEditPost((prevState) =>({
       ...prevState,
@@ -158,7 +189,8 @@ function Post ({post, page,refetchHomePage}){
     createdAt:"",
     background:"",
     color:"",
-    user:user?.id
+    user:user?.id,
+    group:""
   });
   const handleSharePost = async (postid,userid) =>{
     const isConfirmed = window.confirm("Bạn muốn share bài post này?"); 
@@ -175,7 +207,7 @@ function Post ({post, page,refetchHomePage}){
     if (isConfirmed) {
       try {
         await deletePost({id});
-        //toast.success("Bài đăng đã được xóa thành công!");
+        
       } catch (error) {
         console.log(error);
       }
@@ -204,9 +236,7 @@ function Post ({post, page,refetchHomePage}){
       console.error('Error occurred while liking:', error);
     }
   };
-  
   const handleChangeUpdateLike = async (postId, enumEmo) => {
-  
       try {
         await updateLike({
           user: user?.id, // Assuming user ID is 1
@@ -236,7 +266,6 @@ function Post ({post, page,refetchHomePage}){
   const isLiked = () => {
       return checkLike === true; // Check if the post is liked by the user
   };
-
     return (
         <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
             <Row>
@@ -313,7 +342,7 @@ function Post ({post, page,refetchHomePage}){
                 <Modal className="postmodaleditpost" show={showEditPost[post.id]} onHide={() =>handleCloseEditPost(post.id)} animation={false}>
               <div >
                 <div >
-                <Modal.Header  closeButton>
+                <Modal.Header className="classmodalheader"  closeButton>
                   <Modal.Title className="modalpost-title">
                         Edit Post
                   </Modal.Title>
@@ -340,10 +369,10 @@ function Post ({post, page,refetchHomePage}){
                     '--showpostbackground': post.background || 'white'
                   } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                   >
-                    {post.text}
+                    {renderCommentWithLink(post.text)}
                   </div>
                   ):(
-                    <p className="h6 mx-5 mb-3 text-dark">{post.text}</p>
+                    <p className="h6 mx-5 mb-3 text-dark">{renderCommentWithLink(post.text)}</p>
                   )}
                     
                     <div className="mb-2 img-media">
@@ -383,8 +412,8 @@ function Post ({post, page,refetchHomePage}){
                   <ListLike post={post} getLikeUser={getLikeUser} getEnumEmo={getEnumEmo} currentPostId={currentPostId}/>              
                 </Modal>
                 <Col md={8} lg={8} xl={8} sm={8} xs={6} className="d-flex flex-row justify-content-end align-items-center">
-                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>{countComment} <span className="d-none d-md-block ">comments</span><span className="d-md-none"><ChatLeft/></span></p>
-                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">0 <span className="d-none d-md-block ">shares</span><span className="d-md-none"><Shuffle/></span></p>                
+                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>{total} <span className="d-none d-md-block ">comments</span><span className="d-md-none"><ChatLeft/></span></p>
+                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">{countShare} <span className="d-none d-md-block ">shares</span><span className="d-md-none"><Shuffle/></span></p>                
                 </Col>
                 <hr className="mx-auto"style={{ width:"90%"}} />
                 <Col xl={12} className="row pb-2 posticonbinhluan-all">
@@ -429,8 +458,8 @@ function Post ({post, page,refetchHomePage}){
                         <p className="h6 mx-2 text-black-50 ">Share</p>
                     </div>
                     <Modal show={showShareModal[post.id]} onHide={() =>handleShareClose(post.id)}>
-                      <Modal.Header closeButton>
-                          <Modal.Title>Chia sẻ bài viết</Modal.Title>
+                      <Modal.Header className="classmodalheader" closeButton>
+                          <Modal.Title>Share Post</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                       <ShareForm post={post} handleShareClose={handleShareClose} setFromSharePost={setFromSharePost} formSharePost={formSharePost} show={showShareModal} handleClose={handleShareClose} />

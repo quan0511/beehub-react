@@ -10,6 +10,10 @@
 .modalright-img{
     height: 100%;
 }
+.classmodalheader{
+    background-color: #8224e3;
+    color: white;
+}
 .modaltitleshowcomment{
     width: 100%;
     display: flex;
@@ -23,7 +27,6 @@
     display: flex;
     position: relative;
     align-items: center;
-    top: 7px;
     height: 70px;
     margin-left: 15px;
 }
@@ -54,7 +57,7 @@
     height: 425px;
 }
 .modalpostimg{
-    border: 1px solid ;
+    border: 1px solid gainsboro;
     height: 100%;
 }
 .modalpostimgshare{
@@ -177,6 +180,7 @@
     background-color: #F0F2F5;
     border-radius: 10px;
     height: 80%;
+    max-width: 530px;
 }
 .modal-showbinhluanname{
     position: relative;
@@ -523,4 +527,61 @@
     width: 610px;
     left: 19px;
 }
+.myul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    position: absolute;
+    z-index: 100;
+    display: none;
+  }
+  .myul  li a {
+    border: 1px solid #ddd;
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #f6f6f6;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+  }
+  .myul li a:hover:not(.header) {
+    background-color: #8224e3;
+    color: white;
+  }
+  .ulrecoment{
+    position: relative;
+    width: 500px !important;
+    left: 45px;
+  }
+  .selected {
+    pointer-events: none; /* Ngăn chặn sự kiện click */
+    background-color: #ccc; /* Đặt màu nền */
+  }
+  .showuserli{
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .showuserlicomment{
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 20px;
+  }
+  .showuserlianhcomment{
+    position: relative;
+    /* border: none; */
+    background-color: transparent !important;
+    border: none !important;
+  }
+  .showuserlianhrecomment{
+    position: relative;
+    height: -11px;
+    bottom: 0px;
+    /* border: none; */
+    background-color: transparent !important;
+    border: none !important;
+  }
 
