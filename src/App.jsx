@@ -16,6 +16,7 @@ import Layout from './layouts/Layout'
 import Layout2 from "./layouts/Layout2"
 import Homepage from './pages/Homepage'
 import Profile from './pages/Profile/Profile'
+import PostPage from './pages/Post/PostPage'
 import PeoplePage from './pages/PeoplePage'
 import Searching from './pages/Search/Searching'
 import Group from './pages/Group/Group'
@@ -41,6 +42,7 @@ function App() {
           <Route path='people' element={<PeoplePage />} />
           <Route path='search' element={<Searching />} />
           <Route path='listgroup' element={<ListGroupPage />} />
+          <Route path="post/:id" element={<PostPage />}/>
         </Route>
 
         <Route path='/member' element={<Layout2 />}>
