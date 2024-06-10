@@ -129,6 +129,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 url: `/user/${id_user}/get-post/${id_post}`
             })
         }),
+        getNotitfication: builder.query({
+            query: ({id, reset})=>({
+                url: `/user/request/${id}`
+            }),
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg
+                },
+        }),
         uploadImageProfile: builder.mutation({
             query: ({id, image})=>{
                 var bodyFormData = new FormData();
@@ -227,6 +235,7 @@ export const {
     useGetFriendsAndGroupQuery,
     useSearchingQuery,
     useGetPostQuery,
+    useGetNotitficationQuery,
     useUploadImageProfileMutation,
     useUploadBackgroundProfileMutation,
     useUploadImageGroupMutation,
