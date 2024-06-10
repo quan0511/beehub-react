@@ -1,0 +1,8 @@
+#tooltip-add-friend > .tooltip-inner{
+    max-width: 400px !important;
+    background-color: #FFF;
+}
+#tooltip-loading > .tooltip-inner{
+    max-width: 400px !important;
+    background-color: #FFF;
+}

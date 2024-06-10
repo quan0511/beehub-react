@@ -29,8 +29,7 @@ function NotificationListGroup({requirements,handleButton}){
                                     <p className="text-black text-start lh-sm"><b>{req.sender.fullname}</b> &nbsp;
                                     want to joined group <br/>
                                     <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
-                                    </p>
-                                    
+                                    </p>                                    
                                 </Col>
                                 <Col xl={3} lg={3} md={3} sm={5} >
                                 <div className="d-lg-inline-flex d-flex">
