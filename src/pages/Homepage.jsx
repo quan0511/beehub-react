@@ -35,7 +35,7 @@ function Homepage() {
             <Row>
                 <Col xl={8} lg={8} md={10} sm={12} className='m-md-auto'>
                     <div className="border-2 rounded-2 border-dark mt-3 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
-                        <div method="post" className="row pe-4" onClick={handleOpenInputModal}>
+                        <div className="row pe-4" onClick={handleOpenInputModal}>
                             <label className="col-1 mx-auto mb-3 col-form-label">
                                 {
                                     user?.image?

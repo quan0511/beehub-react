@@ -175,7 +175,7 @@ function Post ({post, page,refetchHomePage}){
         background: getPostById.background,
         color: getPostById.color,
         user:getPostById.user,
-        group:getPostById.group
+        group: getPostById.group !== null ? getPostById.group : 0
       });
     setShowEditPost((prevState) =>({
       ...prevState,
@@ -357,7 +357,7 @@ function Post ({post, page,refetchHomePage}){
                   <SharePost getSettingType={getSettingType} post={post}/>
                 ):(
                   <Col xl={12} className="text-start">
-                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit") ?(
+                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.color && post.color !== "ff000000" && post.background && post.background !== "ffffffff") ?(
                   <div
                   className={
                     post.color !== null
