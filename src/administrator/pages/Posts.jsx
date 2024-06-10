@@ -1,12 +1,14 @@
+import { Button } from "react-bootstrap";
 import { useAdminPostsQuery } from "../adminApiSlice";
 import ContentHeader from "../components/ContentHeader";
 import FullWidthTable from "../components/FullWidthTable";
+import dateFormat from "dateformat";
 
 const header = [
     {content: 'Id'},
     {content: 'Creator'},
-    {content: 'Reactions'},
-    {content: 'Reports'},
+    {content: 'Timestamp'},
+    {content: 'Status'},
     {content: 'Action'},
 ]
 
@@ -24,6 +26,12 @@ function Posts() {
                     {posts.length > 0 && posts.map((p, i) => 
                         <tr key={i}>
                             <td>{p.id}</td>
+                            <td>{p.creator}</td>
+                            <td>{dateFormat(p.timestamp, "dddd, mmmm dS, yyyy, h:MM:ss TT")}</td>
+                            <td>{p.status}</td>
+                            <td>
+                                <Button variant="secondary" size="sm">block</Button>
+                            </td>
                         </tr>
                     )}
                 </FullWidthTable>

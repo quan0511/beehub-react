@@ -1,5 +1,5 @@
 import { Button, Image, Modal } from "react-bootstrap";
-import BeehubModal from "../../components/BeehubModal";
+import BeehubModal from "../../../components/BeehubModal";
 
 function PostModal({ open, onClose, post }) {
     return (

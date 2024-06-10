@@ -33,8 +33,8 @@ function Homepage() {
     return (
         <Container fluid className='ps-4' style={{marginTop: "60px",marginBottom: "10px"}}>
             <Row>
-                <Col xl={8} lg={8} md={10} sm={12} className='m-md-auto'>
-                    <div className="border-2 rounded-2 border-dark mt-3 " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
+                <Col xl={7} lg={7} md={10} sm={12} className='m-md-auto pt-5 px-lg-5'>
+                    <div className="border-2 rounded-2 border-dark " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
                         <div method="post" className="row pe-4" onClick={handleOpenInputModal}>
                             <label className="col-1 mx-auto mb-3 col-form-label">
                                 {
@@ -78,12 +78,12 @@ function Homepage() {
                     {
                     isFetching?
                     <div className='mt-4 mb-3 text-center w-100'>
-                        <p className='text-black-50'><Spinner animation='border' size='8' /> Loading</p>
+                        <div className='text-black-50'><Spinner animation='border' size='8' /> Loading</div>
                     </div>:
                     <div></div>
                     }
                 </Col>
-                <Col xl={4} lg={4} className='section-right'>
+                <Col xl={4} lg={4} className='section-right border-start p-5'>
                     <SessionRight />
                 </Col>
             </Row>
