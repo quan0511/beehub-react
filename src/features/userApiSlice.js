@@ -13,8 +13,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
-                console.log(currentCache.length);
-                console.log(newItems);
             currentCache.push(...newItems)
             },
             // Refetch when the page arg changes
@@ -71,8 +69,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems) => {
-                console.log(currentCache.length);
-                console.log(newItems);
             currentCache.push(...newItems)
             },
             // Refetch when the page arg changes
@@ -127,6 +123,11 @@ export const userApiSlice = apiSlice.injectEndpoints({
             forceRefetch({ currentArg, previousArg }) {
             return currentArg !== previousArg
             },
+        }),
+        getPost: builder.query({
+            query: ({id_user,id_post})=>({
+                url: `/user/${id_user}/get-post/${id_post}`
+            })
         }),
         uploadImageProfile: builder.mutation({
             query: ({id, image})=>{
@@ -197,6 +198,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
                     body: data
                 }
             }
+        }),
+        settingPost: builder.mutation({
+            query: ({id,data})=>{
+                return {
+                    url: `/user/${id}/setting/post`,
+                    method: "POST",
+                    body: data
+                }
+            }
         })
     })
 })
@@ -216,10 +226,12 @@ export const {
     useGetSettingItemsQuery,
     useGetFriendsAndGroupQuery,
     useSearchingQuery,
+    useGetPostQuery,
     useUploadImageProfileMutation,
     useUploadBackgroundProfileMutation,
     useUploadImageGroupMutation,
     useUploadBgGroupMutation,
     useCreateGroupMutation, 
-    useCreateReportMutation
+    useCreateReportMutation,
+    useSettingPostMutation
 } = userApiSlice

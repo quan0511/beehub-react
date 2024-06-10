@@ -11,9 +11,11 @@ function ProfilePost ({appUser,user}){
                         <Row className="g-1">
                             {user.galleries!=null && user.galleries.length>0? user.galleries.map((gallery, index)=>{
                                 let imageUrl = gallery.media;
-                                return (<Col key={index}>
-                                    <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
-                                    </Col>);
+                                if(index<4){
+                                    return (<Col key={index}>
+                                        <Image src={imageUrl} style={{maxWidth: "120px",margin: "2px"}} className="rounded-2"/>
+                                        </Col>);
+                                }
                             }):<></>}
                             
                         </Row>
