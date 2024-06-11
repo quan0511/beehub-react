@@ -1,0 +1,27 @@
+.showcase {
+    background: rgba(130, 36, 227, 0.02);
+    background: linear-gradient(135deg, rgba(130, 36, 227, 0.04) 0%, rgba(255, 255, 255, 0) 25%, rgba(130, 36, 227, 0.07) 100%);
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+
+.showcase .product-list li {
+    display: block;
+    position: relative;
+    clear: both;
+    padding: 8px 0;
+}
+
+.showcase .product-list a {
+    text-decoration: none;
+}
+
+.showcase .product-name {
+    display: -webkit-box;
+    color: black;
+}
+
+.showcase .product-price {
+    font-size: small;
+    color: #8224e3;
+}

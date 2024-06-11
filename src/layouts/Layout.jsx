@@ -39,7 +39,7 @@ function Layout(){
                 {message??"Update Successful"}
             </Alert>
             <Row >
-                <Col xl={3} className='p-0 section-left' >
+                <Col xl={3} className='p-0 section-left' style={{marginRight: '-5px'}} >
                     <SessionLeft appUser={user}/>
                 </Col>
                 <Col xl={9} md={12}  className='p-0 main'>

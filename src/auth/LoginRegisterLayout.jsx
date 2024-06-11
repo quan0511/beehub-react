@@ -7,8 +7,8 @@ function LoginRegisterLayout({children}) {
             <div className="bg-black">
                 <div className="container">
                     <div className="d-flex justify-content-center py-4">
-                        <div>
-                            <img width={100} src="https://mythemestore.com/beehive-preview/wp-content/uploads/2020/07/white-logo.svg" alt="" />
+                        <div className='text-white' style={{letterSpacing: 1.8}}>
+                            <img className='me-2' width={40} src="./assets/images/beehub-logo.svg" alt="logo" /> Beehub
                         </div>
                     </div>
                 </div>

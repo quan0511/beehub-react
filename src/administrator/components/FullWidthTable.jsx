@@ -1,13 +1,13 @@
 import Pagination from './Pagination';
 import './FullWidthTable.css'
 
-function FullWidthTable({ title, children, header }) {
+function FullWidthTable({ title, children, header, total, perPage, setCurrentPage, currentPage }) {
 
     return (
         <div className="card mb-4">
             <div className="card-header">
                 <h3 className="card-title">{title}</h3>
-                <Pagination/>
+                <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} total={total} perPage={perPage}/>
             </div>
             <div className="card-body overflow-x-auto p-0">
                 <table className="table table-striped">
@@ -24,7 +24,7 @@ function FullWidthTable({ title, children, header }) {
                 </table>
             </div>
             <div className="card-footer clearfix">
-                <Pagination/>
+                <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} total={total} perPage={perPage}/>
             </div>
 
         </div>

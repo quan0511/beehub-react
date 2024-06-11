@@ -1,10 +1,10 @@
 import { Button, Image, Modal } from "react-bootstrap";
-import BeehubModal from "../../components/BeehubModal";
-import { useAdminGroupsQuery } from "../adminApiSlice";
+import BeehubModal from "../../../components/BeehubModal";
+import { useAdminGroupQuery } from "../../adminApiSlice";
 
 function GroupModal({ open, onClose, groupname }) {
     if (!groupname) return
-    const {data: group, isLoading} = useAdminGroupsQuery(groupname)
+    const {data: group, isLoading} = useAdminGroupQuery(groupname)
     if (!group) return
     console.log(group)
     return (
@@ -15,14 +15,14 @@ function GroupModal({ open, onClose, groupname }) {
             <Modal.Body>
                 <div className="d-flex gap-2 mb-2">
                     <div className="avatar">
-                        <Image src={group.image_group} alt="avatar" thumbnail />
+                        <Image src={group.image_group || "http://localhost:8080/api/files/group_image.png"} alt="avatar" thumbnail />
                     </div>
                     <div className="info">
                         <ul>
                             <li>{group.groupname}</li>
                             <li>{group.public_group ? "Public" : "Private"}</li>
-                            <li>{group.members} members</li>
-                            <li>{group.posts} posts</li>
+                            <li>{group.group_members.length} members</li>
+                            <li>{group.post_count} posts</li>
                             <li><small>{group.active ? 'active' : 'banned'}</small></li>
                         </ul>
                     </div>
