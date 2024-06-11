@@ -154,7 +154,7 @@ function NavigatorBar() {
                                         <div className="position-relative">
                                         <EnvelopeOpen size={20}/> 
                                             {!isLoading&& notifications.length>0?
-                                                <span className="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1"><span class="visually-hidden">add friend notification</span></span>
+                                                <span className="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1"><span className="visually-hidden">add friend notification</span></span>
                                                 : <></>
                                             }
                                         </div>

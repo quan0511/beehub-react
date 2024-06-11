@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { refresh,showMessageAlert } from "../features/userSlice";
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 import ListLike from "./ListLike";
 import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
@@ -564,7 +564,7 @@ function Post ({post, page,refetchHomePage}){
                                 setShowSettingPost(false);
                                 if(respon.data){
                                   dispatch(showMessageAlert("Setting type for post successfully"));
-                                  refetchHomePage();
+                                  dispatch(resetData());
                                 }
                             } catch (error) {
                                 console.error('An error occurred while submitting the form.', error);
