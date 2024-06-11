@@ -388,8 +388,8 @@ function selectName(selectedName) {
               <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple hidden/>
           </div>
           )}     
-          <input type="hidden" name="color" value={formData.color} onChange={(e) => handleChangePost(e)}/>
-          <input type="hidden" name="background" value={formData.background} onChange={(e) => handleChangePost(e)}/>
+          <input type="" name="color" value={formData.color} onChange={(e) => handleChangePost(e)}/>
+          <input type="" name="background" value={formData.background} onChange={(e) => handleChangePost(e)}/>
           <input type="hidden" name="group" value={formData.group} onChange={(e) => handleChangePost(e)}/>
           {selectedFiles.length?(
             <div className="modalpost-postst ">

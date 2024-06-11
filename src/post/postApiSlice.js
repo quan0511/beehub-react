@@ -180,7 +180,8 @@ export const postApiSlice = apiSlice.injectEndpoints({
             query: ({id}) => ({
                 url: POST_URL + `/deletepost/${id}`,
                 method: 'POST',
-            })
+            }),
+            invalidatesTags: ['Post']
         }),
         postComment: builder.mutation({
             query: comment => ({

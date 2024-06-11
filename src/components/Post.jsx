@@ -39,7 +39,7 @@ function Post ({post, page,refetchHomePage}){
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
-    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
+    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : countComment;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
     const {data: reportTypes} = useGetReportTypesQuery();
@@ -56,6 +56,9 @@ function Post ({post, page,refetchHomePage}){
         [id]:false,
       }))
     };
+    console.log("count comment: ", countComment);
+    console.log("count recomment: ", countReacitonByPost);
+    console.log("count comment all: ", total);
     const [showShareModal, setShowShareModal] = useState({});
     const handleShareClose = (id) => {
       setShowShareModal((prevState) => ({
@@ -209,7 +212,6 @@ function Post ({post, page,refetchHomePage}){
     if (isConfirmed) {
       try {
         await deletePost({id});
-        
       } catch (error) {
         console.log(error);
       }

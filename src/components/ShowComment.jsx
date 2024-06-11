@@ -206,40 +206,43 @@ function selectName(selectedName, inputId, divId) {
   let currentValue = currentInput.textContent?.trim() || "";
   currentValue = currentValue.replace(/&nbsp;/g, '');
   currentValue = currentValue.replace(/\s+/g, ' ');
+
   const newValue = getOverwrittenText(currentValue, selectedName);
-  const commentInputElement = document.getElementById(inputId) ;
-  if (commentInputElement) { // Kiểm tra phần tử trước khi đặt giá trị
-    commentInputElement.value = newValue;
-  } else {
-    console.error(`Element with id ${inputId} not found`);
+  const commentInputElement = document.getElementById(inputId);
+  if (!commentInputElement) {
+      console.error(`Element with id ${inputId} not found`);
+      return;
   }
-  currentInput.innerHTML = "";
+  commentInputElement.value = newValue;
+  currentInput.innerHTML = ""; // Xóa nội dung hiện tại
   newValue.split(" ").forEach((word, index, array) => {
-    const span = document.createElement("span");
-    const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-    span.textContent = wordWithSpaces;
+      if (word.trim() !== "") {
+          const span = document.createElement("span");
+          const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+          span.textContent = wordWithSpaces;
 
-    if (isInList(word, divId)) {
-      span.contentEditable = "false";
-      span.classList.add("selected");
-      const link = `${word}`;
-      span.setAttribute("data-link", link);
-    } else {
-      span.contentEditable = "true";
-    }
-    currentInput.appendChild(span);
-    if (index < array.length - 1) {
-      const space = document.createTextNode(" ");
-      currentInput.appendChild(space);
-    }
+          // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+          if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+              span.contentEditable = "false";
+              span.classList.add("selected");
+              const link = `${word.trim()}`;
+              span.setAttribute("data-link", link);
+          } else {
+              span.contentEditable = "true";
+          }
+          currentInput.appendChild(span);
+          if (index < array.length - 1) {
+              const space = document.createTextNode(" ");
+              currentInput.appendChild(space);
+          }
+      }
   });
-
   const event = new Event('input', {
-    bubbles: true,
-    cancelable: true,
+      bubbles: true,
+      cancelable: true,
   });
   currentInput.dispatchEvent(event);
-  (document.getElementById(`${divId}-ul`) ).style.display = "none";
+  (document.getElementById(`${divId}-ul`)).style.display = "none";
 }
 function isInList(word, divId) {
   const ulElement = document.getElementById(`${divId}-ul`) ;

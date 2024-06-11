@@ -7,7 +7,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
             query: arg => ({
                 url: '/homepage/'+arg.id+"?page="+arg.page+"&limit="+3
             }),
-            providesTags: ['homepage'],
+            providesTags: ['Post'],
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
