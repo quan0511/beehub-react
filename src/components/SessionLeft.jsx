@@ -15,6 +15,7 @@ function SessionLeft ({appUser}){
         let childitem = document.getElementsByClassName("link-item");
         for (let index = 0; index < childitem.length; index++) {
             const element = childitem[index];
+            console.log(element.getAttribute("href") == location.pathname)
             if(element.getAttribute("href") == location.pathname){
                 element.parentNode.classList.add("active");
             } else {
@@ -28,9 +29,11 @@ function SessionLeft ({appUser}){
         </div>
     }    
     return (
-        <div className="d-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
+        <div className="d-none d-md-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
             <div  style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", textAlign:"center"}}>
-                <Image src="https://mythemestore.com/beehive-preview/wp-content/themes/beehive/assets/images/logo-vertical.svg"/>
+                <Image className="mb-2" src="./assets/images/beehub-logo.svg"/>
+                <h4 className="text-white fw-bold" style={{letterSpacing: 1.8}}>Beehub</h4>
+                <p className="text-white">Social network</p>
                 
                 <div className="rounded-3 mx-auto px-5 py-4 shadow-sm sessionLeft2_profile" style={{width: "250px",height: "250px",backgroundColor: "#FFFFFF", marginTop: "1.2rem"}} >
                     <div className="d-flex flex-column align-items-center ">

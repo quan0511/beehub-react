@@ -92,7 +92,7 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
           color: updatedColor,
           background: updatedBackground,
       };
-      console.log('edit',updatedPost)
+      //console.log('edit',updatedPost)
       try {
         await editPost(updatedPost)
         handleCloseEditPost(post.id);

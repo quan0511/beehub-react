@@ -59,6 +59,23 @@
 .togglePost{
     background-color: white;
     width: 250px;
+    height: 140px;
+    z-index: 100;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px 5px #d1d4dc;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    right: -121px;
+    top: 103px;
+}
+.togglePost2{
+    background-color: white;
+    width: 250px;
     height: 90px;
     z-index: 100;
     border-radius: 10px;

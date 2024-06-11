@@ -1,6 +1,6 @@
 import { Button, Image, Modal } from "react-bootstrap";
-import BeehubModal from "../../components/BeehubModal";
-import { useAdminUserQuery } from "../adminApiSlice";
+import BeehubModal from "../../../components/BeehubModal";
+import { useAdminUserQuery } from "../../adminApiSlice";
 
 function UserModal({ open, onClose, username }) {
     if (!username) return
@@ -24,7 +24,7 @@ function UserModal({ open, onClose, username }) {
                             <li>{user.username}</li>
                             <li>{user.noOfFriends} friends</li>
                             <li>{user.noOfPosts} posts</li>
-                            <li><small>{user.active ? 'active' : 'banned'}</small></li>
+                            <li><small>{user.status}</small></li>
                         </ul>
                     </div>
                 </div>

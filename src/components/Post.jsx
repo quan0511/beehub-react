@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button, Col, Form, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
-import { ChatLeft, Dot, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
+import { ChatLeft, Dot, GearFill, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
 import { Link, json } from "react-router-dom";
 import '../css/post.css';
@@ -13,12 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { refresh } from "../features/userSlice";
+import { refresh,showMessageAlert } from "../features/userSlice";
 import ListLike from "./ListLike";
 import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
-import { useCreateReportMutation, useGetReportTypesQuery } from "../features/userApiSlice";
+import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
 import axios from "axios";
 function Post ({post, page,refetchHomePage}){
   const user = useSelector(selectCurrentUser);
@@ -41,12 +41,15 @@ function Post ({post, page,refetchHomePage}){
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
     const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
+    const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
     const {data: reportTypes} = useGetReportTypesQuery();
     const [movePostId,setMovePostId] = useState(null);
     const [showReport,setShowReport] = useState(false);
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
     const [targetReport, setTargetReport] = useState(null);
+    const [showSettingPost, setShowSettingPost] = useState(false);
+    let reset = useSelector((state)=> state.user.reset);
     const handleCloseEditPost = (id) => {
       setShowEditPost((prevState) => ({
         ...prevState,
@@ -165,7 +168,6 @@ function Post ({post, page,refetchHomePage}){
       user:user?.id,
       usershare:"",
     });
-    console.log("post",getPostById)
     const handleShowEditPost = (id) =>{
       setFromUpdatePost({
         id:getPostById.id,
@@ -213,6 +215,7 @@ function Post ({post, page,refetchHomePage}){
       }
     }
   };
+
   const [togglePost, setTogglePost] = useState({});
   const handleTogglePost = (postId) =>{
     setTogglePost((prevState) =>({
@@ -263,6 +266,7 @@ function Post ({post, page,refetchHomePage}){
         console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
       }
   };
+  
   const isLiked = () => {
       return checkLike === true; // Check if the post is liked by the user
   };
@@ -313,17 +317,21 @@ function Post ({post, page,refetchHomePage}){
                    <div >
                    {post.user_id === user?.id ?(
                      <div className="togglePost">
-                     <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
-                       <div><MdModeEdit className="iconefunctionpost" /></div>
-                       <div className="fonttextfunctionpost">Edit Post</div>
-                     </div>
-                     <div className="selectedfunction" onClick={() => handleDeletePost(post.id)}>
-                       <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
-                       <div className="fonttextfunctionpost">Delete Post</div>
-                     </div>
+                      <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
+                        <div><MdModeEdit className="iconefunctionpost" /></div>
+                        <div className="fonttextfunctionpost">Edit Post</div>
+                      </div>
+                      <div className="selectedfunction" onClick={() => setShowSettingPost(true)}>
+                        <div><GearFill className="iconefunctionpost"/></div>
+                        <div className="fonttextfunctionpost">Setting Post</div>
+                      </div>
+                      <div className="selectedfunction" onClick={() => handleDeletePost(post.id)}>
+                        <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                        <div className="fonttextfunctionpost">Delete Post</div>
+                      </div>
                      </div>
                    ):(
-                     <div className="togglePost">
+                     <div className="togglePost2">
                        {post.user_id != user.id?
                         <div className="selectedfunction" onClick={()=> setShowReport(true)}>
                           <div><MdReport className="iconefunctionpost" /></div>
@@ -340,19 +348,19 @@ function Post ({post, page,refetchHomePage}){
                  </div>
                 )}
                 <Modal className="postmodaleditpost" show={showEditPost[post.id]} onHide={() =>handleCloseEditPost(post.id)} animation={false}>
-              <div >
-                <div >
-                <Modal.Header className="classmodalheader"  closeButton>
-                  <Modal.Title className="modalpost-title">
-                        Edit Post
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body >
-                  <EditPost post={post} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
-                </Modal.Body>
-                </div>
-              </div>
-            </Modal>
+                  <div >
+                    <div >
+                    <Modal.Header className="classmodalheader"  closeButton>
+                      <Modal.Title className="modalpost-title">
+                            Edit Post
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body >
+                      <EditPost post={post} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
+                    </Modal.Body>
+                    </div>
+                  </div>
+                </Modal>
                 {post.share === true ?(
                   <SharePost getSettingType={getSettingType} post={post}/>
                 ):(
@@ -477,7 +485,7 @@ function Post ({post, page,refetchHomePage}){
                       <Modal.Header className="text-center" closeButton>
                         <Modal.Title>Report</Modal.Title>
                       </Modal.Header>
-                    <Formik
+                      <Formik
                         initialValues={{
                           sender_id: user.id,
                           user_username: post.user_username,
@@ -492,10 +500,10 @@ function Post ({post, page,refetchHomePage}){
                                   props.setErrors({type_id : "Type Report is required"});
                                 }else{
                                   values.type_id = targetReport;
-                                  console.log(JSON.stringify(values));
-                                  let respon= await createReport({id:user.id,data:values });
-                                  dispatch(refresh());
+                                  await createReport({id:user.id,data:values });
+                                  dispatch(showMessageAlert("Send Report post successfully"));
                                   setShowReport(false);
+                                  refetchHomePage();
                                 }
                             } catch (error) {
                                 console.error('An error occurred while submitting the form.', error);
@@ -537,6 +545,47 @@ function Post ({post, page,refetchHomePage}){
                           Send Report
                         </Button>
                       </Modal.Footer>
+                      </Form>
+                      )}</Formik>
+                    </Modal>
+                    <Modal show={showSettingPost} onHide={()=> setShowSettingPost(false)}>
+                      <Modal.Header className="text-center" closeButton>
+                        <Modal.Title>Setting</Modal.Title>
+                      </Modal.Header>
+                      <Formik
+                        initialValues={{
+                          user_id: user.id,
+                          post_id: post.id,
+                          setting_type: post.setting_type,
+                        }}
+                        onSubmit={async (values, { ...props }) => {
+                            try {
+                                let respon= await settingPost({id:user.id,data:values });
+                                setShowSettingPost(false);
+                                if(respon.data){
+                                  dispatch(showMessageAlert("Setting type for post successfully"));
+                                  refetchHomePage();
+                                }
+                            } catch (error) {
+                                console.error('An error occurred while submitting the form.', error);
+                            }
+                        }}
+                    > {({ handleSubmit, handleChange, values, touched, errors }) => (
+                      <Form noValidate onSubmit={handleSubmit}>
+                        <Modal.Body>
+                          <Form.Label>Setting Post</Form.Label>
+                              <Form.Select name="setting_type" aria-label="select setting type" defaultValue={post.setting_type} className="mb-3"
+                                  onChange={handleChange}>
+                                <option value="PUBLIC">Public</option>
+                                <option value="FOR_FRIEND">Only Friends</option>
+                                <option value="HIDDEN">Hidden</option>
+                              </Form.Select>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="primary" type="submit">
+                            Save
+                          </Button>
+                        </Modal.Footer>
                       </Form>
                       )}</Formik>
                     </Modal>

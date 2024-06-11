@@ -15,6 +15,7 @@ function SideBar({ setSidebarOpen }) {
     return ( 
         <aside className="sidebar bg-body-secondary">
             <div className="sidebar-brand fw-bold">
+                <img className="me-2" width={40} src="./assets/images/beehub-logo.svg" alt="logo"/>
                 Beehub
             </div>
             <div className="sidebar-wrapper p-1">

@@ -3,7 +3,7 @@ import './Hero.css'
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 
-function Hero({ img, title, timestamp, linkTitle, linkUrl }) {
+function Hero({ img, background, title, timestamp, linkTitle, linkUrl }) {
     const user = useSelector(selectCurrentUser)
     const navigate = useNavigate()
 
@@ -24,21 +24,21 @@ function Hero({ img, title, timestamp, linkTitle, linkUrl }) {
                 />
                 <span className="d-none d-md-inline align-middle">{user?.username}</span>
             </a>
-            <ul className="hero dropdown-menu p-0 dropdown-menu-lg dropdown-menu-end">
-                <li className="hero-header text-bg-primary">
+            <ul className="hero dropdown-menu p-0 dropdown-menu-lg dropdown-menu-end" >
+                <li className="hero-header text-bg-primary" style={{backgroundImage: `url(${background})`}} >
                     <img
                         width={90}
                         height={90}
                         className="rounded-circle shadow border-1"
                         src={img}
                     />
-                    <p className="pt-2 pb-0 text-break"> {title}
+                    <p className="position-relative pt-2 pb-0 mb-0 text-break"> {title}
                         <small className="d-block">Member since {timestamp}</small>
                     </p>
                 </li>
                 <li className="hero-actions">
-                    <Link onClick={(e) => handleLinkNavigate(e, linkUrl)} to={linkUrl} className="d-flex justify-content-center w-50 text-black text-decoration-none p-2">{linkTitle}</Link>
-                    <Link onClick={(e) => handleLinkNavigate(e, '/logout')} to={'/logout'} className="d-flex justify-content-center w-50 text-black text-decoration-none p-2">Logout</Link>
+                    <Link onClick={(e) => handleLinkNavigate(e, linkUrl)} to={linkUrl} className="d-flex justify-content-center w-50 text-decoration-none p-2">{linkTitle}</Link>
+                    <Link onClick={(e) => handleLinkNavigate(e, '/logout')} to={'/logout'} className="d-flex justify-content-center w-50 text-decoration-none p-2">Logout</Link>
                 </li>
             </ul>
         </li>
