@@ -9,6 +9,7 @@ import { LuLink } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import { SlArrowLeft } from 'react-icons/sl';
+import { Modal } from 'react-bootstrap';
 function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost}){
     const [viewFoundBackground, setViewFoundBackground] = useState(false);
     const [editPost] = useUpdatePostMutation();
@@ -76,6 +77,7 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
       };
     const handleSubmitEditPost = async(e) =>{
         e.preventDefault();
+        setLoading(true);
         //setLoadingEditPost(true);
         const inputElement = document.getElementById("myInput") ;
         const userInput = inputElement.textContent?.trim() || "";
@@ -90,6 +92,7 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
           color: updatedColor,
           background: updatedBackground,
       };
+      //console.log('edit',updatedPost)
       try {
         await editPost(updatedPost)
         handleCloseEditPost(post.id);
@@ -240,10 +243,8 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
               fragment.appendChild(document.createTextNode(word + " "));
           }
       });
-    
       // Thêm các nút con mới vào div
       currentInput.appendChild(fragment);
-    
       // Khôi phục vị trí của caret
       setCaretPosition(currentInput, currentInput.childNodes.length);
     }
@@ -267,9 +268,17 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
           e.target.setAttribute("data-text", "What do you think ?");
         }
       };
-      console.log("post",post)
+      const [loading, setLoading] = useState(false);
     return(
         <div key={post.id} >
+          <Modal className="postLoading" show={loading} onHide={() => setLoading(false)}>
+          <Modal.Body>
+            <div className="loading-spinner">
+              <div className="loader"></div>
+              <span className="sr-only">Loading...</span>
+            </div>
+          </Modal.Body>
+        </Modal>
                 <form onSubmit={handleSubmitEditPost} encType="multipart/form-data">
                 <input type="hidden" name="id" value={formUpdatePost.id} onChange={(e) => handleChangeEditPost(e)}/>
                     <div className="modalpost-nameanh">
