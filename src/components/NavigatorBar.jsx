@@ -134,8 +134,13 @@ function NavigatorBar({hideButton}){
                         </Row>
                     </Col>
                     {/* <Col  ></Col> */}
-                    <Col lg={3} md={3} sm={5} xs={6} className="ms-auto">
+                    <Col xl={4} lg={4} md={3} sm={5} xs={6} className="ms-auto">
                         <Nav className="justify-content-end d-flex flex-row" variant="none" defaultActiveKey="/home">
+                            <Nav.Item  className="me-2">
+                                <Nav.Link  href="/friend">
+                                    <Bell size={20}/>
+                                </Nav.Link>
+                            </Nav.Item>
                             <Nav.Item className="me-2">
                                 <Nav.Link >
                                     <OverlayTrigger
@@ -144,18 +149,13 @@ function NavigatorBar({hideButton}){
                                         overlay={tooltipAddFriend}
                                         >
                                         <div className="position-relative">
-                                        <Bell size={20}/>
+                                        <EnvelopeOpen size={20}/> 
                                             {!isLoading&& notifications.length>0?
                                                 <span className="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1"><span class="visually-hidden">add friend notification</span></span>
                                                 :<></>
                                             }
                                         </div>
                                     </OverlayTrigger>
-                                </Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item  className="me-2">
-                                <Nav.Link  href="/friend">
-                                    <EnvelopeOpen size={20}/>
                                 </Nav.Link>
                             </Nav.Item>
                             <Nav.Item  className="me-2">
