@@ -315,4 +315,36 @@
 .inputCreatePost:empty:before {
     content: attr(data-text);
     color: gray;
-  }
+}
+.postLoading {
+    display: inline;
+}
+.postLoading .modal-dialog {
+    position: relative;
+    top: 150px;
+    width: 250px;
+}
+.postLoading .modal-dialog .modal-content {
+    height: 100px;
+}
+.postLoading .modal-dialog .modal-content .modal-body {
+    background-color: gray;
+}
+.loading-spinner{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #8224e3;
+    border-left-color:#8224e3 ;
+    border-top-color: #8224e3;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
