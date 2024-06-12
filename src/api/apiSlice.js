@@ -10,6 +10,7 @@ const baseQuery = fetchBaseQuery({
         }
         return headers
     },
+    timeout: 5000
 })
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
@@ -34,5 +35,5 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
     baseQuery: baseQueryWithReauth,
     endpoints: builder => ({}),
-    tagTypes: ['Post', 'User']
+    tagTypes: ['Post', 'User', 'Group', 'Report']
 })

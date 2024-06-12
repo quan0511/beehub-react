@@ -1,20 +1,34 @@
-import { Button, Image, Modal } from "react-bootstrap";
+import { Badge, Button, Image, Modal } from "react-bootstrap";
 import BeehubModal from "../../../components/BeehubModal";
+import { useAdminPostQuery } from "../../adminApiSlice";
+import dateFormat from "dateformat";
+import BlockButton from "../actions/BlockButton";
 
-function PostModal({ open, onClose, post }) {
+function PostModal({ open, onClose, postId }) {
+    const { data: post, isLoading } = useAdminPostQuery(postId, { skip: postId == "" })
+
+    if (!post) return
+
     return (
         <BeehubModal open={open} onClose={onClose}>
             <Modal.Header>
                 <h3>Post</h3>
             </Modal.Header>
             <Modal.Body>
-                <p>Optimus Dance</p>
-                <div>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/nF_GeASSvIQ?si=3N0GPkw6u4SP_uoG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
+                {post.creatorImage &&
+                    <Image className="me-2 float-start" src={post.creatorImage} alt="creator" roundedCircle width={40} />
+                }
+                <Badge className="float-end" bg={post.isBlocked ? "danger" : "success"}>{post.isBlocked ? "blocked" : "active"}</Badge>
+                <span>{post.creator}</span>
+                <span className="d-block" >{dateFormat(post.timestamp, "h:MM:ss TT, dd/mm/yy")}</span>
+                <p>{post.content}</p>
+                {post.image &&
+                    <Image className="w-100" src={post.image} alt="post image" />
+                }
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={onClose}>Close</Button>
+                <BlockButton isBlocked={post.isBlocked} postId={post.id} />
+                <Button onClick={onClose}>Cancel</Button>
             </Modal.Footer>
         </BeehubModal>
     );

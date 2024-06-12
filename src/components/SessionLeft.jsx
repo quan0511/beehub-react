@@ -31,7 +31,7 @@ function SessionLeft ({appUser}){
     return (
         <div className="d-none d-md-flex flex-column " style={{overflowY: "scroll",height: "100vh", position: "fixed", width: "inherit"}}>
             <div  style={{backgroundColor: "#383a45",backgroundImage:"linear-gradient(135deg, #4f5261 0%, #383a45 50%)",height: "400px", paddingTop: "4rem", textAlign:"center"}}>
-                <Image className="mb-2" src="./assets/images/beehub-logo.svg"/>
+                <Image className="mb-2" src="/assets/images/beehub-logo.svg"/>
                 <h4 className="text-white fw-bold" style={{letterSpacing: 1.8}}>Beehub</h4>
                 <p className="text-white">Social network</p>
                 

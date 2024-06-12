@@ -1,12 +1,13 @@
 import { Button, Image, Modal } from "react-bootstrap";
 import BeehubModal from "../../../components/BeehubModal";
 import { useAdminGroupQuery } from "../../adminApiSlice";
+import DeleteButton from "../actions/DeleteButton";
 
-function GroupModal({ open, onClose, groupname }) {
-    if (!groupname) return
-    const {data: group, isLoading} = useAdminGroupQuery(groupname)
+function GroupModal({ open, onClose, groupId }) {
+    const { data: group, isLoading } = useAdminGroupQuery(groupId, { skip: groupId == '' })
+
     if (!group) return
-    console.log(group)
+
     return (
         <BeehubModal open={open} onClose={onClose}>
             <Modal.Header>
@@ -35,6 +36,11 @@ function GroupModal({ open, onClose, groupname }) {
                 </div>
             </Modal.Body>
             <Modal.Footer>
+                <DeleteButton
+                    caseId={group.id}
+                    caseType={"group"}
+                    confirmContent={'Do you sure delete this group?'}
+                />
                 <Button onClick={onClose}>Close</Button>
             </Modal.Footer>
         </BeehubModal>
