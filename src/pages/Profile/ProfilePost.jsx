@@ -21,7 +21,7 @@ function ProfilePost ({appUser,user}){
         const onScroll = () => {
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
             if(!scrolledToBottom && reset){
-                setPage(page);
+                setPage(0);
                 return;
             }else{
                 if (scrolledToBottom && !isFetching && !reset) {
