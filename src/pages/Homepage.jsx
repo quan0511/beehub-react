@@ -30,7 +30,7 @@ function Homepage() {
                   setPage(page + 1);
                 }
             }
-        };
+        }
         document.addEventListener("scroll", onScroll);
         if(reset!=null && reset){
             window.scrollTo({ top: 0, behavior: 'smooth' });

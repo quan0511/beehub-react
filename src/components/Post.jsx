@@ -315,7 +315,7 @@ function Post ({post, page,refetchHomePage}){
                 </Col>
                 {togglePost[post.id] && (
                    <div >
-                   {post.user_id === user?.id ?(
+                   {post.user_id === user?.id && post.group_id==null?(
                      <div className="togglePost">
                       <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
                         <div><MdModeEdit className="iconefunctionpost" /></div>
@@ -330,7 +330,19 @@ function Post ({post, page,refetchHomePage}){
                         <div className="fonttextfunctionpost">Delete Post</div>
                       </div>
                      </div>
-                   ):(
+                   ):post.user_id === user?.id && post.group_id!=null?(
+                    <div className="togglePost2">
+                      <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
+                        <div><MdModeEdit className="iconefunctionpost" /></div>
+                        <div className="fonttextfunctionpost">Edit Post</div>
+                      </div>
+                      <div className="selectedfunction" onClick={() => handleDeletePost(post.id)}>
+                        <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                        <div className="fonttextfunctionpost">Delete Post</div>
+                      </div>
+                     </div>
+                   )
+                   :(
                      <div className="togglePost2">
                        {post.user_id != user.id?
                         <div className="selectedfunction" onClick={()=> setShowReport(true)}>

@@ -21,14 +21,12 @@ function Group (){
     const [page, setPage] = useState(0);
     const reset = useSelector((state)=>state.user.reset);
     const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
-    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page});
+    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page, reset:reset});
     const [tab, setTab] = useState('discussion');
     const dispatch = useDispatch();
-    console.log(group);
     const handleButton= async(typeClick)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, group_id: group.id, type: typeClick },token);
         if(resp.result != 'unsuccess'|| resp.result !="error"){
-            console.log(resp.data);
             dispatch(refresh())
         }
     }

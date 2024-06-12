@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
 import { Ban, CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
-import "./Profile.css"
+import "../../css/Profile.css"
 import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
