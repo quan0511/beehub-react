@@ -1,6 +1,7 @@
 import React from "react";
 import {  Card,ListGroup, Image,Row, Col,Button} from "react-bootstrap";
 import APIService from "../features/APIService";
+import { Link } from "react-router-dom";
 function NotificationListGroup({requirements,handleButton}){
     const getTimeOfRequirement = (requi)=>{
         let datePost = new Date(requi);
@@ -23,10 +24,10 @@ function NotificationListGroup({requirements,handleButton}){
                         <ListGroup.Item key={index} >
                             <Row className="py-1">
                                 <Col xl={1} lg={1} md={1} sm={1}>
-                                    <Image src={urlImage} width={50} className="border bg-light p-1" roundedCircle/>
+                                <Link to={`/member/profile/${req.sender.username}`}><Image src={urlImage} width={50} className="border bg-light p-1" roundedCircle/></Link>
                                 </Col>
                                 <Col xl={7} lg={6} md={6} sm={5} className="ms-3">
-                                    <p className="text-black text-start lh-sm"><b>{req.sender.fullname}</b> &nbsp;
+                                    <p className="text-black text-start lh-sm"><Link to={`/member/profile/${req.sender.username}`} className="text-decoration-none fw-bold" style={{color: "FFFFFF"}}>{req.sender.fullname}</Link> &nbsp;
                                     want to joined group <br/>
                                     <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
                                     </p>                                    

@@ -92,7 +92,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
         }),
         profilePosts: builder.query({
-            query: ({id_user, username, page, reset}) =>({
+            query: ({id_user, username, page, reset,newProfile}) =>({
                 url: `/user/${id_user}/get-posts/${username}?limit=3&page=${page}`
             }),
             serializeQueryArgs: ({ endpointName }) => {
@@ -100,7 +100,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems,{arg: arg}) => {
-                if(!arg.reset){
+                if(arg.newProfile){
+                    return newItems;
+                }
+                if(!arg.reset && !arg.newProfile&& arg.page!=0){
                     currentCache.push(...newItems)
                 }else{
                     return newItems;

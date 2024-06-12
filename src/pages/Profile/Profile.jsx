@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
-import { Ban, CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
+import { Ban, CardImage, ColumnsGap, ExclamationCircle, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
 import "../../css/Profile.css"
 import ProfileAbout from "./ProfileAbout";
@@ -12,8 +12,9 @@ import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
-import userSlice, { refresh } from "../../features/userSlice";
+import userSlice, { changedProfile, refresh } from "../../features/userSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
+import ModalReport from "../../components/ModalReport";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
@@ -28,6 +29,7 @@ function Profile (){
     const [show1, setShow1] = useState(false);
     const handleShow1 = () => setShow1(true);
     const [show2, setShow2]= useState(false);
+    const [showReport,setShowReport] = useState(false);
     const [fileImage,setFileImage] = useState();
     const [fileBackground, setFileBackground] = useState();
     const [saveImg,{isLoadingImage, isFetchingImage, isErrorImage, isSuccessImage}] = useUploadImageProfileMutation();
@@ -150,6 +152,7 @@ function Profile (){
         }
     }
     useEffect(()=>{
+        dispatch(changedProfile());
         setTab("posts");
     },[username])
     if(isLoading || !isSuccess){
@@ -162,6 +165,15 @@ function Profile (){
                 </Row>
             </Container>
         );
+    }
+    if(user==null || user.relationship_with_user=="BE_BLOCKED"){
+        return (<Container style={{marginTop: "150px"}}>
+                <Row>
+                    <Col xl={6} className="mx-auto" style={{height: "400px"}}>
+                        <h1>Cannot found this user</h1>
+                    </Col>
+                </Row>
+        </Container>);
     }
     return (
             <Container style={{marginTop: "50px"}} fluid>
@@ -277,11 +289,23 @@ function Profile (){
                                     </div>
                                     <div>
                                         {getButton()}
+                                        {appUser.id != user.id?
+                                        <button onClick={()=>{
+                                            setShowReport(true);
+                                        }} className="ms-2 btn btn-link ">
+                                            <ExclamationCircle color="red" size={25}/>
+                                        </button>
+                                        :<></>
+                                        }
                                     </div>
                                     <Button variant="outline-light" className="position-absolute rounded-circle " onClick={()=>setShow2(true)} style={{top: "-50px", right:0}}>
                                         <PencilFill/>
                                     </Button>
                                 </Col>
+                                {appUser.id != user.id?
+                                    <ModalReport showReport={showReport} setShowReport={setShowReport} userTarget={user} />
+                                :<></>
+                                }
                             </Row>
                             <Container fluid>
                                 <Row>

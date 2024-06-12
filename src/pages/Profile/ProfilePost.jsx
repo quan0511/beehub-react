@@ -8,25 +8,27 @@ import AddPost from "../../components/AddPost";
 import { useHomepageQuery, useProfilePostsQuery } from "../../features/userApiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import BeehubSpinner from "../../components/BeehubSpinner";
-import { cancelReset } from "../../features/userSlice";
+import { cancelReset, changedProfile, oldProfile } from "../../features/userSlice";
 function ProfilePost ({appUser,user}){
     const [page, setPage] =useState(0);
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
-    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useProfilePostsQuery({id_user:appUser.id, username: user.username, page:page, reset: reset},{skip : user==null});
+    const newProfile = useSelector((state)=>state.user.newProfile);
+    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useProfilePostsQuery({id_user:appUser.id, username: user.username, page:page, reset: reset,newProfile:newProfile},{skip : user==null});
     const [showInputModal, setShowInputModal] = useState(false);
     const handleOpenInputModal = () => setShowInputModal(true);
+    const [refreshPost, setRefreshPost] = useState(newProfile??true);
     const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
+        setTimeout(()=>setRefreshPost(false),800);
         const onScroll = () => {
+            dispatch(oldProfile());
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
             if(!scrolledToBottom && reset){
                 setPage(0);
                 return;
-            }else{
-                if (scrolledToBottom && !isFetching && !reset) {
-                    setPage(page + 1);
-                }
+            }else if (scrolledToBottom && !reset){
+                setPage(page + 1);
             }
         };
         document.addEventListener("scroll", onScroll);
@@ -37,11 +39,11 @@ function ProfilePost ({appUser,user}){
         return function () {
           document.removeEventListener("scroll", onScroll);
         };
-      }, [page, isFetching]);
-    if(isLoading){
+      }, [page]);
+    if(isLoading|| refreshPost){
         return <Container fluid>
             <Row className="profile-tab">
-                <Col xl={4} lg={4} md={12} sm={12} className="mx-auto">
+                <Col xl={4} lg={4} md={12} sm={12} className="mx-auto mt-5">
                     {BeehubSpinner()}
                 </Col>
             </Row>
@@ -101,10 +103,11 @@ function ProfilePost ({appUser,user}){
                         </div>
                         :<></>
                         }
-                        {posts.length==0?
+                        {posts!=null && posts.length==0?
                             <h2 className="text-black-50">There are no post in this profile</h2>
-                        :
-                        posts.map((post, index)=> <Post key={index} post={post} page="profile"/>)
+                        :posts!=null?
+                            posts.map((post, index)=> <Post key={index} post={post} page="profile"/>)
+                        :<></>
                         }
                     </Col>
                 </Row>

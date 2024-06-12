@@ -69,7 +69,7 @@ const GroupCard =({group,image})=>{
                     <Col xl={6} lg={6} md={6} sm={6} xs={5}>
                         <div style={{fontSize: "16px", fontWeight: "bold"}}><Link to={"/group/"+group.id} style={{textDecoration: "none", color:"black"}}>{group.groupname}</Link></div>
                         <div className="lh-sm" style={{overflow:"hidden",height: "50px",fontSize: "14px"}} >
-                            {group.is_public? "Public":"Private"} <Dot className="mx-1"/> {group.member_count} members 
+                            {group.public_group? "Public":"Private"} <Dot className="mx-1"/> {group.member_count} members 
                             <br/>
                             {group.description}                           
                         </div>

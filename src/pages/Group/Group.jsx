@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {Col, Container, Image, Button, Row, Nav, Spinner} from "react-bootstrap";
-import { Dot, GlobeAmericas, LockFill, ThreeDots } from "react-bootstrap-icons";
+import { Dot, ExclamationCircle, GlobeAmericas, LockFill, ThreeDots } from "react-bootstrap-icons";
 
 import GroupMedia from "./GroupMedia";
 import GroupPeople from "./GroupPeople";
@@ -14,11 +14,14 @@ import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useGroupInfoQuery, useGroupPostsQuery } from "../../features/userApiSlice";
 import { refresh } from "../../features/userSlice";
 import { GroupError } from "./GroupError";
+import BeehubSpinner from "../../components/BeehubSpinner";
+import ModalReport from "../../components/ModalReport";
 function Group (){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
     const token = useSelector(selectCurrentToken);
     const [page, setPage] = useState(0);
+    const [showReport,setShowReport] = useState(false);
     const reset = useSelector((state)=>state.user.reset);
     const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
     const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page, reset:reset});
@@ -55,7 +58,7 @@ function Group (){
                 return <GroupError/>
             case "people":
                 if(  group.active && (group.public_group || group.joined=='joined')){
-                    return <GroupPeople members={group.group_members} />;
+                    return <GroupPeople members={group.group_members.filter((e)=> e.relationship !="BE_BLOCKED")} />;
                 }
                 return <GroupError/>
             case "media":
@@ -76,7 +79,7 @@ function Group (){
     },[])
     if(isLoading || !isSuccess ){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
-            <Spinner animation="border" />
+            {BeehubSpinner()}
         </div>
     }
     return (
@@ -101,20 +104,32 @@ function Group (){
                                     <span><GlobeAmericas /> Public group</span> 
                                     :<span><LockFill/> Private group</span>
                                 }<Dot/> {group.member_count} members</p>
-                                {group.member_role ==null && group.joined ==null?
-                                    <Button variant="primary" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("JOIN")}>Join</Button>
-                                    :( group.member_role ==null && group.joined =='send request' ?
-                                        <Button variant="outline-warning" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("CANCEL_JOIN")}>Cancel Request</Button>
-                                        :
-                                        (group.member_role == "MEMBER"?
-                                        <Button variant="outline-danger" style={{width: "200px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
-                                        : (group.member_role == "GROUP_MANAGER"?
-                                            <div><Button variant="outline-danger" style={{width: "200px", marginRight:"10px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
-                                            <Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link></div>
-                                            :<Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link>
-                                        ))
-                                    )
-                                }
+                                <div className="d-flex flex-nowrap ">
+                                    {group.member_role ==null && group.joined ==null?
+                                        <Button variant="primary" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("JOIN")}>Join</Button>
+                                        :( group.member_role ==null && group.joined =='send request' ?
+                                            <Button variant="outline-warning" style={{width: "100px",fontWeight: "bold"}} onClick={()=> handleButton("CANCEL_JOIN")}>Cancel Request</Button>
+                                            :
+                                            (group.member_role == "MEMBER"?
+                                            <Button variant="outline-danger" style={{width: "200px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
+                                            : (group.member_role == "GROUP_MANAGER"?
+                                                <div><Button variant="outline-danger" style={{width: "200px", marginRight:"10px"}}  onClick={()=> handleButton("LEAVE_GROUP")}>Leave Group</Button>
+                                                <Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link></div>
+                                                :<Link  className="btn btn-danger" role="button" to={"/group/manage/"+group.id} >Manager Group</Link>
+                                            ))
+                                        )
+                                    }
+                                    {group.member_role!="GROUP_CREATOR"?
+                                        (<div className="ms-1"><button onClick={()=>{
+                                            setShowReport(true);
+                                        }} className="ms-2 btn btn-link ">
+                                            <ExclamationCircle color="red" size={25}/>
+                                        </button>
+                                        <ModalReport showReport={showReport} setShowReport={setShowReport} groupTarget={group} /></div>
+                                        )
+                                    :<></>
+                                    }
+                                </div>
                             </div>
                             <div className="d-flex flex-row mb-2 flex-nowrap align-items-end d-none d-lg-block d-xl-block" style={{overflowX: "hidden"}}>
                                 {
