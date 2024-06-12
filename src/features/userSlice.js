@@ -10,6 +10,12 @@ export const userSlice = createSlice({
         refresh: (state)=>{
             state.reset = !state.reset;
         },
+        resetData: (state)=>{
+            state.reset = true;
+        },
+        cancelReset: (state)=>{
+            state.reset = false;
+        },
         showMessageAlert: (state,payload)=>{
             state.showMessage= true;
             state.message = payload.payload;
@@ -19,5 +25,5 @@ export const userSlice = createSlice({
         }
     }
 })
-export const {refresh,showMessageAlert,closeMessageAlert }= userSlice.actions;
+export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset }= userSlice.actions;
 export default userSlice.reducer

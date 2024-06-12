@@ -7,17 +7,20 @@ export const userApiSlice = apiSlice.injectEndpoints({
             query: arg => ({
                 url: '/homepage/'+arg.id+"?page="+arg.page+"&limit="+3
             }),
-            providesTags: ['Post'],
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
             // Always merge incoming data to the cache entry
-            merge: (currentCache, newItems) => {
-            currentCache.push(...newItems)
+            merge: (currentCache, newItems,{arg: arg}) => {
+                if(!arg.reset){
+                    currentCache.push(...newItems)
+                }else{
+                    return newItems;
+                }
             },
             // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
-            return currentArg !== previousArg
+                return currentArg !== previousArg;
             },
         }),
         friends: builder.query({
@@ -214,7 +217,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
                     method: "POST",
                     body: data
                 }
-            }
+            },
+            invalidatesTags: ['Post']
         })
     })
 })

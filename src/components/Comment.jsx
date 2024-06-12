@@ -124,12 +124,9 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         const handleCancelEditComment = () => {
           setEditCommentId(null);
         };
-        const commentTagLink = (comments) => {
-          return /tag=.*&link=/.test(comments);
-        };
         const renderCommentWithLink = (comment) => {
           if (typeof comment === 'string') {
-            const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+            const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
             let match;
             const result = [];
             let lastIndex = 0;
@@ -145,7 +142,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             }
             const restOfString = comment.substring(lastIndex);
             result.push(restOfString);
-            return result;
+            return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
           } else {
             return comment;
           }
@@ -203,7 +200,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         }
       };
 
-      function handleInput(inputId, divId, formType) {
+      const handleInput = (inputId, divId, formType) => {
         const inputElement = document.getElementById(divId);
         const ulElement = document.getElementById(`${divId}-ul`);
         let userInput = inputElement.innerHTML.trim() || "";
@@ -234,6 +231,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                 } else {
                     return span.textContent?.trim() || "";
                 }
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "A") {
+                const linkText = node.textContent?.trim() || "";
+                const href = node.getAttribute("href") || "";
+                const link = href.split("/").pop(); // Extract the link part from href
+                return `tag=${linkText}&link=${link}`;
             }
             return "";
         }).join(" ");
@@ -244,7 +246,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         }
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
-    }
+      };
       function getFilterText(inputValue) {
         // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
         const regex = /^@(.+)|\s@(.+)/;
@@ -289,7 +291,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
-  
       const newValue = getOverwrittenText(currentValue, selectedName);
       const commentInputElement = document.getElementById(inputId);
       if (!commentInputElement) {
@@ -303,7 +304,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
               const span = document.createElement("span");
               const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
               span.textContent = wordWithSpaces;
-  
               // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
               if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
                   span.contentEditable = "false";
@@ -326,7 +326,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       });
       currentInput.dispatchEvent(event);
       (document.getElementById(`${divId}-ul`)).style.display = "none";
-  }
+    }
     function isInList(word, divId) {
       const ulElement = document.getElementById(`${divId}-ul`) ;
       const listItems = ulElement.getElementsByTagName("li");

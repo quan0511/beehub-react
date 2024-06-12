@@ -136,7 +136,7 @@
     right: 20px;
 }
 .sharekhung{
-    width: 600px;
+    width: 500px;
     position: relative;
     left: 50px;
     border-radius: 5px;
@@ -153,7 +153,7 @@
     border-radius: 10px;
     background-color: var(--showpostbackground);
     color:var(--showpostcolor);
-    width: 540px;
+    width: 440px;
     height: 280px;
     display: flex;
     align-items: center;

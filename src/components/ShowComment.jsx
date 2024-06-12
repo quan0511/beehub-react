@@ -91,32 +91,29 @@ function ShowComment({
       }
     };
 
-  const commentTagLink = (comments) => {
-    return /tag=.*&link=/.test(comments);
-  };
-  const renderCommentWithLink = (comment) => {
-    if (typeof comment === 'string') {
-      const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
-      let match;
-      const result = [];
-      let lastIndex = 0;
-      while ((match = regex.exec(comment)) !== null) {
-        const [fullMatch, tagName, link] = match;
-        const beforeTag = comment.substring(lastIndex, match.index);
-        result.push(beforeTag, (
-          <Link key={match.index} to={"/member/profile/" + link}>
-            {tagName}
-          </Link>
-        ));
-        lastIndex = regex.lastIndex;
+    const renderCommentWithLink = (comment) => {
+      if (typeof comment === 'string') {
+        const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
+        let match;
+        const result = [];
+        let lastIndex = 0;
+        while ((match = regex.exec(comment)) !== null) {
+          const [fullMatch, tagName, link] = match;
+          const beforeTag = comment.substring(lastIndex, match.index);
+          result.push(beforeTag, (
+            <Link key={match.index} to={"/member/profile/" + link}>
+              {tagName}
+            </Link>
+          ));
+          lastIndex = regex.lastIndex;
+        }
+        const restOfString = comment.substring(lastIndex);
+        result.push(restOfString);
+        return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
+      } else {
+        return comment;
       }
-      const restOfString = comment.substring(lastIndex);
-      result.push(restOfString);
-      return result;
-    } else {
-      return comment;
-    }
-  }; 
+    };
   
   function handleInput(inputId, divId, formType) {
     const inputElement = document.getElementById(divId);
@@ -329,6 +326,12 @@ const handleBlur = (e) => {
     post: postIdco.id,
     user:user?.id,
   })
+  const formatcolor = (color) =>{
+    if(color && color.length ===8){
+      return `#${color.slice(2)}`;
+    }
+    return color;
+  }
     return(
         <div className="modalshowpostandcomment">
               <div key={postIdco.id} className="modelkhung">           
@@ -365,28 +368,27 @@ const handleBlur = (e) => {
                         </div>
                         ):(
                           <div>
-                            {(postIdco.color && postIdco.color !== "inherit" && postIdco.background && postIdco.background !== "inherit") ?(
+                            {(formatcolor(postIdco.color) && formatcolor(postIdco.color) !== "inherit" && formatcolor(postIdco.background) && formatcolor(postIdco.background) !== "inherit" && formatcolor(postIdco.background)!== '#ffffff') ?(
                       <div
                         className={
-                            postIdco.color !== null
+                          formatcolor(postIdco.color) !== null
                             ? 'modal-showcommentBackgroundcolor'
                             : ''
                         }
                         style={{
-                          '--showpostcolor': postIdco.color || 'black' ,
-                          '--showpostbackground': postIdco.background || 'white'
+                          '--showpostcolor': formatcolor(postIdco.color) || 'black' ,
+                          '--showpostbackground': formatcolor(postIdco.background) || 'white'
                         } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                       >
-                        {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                        {renderCommentWithLink(postIdco?.text)}
                       </div>
                       ):(
                         <div className="modal-showcomment">
-                        {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                        {renderCommentWithLink(postIdco?.text)}
                         </div>
                       )}
                         </div>
                       )}
-                  
                       </div>
                     )}
                   <div className="postuser-alllikeModal" >
@@ -467,7 +469,7 @@ const handleBlur = (e) => {
                       </div>
                       <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
                       <input type="hidden" name="createdAt" value={formComment.createdAt} onChange={(e) => handleChangeComment(e)} />
-                      <button type="submit" className="commentpost" value="Comment"><IoMdSend className="iconcomment"/></button>
+                      <button type="submit" className={`commentpost${!content ? 'disable' : ''}`} value="Comment"><IoMdSend className="iconcomment"/></button>
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
