@@ -1,12 +1,20 @@
-import ContentHeader from "../components/ContentHeader";
-import FullWidthTable from "../components/FullWidthTable";
-import { useAdminCreateUserMutation, useAdminUsersQuery } from "../adminApiSlice";
+import { useState } from "react";
+import * as Yup from 'yup';
 import { Badge, Button, ButtonGroup } from "react-bootstrap";
 import { IoFemale, IoMale } from "react-icons/io5";
 import { Field, Form, Formik } from "formik";
-import * as Yup from 'yup';
+import {
+    useAdminCreateUserMutation,
+    useAdminPatchUserRoleMutation,
+    useAdminUsersQuery
+} from "../adminApiSlice";
+
 import BeehubSpinner from "../../../src/components/BeehubSpinner";
-import { useState } from "react";
+import ContentHeader from "../components/ContentHeader";
+import FullWidthTable from "../components/FullWidthTable";
+import UserModal from "../components/modals/UserModal";
+import DeleteButton from "../components/actions/DeleteButton";
+import BanButton from "../components/actions/BanButton";
 
 const userHeader = [
     { style: { width: 10 }, content: 'id' },
@@ -14,11 +22,11 @@ const userHeader = [
     { content: 'Email' },
     { content: 'Full Name' },
     { content: 'Gender' },
-    { content: 'No of posts' },
-    { content: 'No of friends' },
-    { content: 'Role' },
+    { style: { width: 60 }, content: 'No of posts' },
+    { style: { width: 60 }, content: 'No of friends' },
+    { style: { width: 110, textAlign: 'center' }, content: 'Role' },
     { content: 'Status' },
-    { content: 'Action' },
+    { style: { width: 80, textAlign: 'center' }, content: 'Action' },
 ]
 
 const DisplayingErrorMessagesSchema = Yup.object().shape({
@@ -33,8 +41,13 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
 function Users() {
     const { data: users, isLoading, isFetching } = useAdminUsersQuery()
     const [createUser, { error, isLoading: isCreateLoading, isSuccess }] = useAdminCreateUserMutation()
+    const [updateRole, { error: updateError, isLoading: isUpdating }] = useAdminPatchUserRoleMutation()
+
     const [successMessage, setSuccessMessage] = useState('')
-    
+
+    const [chosenUser, setChosenUser] = useState('')
+    const [openUserModal, setOpenUserModal] = useState(false)
+
     const [currentPage, setCurrentPage] = useState(1)
     const [perPage, setPerPage] = useState(10)
 
@@ -49,7 +62,7 @@ function Users() {
             resetForm()
             setTimeout(() => setSuccessMessage(''), 3000)
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
     }
 
@@ -58,14 +71,16 @@ function Users() {
         if (gender === 'male') return <IoMale color="blue" />
     }
 
-    const getRole = (role) => {
-        if (role === 'ROLE_ADMIN') return <Badge bg="primary">admin</Badge>
-        if (role === 'ROLE_USER') return <Badge bg="secondary">user</Badge>
-    }
-
     const getStatus = (status) => {
         if (status === 'active') return <Badge bg="success">active</Badge>
-        if (status === 'inactive') return <Badge bg="light" text="dark">inactive</Badge>
+        if (status === 'inactive') return <Badge bg="danger">inactive</Badge>
+        if (status === 'banned') return <Badge bg="secondary">banned</Badge>
+    }
+
+    const handleOpenModal = (e, reportedCase, caseType) => {
+        e.preventDefault()
+        setChosenUser(reportedCase)
+        setOpenUserModal(true)
     }
 
     return (<>
@@ -106,32 +121,50 @@ function Users() {
                                     {isCreateLoading ? <BeehubSpinner /> : 'Add'}
                                 </Button>
                                 {(errors.username || errors.email || errors.password) && <Button className="ms-2" variant="secondary" onClick={resetForm}>Clear</Button>}
-                                <small className="text-danger ms-4">{error?.data?.message}</small>
+                                <small className="text-danger ms-4">{error?.data?.message || updateError?.data?.message || deleteError?.data?.message}</small>
                                 <small className="text-success ms-4">{successMessage}</small>
                             </div>
+                            {(isLoading || isFetching || isUpdating || isBanning || isDeleting) && <div className="ms-auto d-flex align-items-end"><BeehubSpinner /></div>}
                         </Form>
                     )}
                 </Formik>
 
-                {(isLoading || isFetching) && <div className="d-flex justify-content-center align-items-center h-100"><BeehubSpinner /></div>}
 
                 {(users && users.length > 0) &&
-                    <FullWidthTable header={userHeader} total={users.length} perPage={perPage} setCurrentPage={setCurrentPage} currentPage={currentPage}>
+                    <FullWidthTable
+                        header={userHeader}
+                        total={users.length}
+                        perPage={perPage}
+                        setCurrentPage={setCurrentPage}
+                        currentPage={currentPage}
+                    >
                         {currentData.map((u, i) =>
                             <tr key={i}>
                                 <td>{u.id}</td>
-                                <td>{u.username}</td>
+                                <td>
+                                    <a href={`user/${u.id}`} onClick={e => handleOpenModal(e, u.id, 'user')}>{u.username}</a>
+                                </td>
                                 <td>{u.email}</td>
                                 <td>{u.fullName}</td>
-                                <td>{getGender(u.gender)}</td>
-                                <td className="ps-5">{u.noOfPosts}</td>
-                                <td className="ps-5">{u.noOfFriends}</td>
-                                <td>{getRole(u.role)}</td>
+                                <td className="text-center">{getGender(u.gender)}</td>
+                                <td className="text-center">{u.noOfPosts}</td>
+                                <td className="text-center">{u.noOfFriends}</td>
+                                <td>
+                                    <select className="form-select form-select-sm py-0" defaultValue={u.role} onChange={e => updateRole({ id: u.id, role: e.currentTarget.value })}>
+                                        <option value="ROLE_ADMIN">Admin</option>
+                                        <option value="ROLE_USER">User</option>
+                                    </select>
+                                </td>
                                 <td>{getStatus(u.status)}</td>
                                 <td>
                                     <ButtonGroup>
-                                        <Button size="sm" variant="secondary">Ban</Button>
-                                        <Button size="sm" variant="danger">Delete</Button>
+                                        <BanButton size={'sm'} isBanned={u.status === 'banned'} userId={u.id} />
+                                        <DeleteButton
+                                            caseId={u.id}
+                                            caseType={'user'}
+                                            confirmContent={'Are you sure you want to delete this user?'}
+                                            size={'sm'}
+                                        />
                                     </ButtonGroup>
                                 </td>
                             </tr>
@@ -140,6 +173,7 @@ function Users() {
                 }
             </div>
         </div>
+        <UserModal open={openUserModal} onClose={() => setOpenUserModal(false)} userId={chosenUser} />
     </>);
 }
 
