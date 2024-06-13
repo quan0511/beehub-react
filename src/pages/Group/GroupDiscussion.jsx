@@ -3,26 +3,33 @@ import {Col, Row, Image, Button,Form,Table, Container} from "react-bootstrap";
 import { Eye, EyeSlash, GlobeAmericas, LockFill } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../features/APIService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../../auth/authSlice";
 import {  useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import AddPost from "../../components/AddPost";
+import { cancelReset } from "../../features/userSlice";
 function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
     const appUser = useSelector(selectCurrentUser);
+    const dispatch = useDispatch();
+    const reset = useSelector((state)=>state.user.reset);
     useEffect(() => {
         const onScroll = () => {
-          const scrolledToBottom =
-            Math.floor(window.innerHeight + window.scrollY) >= (document.body.offsetHeight-1);
-            console.log(Math.floor(window.innerHeight + window.scrollY));
-            console.log(document.body.offsetHeight-1);
-            console.log(page);
-          if (scrolledToBottom && !isFetching) {
-            console.log("Fetching more data...");
-            setPage(page + 1);
-          }
+            const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
+            if(!scrolledToBottom && reset){
+                setPage(page);
+                return;
+            }else{
+                if (scrolledToBottom && !isFetching && !reset) {
+                    setPage(page + 1);
+                }
+            }
         };
         document.addEventListener("scroll", onScroll);
+        if(reset!=null && reset){
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            dispatch(cancelReset());
+        }
         return function () {
           document.removeEventListener("scroll", onScroll);
         };

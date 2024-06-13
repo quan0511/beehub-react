@@ -1,34 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, ListGroup, Modal, Nav, Row, Spinner } from "react-bootstrap";
-import { Ban, CardImage, ColumnsGap, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
+import { Ban, CardImage, ColumnsGap, ExclamationCircle, GearFill, PenFill, PencilFill, People, PersonVcard, Plus, PlusCircle,} from "react-bootstrap-icons";
 
-import "./Profile.css"
+import "../../css/Profile.css"
 import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
 import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
-import userSlice, { refresh } from "../../features/userSlice";
+import userSlice, { changedProfile, refresh } from "../../features/userSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
+import ModalReport from "../../components/ModalReport";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
     const navigate = useNavigate();
+    const location = useLocation()
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
+    const newProfile = useSelector((state)=>state.user.newProfile);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
     const handleClose1 = () => setShow1(false);
     const [show1, setShow1] = useState(false);
     const handleShow1 = () => setShow1(true);
     const [show2, setShow2]= useState(false);
+    const [showReport,setShowReport] = useState(false);
     const [fileImage,setFileImage] = useState();
     const [fileBackground, setFileBackground] = useState();
     const [saveImg,{isLoadingImage, isFetchingImage, isErrorImage, isSuccessImage}] = useUploadImageProfileMutation();
@@ -52,8 +55,8 @@ function Profile (){
             case "posts": 
                 return <ProfilePost appUser={appUser} user={user}/>;
             case "friends":
-                let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
-                return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} />;
+                let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED"&& e.typeRelationship != "BE_BLOCKED");
+                return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} hideFriend={hideFriendCheck} />;
             case "about":
                 return <ProfileAbout user={user} appUser={appUser} />;
             case "photos":
@@ -151,8 +154,11 @@ function Profile (){
         }
     }
     useEffect(()=>{
+        if(!newProfile){
+            dispatch(changedProfile());
+        }
         setTab("posts");
-    },[username])
+    },[location.key])
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -163,6 +169,15 @@ function Profile (){
                 </Row>
             </Container>
         );
+    }
+    if(user==null || user.relationship_with_user=="BE_BLOCKED"){
+        return (<Container style={{marginTop: "150px"}}>
+                <Row>
+                    <Col xl={6} className="mx-auto" style={{height: "400px"}}>
+                        <h1>Cannot found this user</h1>
+                    </Col>
+                </Row>
+        </Container>);
     }
     return (
             <Container style={{marginTop: "50px"}} fluid>
@@ -278,18 +293,30 @@ function Profile (){
                                     </div>
                                     <div>
                                         {getButton()}
+                                        {appUser.id != user.id?
+                                        <button onClick={()=>{
+                                            setShowReport(true);
+                                        }} className="ms-2 btn btn-link ">
+                                            <ExclamationCircle color="red" size={25}/>
+                                        </button>
+                                        :<></>
+                                        }
                                     </div>
                                     <Button variant="outline-light" className="position-absolute rounded-circle " onClick={()=>setShow2(true)} style={{top: "-50px", right:0}}>
                                         <PencilFill/>
                                     </Button>
                                 </Col>
+                                {appUser.id != user.id?
+                                    <ModalReport showReport={showReport} setShowReport={setShowReport} userTarget={user} />
+                                :<></>
+                                }
                             </Row>
                             <Container fluid>
                                 <Row>
                                     <Col xl={2} lg={3} md={2} sm={12} className="d-flex justify-content-md-center align-items-center ms-md-3">
                                         <ListGroup horizontal>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">
-                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships.filter(e=>e.typeRelationship=='FRIEND').length}</span><span className="d-block text-black-50">Friends</span></p>
+                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships.length}</span><span className="d-block text-black-50">Friends</span></p>
                                                 
                                             </ListGroup.Item>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">
@@ -312,17 +339,13 @@ function Profile (){
                                                     <span>About</span>
                                                 </Nav.Link>
                                             </Nav.Item>
-                                            {hideFriendCheck()?
-                                                <></>
-                                                :
-                                                <Nav.Item>
-                                                    <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
-                                                        <People size={20}/>
-                                                        <span>Friends</span>
-                                                    </Nav.Link>
-                                                </Nav.Item>
-                                                
-                                            }
+                                            
+                                            <Nav.Item>
+                                                <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
+                                                    <People size={20}/>
+                                                    <span>Friends</span>
+                                                </Nav.Link>
+                                            </Nav.Item>
                                             <Nav.Item   >
                                                 <Nav.Link eventKey="photos" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                     <CardImage size={20}/>

@@ -1,6 +1,6 @@
 import { Col, Container, Row, Form, Image, Spinner, Button  } from 'react-bootstrap';
 import { useGroupInfoQuery, useHomepageQuery } from '../features/userApiSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';
 import SessionRight from '../components/SessionRight';
@@ -9,31 +9,42 @@ import { useEffect, useState } from 'react';
 import AddPost from '../components/AddPost';
 import Modal from 'react-bootstrap/Modal';
 import '../css/addPost.css';
+import { cancelReset, refresh } from '../features/userSlice';
 function Homepage() {
     const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
-    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page});
+    const reset = useSelector((state)=>state.user.reset);
+    const dispatch = useDispatch();
+    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page, reset:reset});
     const [showInputModal, setShowInputModal] = useState(false);
     const handleOpenInputModal = () => setShowInputModal(true);
     const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
+        
         const onScroll = () => {
-          const scrolledToBottom =
-            Math.floor(window.innerHeight + window.scrollY) >= (document.body.offsetHeight-1);
-          if (scrolledToBottom && !isFetching) {
-            console.log("Fetching more data...");
-            setPage(page + 1);
-          }
-        };
+            const scrolledToBottom =Math.round(window.innerHeight + window.scrollY)>= (document.body.offsetHeight-1);
+            if(!scrolledToBottom && reset){
+                setPage(page);
+                return;
+            }else{
+                if (scrolledToBottom && !isFetching && !reset) {
+                  setPage(page + 1);
+                }
+            }
+        }
         document.addEventListener("scroll", onScroll);
+        if(reset!=null && reset){
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            dispatch(cancelReset());
+        }
         return function () {
           document.removeEventListener("scroll", onScroll);
         };
       }, [page, isFetching]);
     return (
-        <Container fluid className='ps-4' style={{marginTop: "60px",marginBottom: "10px"}}>
+        <Container fluid className='ps-4' style={{marginTop: "50px",marginBottom: "10px"}}>
             <Row>
-                <Col xl={7} lg={7} md={10} sm={12} className='m-md-auto pt-5 px-lg-5'>
+                <Col xl={7} lg={7} md={10} sm={12} className='m-md-auto pt-5 px-lg-5 pb-3'>
                     <div className="border-2 rounded-2 border-dark " style={{paddingTop:"20px", paddingLeft: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
                         <div method="post" className="row pe-4" onClick={handleOpenInputModal}>
                             <label className="col-1 mx-auto mb-3 col-form-label">

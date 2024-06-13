@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Form, Image, InputGroup, ListGroup, Nav, Navbar, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
-import { Bag, Bell, ChatRightHeartFill, EnvelopeOpen, PersonAdd, Search, Trash2 } from "react-bootstrap-icons";
+import { Bag, Ban, Bell, ChatRightHeartFill, EnvelopeOpen, PersonAdd, Search, Trash2 } from "react-bootstrap-icons";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../features/APIService";
@@ -12,7 +12,7 @@ import { useGetNotitficationQuery } from "../features/userApiSlice";
 import { useEffect } from "react";
 import BeehubSpinner from "./BeehubSpinner";
 import { refresh } from "../features/userSlice";
-import './navigatorBar.css';
+import '../css/navigatorBar.css';
 import dateFormat from "dateformat";
 
 function NavigatorBar() {
@@ -25,9 +25,11 @@ function NavigatorBar() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const [showLeft, setShowLeft] = useState(false);
-    const { data: notifications, isLoading, isSuccess } = useGetNotitficationQuery({ id: user.id, reset: reset });
+    const { data: notifications, isLoading, isSuccess } = useGetNotitficationQuery({ id: user.id, reset: reset },{skip:user==null });
     const [addFriendNotification, setAddFriendNotification] = useState([]);
-
+    const [newFriendNotification, setNewFriendNotification] = useState([]);
+    const [joinedGroupNotification, setJoinedGroupNotification] = useState([]);
+   
     const handleClose = () => setShow(false);
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -52,7 +54,12 @@ function NavigatorBar() {
     }
     const handleClick = async (typeClick, sender) => {
         let resp = await APIService.createRequirement(user.id, { sender_id: sender, receiver_id: user.id, type: typeClick }, token);
-        console.log(resp);
+        if (resp.result != 'unsuccess' || resp.result != "error") {
+            dispatch(refresh());
+        }
+    }
+    const handleClickRemove = async(typeClick,id_rep)=>{
+        let resp = await APIService.createRequirement(user.id, { id:id_rep, sender_id: user.id, type: typeClick }, token);
         if (resp.result != 'unsuccess' || resp.result != "error") {
             dispatch(refresh());
         }
@@ -64,7 +71,7 @@ function NavigatorBar() {
             </Tooltip>
         ) : (<Tooltip id="tooltip-add-friend" >
             <ListGroup>
-                {notifications != null && addFriendNotification.length > 0 ? addFriendNotification.map((req, index) => {
+                {addFriendNotification.map((req, index) => {
                     return (
                         <ListGroup.Item key={index}>
                             <Row>
@@ -81,7 +88,7 @@ function NavigatorBar() {
                                         )}
                                 </Col>
                                 <Col xl={6} lg={5} md={4} sm={5} className="ps-3">
-                                    <p className="text-black text-start lh-sm "><b>{req.sender.fullname}</b> &nbsp; send add friend request <br />
+                                    <p className="text-black text-start lh-sm "><Link to={"/member/profile/" + req.sender.username} className="text-decoration-none text-dark fw-bold">{req.sender.fullname}</Link> &nbsp; send add friend request <br />
                                         <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
                                     </p>
                                 </Col>
@@ -92,15 +99,68 @@ function NavigatorBar() {
                             </Row>
                         </ListGroup.Item>
                     );
-                }) :
-                    <ListGroup.Item>Not Found Requirement</ListGroup.Item>
-                }
+                })}
+                {newFriendNotification.map((req, index) => {
+                    return (
+                        <ListGroup.Item key={index}>
+                            <Row>
+                                <Col xl={2} lg={3} md={4} sm={3}>
+                                    {req.receiver.image != null ?
+                                        <Link to={"/member/profile/" + req.receiver.username}>
+                                            <Image src={req.receiver.image} style={{ width: "50px", height: "50px" }} roundedCircle />
+                                        </Link>
+                                        : (
+                                            req.receiver.gender == 'female' ?
+                                                <Link to={"/member/profile/" + req.receiver.username}>
+                                                    <Image src={APIService.URL_REST_API + "/files/user_female.png"} style={{ width: "50px", height: "50px" }} roundedCircle /></Link>
+                                                : <Link to={"/member/profile/" + req.receiver.username}><Image src={APIService.URL_REST_API + "/files/user_male.png"} style={{ width: "50px", height: "50px" }} roundedCircle /></Link>
+                                        )}
+                                </Col>
+                                <Col xl={6} lg={5} md={4} sm={5} className="ps-3">
+                                    <p className="text-black text-start lh-sm ">You have a new friend &nbsp;<Link to={"/member/profile/" + req.sender.username} className="text-decoration-none text-dark fw-bold">{req.receiver.fullname}</Link><br />
+                                        <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
+                                    </p>
+                                </Col>
+                                <Col xl={4} lg={4} md={4} sm={4} className="d-lg-inline-flex d-flex flex-wrap justify-content-center align-items-center" >
+                                    <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><Ban size={20}/></Button>
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                    );
+                })}
+                {joinedGroupNotification.map((req, index) => {
+                    return (
+                        <ListGroup.Item key={index}>
+                            <Row>
+                                <Col xl={2} lg={3} md={4} sm={3}>
+                                    {req.group.image_group != null ?
+                                        <Link to={"/group/" + req.group.id}>
+                                            <Image src={req.group.image_group} style={{ width: "50px", height: "50px" }} roundedCircle />
+                                        </Link>
+                                        :  <Link to={"/group/" + req.group.id}>
+                                        <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{ width: "50px", height: "50px" }} roundedCircle />
+                                    </Link>}
+                                </Col>
+                                <Col xl={6} lg={5} md={4} sm={5} className="ps-3">
+                                    <p className="text-black text-start lh-sm ">Now you are a member of &nbsp;<Link to={"/group/" + req.group.id} className="text-decoration-none text-dark fw-bold">{req.group.groupname}</Link><br />
+                                        <span className="text-black-50">{getTimeOfRequirement(req.create_at)}</span>
+                                    </p>
+                                </Col>
+                                <Col xl={4} lg={4} md={4} sm={4} className="d-lg-inline-flex d-flex flex-wrap justify-content-center align-items-center" >
+                                     <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><Ban size={20}/></Button>
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                    );
+                })}
             </ListGroup>
         </Tooltip>);
 
     useEffect(() => {
         if (notifications != null) {
             setAddFriendNotification(notifications.filter(e => e.group_id == null && !e["_accept"]));
+            setNewFriendNotification(notifications.filter(e => e.receiver != null && e["_accept"]));
+            setJoinedGroupNotification(notifications.filter(e => e.group != null && e["_accept"]));
         }
     }, [notifications]);
 
@@ -149,12 +209,13 @@ function NavigatorBar() {
                                     <OverlayTrigger
                                         trigger="click"
                                         placement="bottom"
+                                        rootClose
                                         overlay={tooltipAddFriend}
                                     >
                                         <div className="position-relative">
                                         <EnvelopeOpen size={20}/> 
                                             {!isLoading&& notifications.length>0?
-                                                <span className="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1"><span class="visually-hidden">add friend notification</span></span>
+                                                <span className="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-1"><span className="visually-hidden">add friend notification</span></span>
                                                 : <></>
                                             }
                                         </div>
