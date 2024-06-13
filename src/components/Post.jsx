@@ -13,13 +13,14 @@ import { useDispatch, useSelector } from "react-redux";
 import ShowComment from "./ShowComment";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { refresh,showMessageAlert } from "../features/userSlice";
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 import ListLike from "./ListLike";
 import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
 import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
 import axios from "axios";
+import ModalReport from "./ModalReport";
 function Post ({post, page,refetchHomePage}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
@@ -42,12 +43,10 @@ function Post ({post, page,refetchHomePage}){
     const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
-    const {data: reportTypes} = useGetReportTypesQuery();
     const [movePostId,setMovePostId] = useState(null);
     const [showReport,setShowReport] = useState(false);
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
-    const [targetReport, setTargetReport] = useState(null);
     const [showSettingPost, setShowSettingPost] = useState(false);
     let reset = useSelector((state)=> state.user.reset);
     const handleCloseEditPost = (id) => {
@@ -56,6 +55,12 @@ function Post ({post, page,refetchHomePage}){
         [id]:false,
       }))
     };
+    const formatcolor = (color) =>{
+      if(color && color.length ===8){
+        return `#${color.slice(2)}`;
+      }
+      return color;
+    }
     const [showShareModal, setShowShareModal] = useState({});
     const handleShareClose = (id) => {
       setShowShareModal((prevState) => ({
@@ -63,7 +68,6 @@ function Post ({post, page,refetchHomePage}){
         [id]:false,
       }))
     };
-
     const handleShareShow = (id) =>{
       setFromSharePost({
         id:getPostById.id,
@@ -123,12 +127,10 @@ function Post ({post, page,refetchHomePage}){
                 </span>
         }
     }
-    const commentTagLink = (comments) => {
-      return /tag=.*&link=/.test(comments);
-    };
+
     const renderCommentWithLink = (comment) => {
       if (typeof comment === 'string') {
-        const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+        const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
         let match;
         const result = [];
         let lastIndex = 0;
@@ -144,7 +146,7 @@ function Post ({post, page,refetchHomePage}){
         }
         const restOfString = comment.substring(lastIndex);
         result.push(restOfString);
-        return result;
+        return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
       } else {
         return comment;
       }
@@ -177,7 +179,7 @@ function Post ({post, page,refetchHomePage}){
         background: getPostById.background,
         color: getPostById.color,
         user:getPostById.user,
-        group:getPostById.group
+        group: getPostById.group !== null ? getPostById.group : 0
       });
     setShowEditPost((prevState) =>({
       ...prevState,
@@ -194,22 +196,13 @@ function Post ({post, page,refetchHomePage}){
     user:user?.id,
     group:""
   });
-  const handleSharePost = async (postid,userid) =>{
-    const isConfirmed = window.confirm("Bạn muốn share bài post này?"); 
-    if(isConfirmed){
-      try{
-        await sharePost({postid,userid});
-      }catch(error){
-        console.log(error);
-      }
-    }
-  }
   const handleDeletePost = async (id) => {
-    const isConfirmed = window.confirm("Bạn chắc chắn muốn xóa bài post này?");
+    const isConfirmed = window.confirm("Are you sure you want to delete this post?");
     if (isConfirmed) {
       try {
         await deletePost({id});
-        
+        dispatch(showMessageAlert("Delete post successfully"));
+        dispatch(resetData());
       } catch (error) {
         console.log(error);
       }
@@ -277,8 +270,8 @@ function Post ({post, page,refetchHomePage}){
                     {
                         post.group_id!=null && page!='group'?(
                             post.group_image!=null?
-                                <Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle />
-                                : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
+                            <Link to={"/group/"+post.group_id}><Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                :  <Link to={"/group/"+post.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
                         )
                         :(
                             post.user_image!=null?
@@ -315,7 +308,7 @@ function Post ({post, page,refetchHomePage}){
                 </Col>
                 {togglePost[post.id] && (
                    <div >
-                   {post.user_id === user?.id ?(
+                   {post.user_id === user?.id && post.group_id==null?(
                      <div className="togglePost">
                       <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
                         <div><MdModeEdit className="iconefunctionpost" /></div>
@@ -330,7 +323,19 @@ function Post ({post, page,refetchHomePage}){
                         <div className="fonttextfunctionpost">Delete Post</div>
                       </div>
                      </div>
-                   ):(
+                   ):post.user_id === user?.id && post.group_id!=null?(
+                    <div className="togglePost2">
+                      <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
+                        <div><MdModeEdit className="iconefunctionpost" /></div>
+                        <div className="fonttextfunctionpost">Edit Post</div>
+                      </div>
+                      <div className="selectedfunction" onClick={() => handleDeletePost(post.id)}>
+                        <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                        <div className="fonttextfunctionpost">Delete Post</div>
+                      </div>
+                     </div>
+                   )
+                   :(
                      <div className="togglePost2">
                        {post.user_id != user.id?
                         <div className="selectedfunction" onClick={()=> setShowReport(true)}>
@@ -365,7 +370,7 @@ function Post ({post, page,refetchHomePage}){
                   <SharePost getSettingType={getSettingType} post={post}/>
                 ):(
                   <Col xl={12} className="text-start">
-                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit") ?(
+                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.background && post.background !== "ffffffff") ?(
                   <div
                   className={
                     post.color !== null
@@ -373,8 +378,8 @@ function Post ({post, page,refetchHomePage}){
                       : ''
                   }
                   style={{
-                    '--showpostcolor': post.color || 'black' ,
-                    '--showpostbackground': post.background || 'white'
+                    '--showpostcolor': formatcolor(post.color) || 'black' ,
+                    '--showpostbackground': formatcolor(post.background) || 'white'
                   } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                   >
                     {renderCommentWithLink(post.text)}
@@ -481,73 +486,7 @@ function Post ({post, page,refetchHomePage}){
                       } animation={false}>
                       <ShowComment postIdco={post}/>
                     </Modal>
-                    <Modal show={showReport} onHide={()=>setShowReport(false)}>
-                      <Modal.Header className="text-center" closeButton>
-                        <Modal.Title>Report</Modal.Title>
-                      </Modal.Header>
-                      <Formik
-                        initialValues={{
-                          sender_id: user.id,
-                          user_username: post.user_username,
-                          target_group_id: post.group_id,
-                          target_post_id: post.id,
-                          type_id: targetReport,
-                          add_description: ""
-                        }}
-                        onSubmit={async (values, { ...props }) => {
-                            try {
-                                if(targetReport==null){
-                                  props.setErrors({type_id : "Type Report is required"});
-                                }else{
-                                  values.type_id = targetReport;
-                                  await createReport({id:user.id,data:values });
-                                  dispatch(showMessageAlert("Send Report post successfully"));
-                                  setShowReport(false);
-                                  refetchHomePage();
-                                }
-                            } catch (error) {
-                                console.error('An error occurred while submitting the form.', error);
-                            }
-                        }}
-                    > {({ handleSubmit, handleChange, values, touched, errors }) => (
-                      <Form noValidate onSubmit={handleSubmit}>
-                      <Modal.Body>
-                             <Form.Label>Please select a problem</Form.Label>
-                             <Form.Select name="report_type" aria-label="select report type" defaultValue={values.type_id} className="mb-3"
-                                isInvalid={!!errors.type_id}
-                              onChange={(e)=>{
-                                let valueId = e.target.value;
-                                let des = reportTypes.find((element) => element.id == valueId);
-                                document.getElementById("descriptionReport").innerText = des.description;
-                                setTargetReport(valueId);
-                             }}>
-                              <option>Open this select menu</option>
-                              { reportTypes!=null && reportTypes.length !=0?
-                                reportTypes.map((re, index)=>{
-                                  return <option key={re.id} value={re.id}>{re.title}</option>
-                                })
-                                :<></>
-                              }
-                            </Form.Select>
-                            {errors.type_id && touched.type_id && (
-                                  <span className="text-danger">{errors.type_id}</span>
-                              )}
-                            <div id="descriptionReport" className="mb-3"></div>
-                            <Form.Control as="textarea" rows={3}  name="add_description"  className="mb-3"
-                                defaultValue={values.add_description} onChange={handleChange} />
-                          
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="secondary" onClick={()=>setShowReport(false)}>
-                          Close
-                        </Button>
-                        <Button variant="primary" type="submit">
-                          Send Report
-                        </Button>
-                      </Modal.Footer>
-                      </Form>
-                      )}</Formik>
-                    </Modal>
+                    <ModalReport showReport={showReport} setShowReport={setShowReport} postTarget={post} />
                     <Modal show={showSettingPost} onHide={()=> setShowSettingPost(false)}>
                       <Modal.Header className="text-center" closeButton>
                         <Modal.Title>Setting</Modal.Title>
@@ -564,7 +503,7 @@ function Post ({post, page,refetchHomePage}){
                                 setShowSettingPost(false);
                                 if(respon.data){
                                   dispatch(showMessageAlert("Setting type for post successfully"));
-                                  refetchHomePage();
+                                  dispatch(resetData());
                                 }
                             } catch (error) {
                                 console.error('An error occurred while submitting the form.', error);

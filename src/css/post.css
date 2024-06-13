@@ -7,6 +7,7 @@
     left: 60px;
     flex-direction: row;
     font-size: 20px;
+    width: 180px;
 }
 .click{
     cursor: pointer;
@@ -71,7 +72,7 @@
     position: absolute;
     transform: translate(-50%, -50%);
     right: -121px;
-    top: 103px;
+    top: 135px;
 }
 .togglePost2{
     background-color: white;
@@ -135,7 +136,7 @@
     right: 20px;
 }
 .sharekhung{
-    width: 600px;
+    width: 500px;
     position: relative;
     left: 50px;
     border-radius: 5px;
@@ -152,7 +153,7 @@
     border-radius: 10px;
     background-color: var(--showpostbackground);
     color:var(--showpostcolor);
-    width: 540px;
+    width: 440px;
     height: 280px;
     display: flex;
     align-items: center;

@@ -469,6 +469,20 @@
     justify-content: center;
     align-items: center;
 }
+.commentpostdisable{
+    background-color: transparent;
+    color: #b5a9a9;
+    border-radius: 5px;
+    position: relative;
+    cursor: not-allowed;
+    height: 25px;
+    border: 0px;
+    left: 585px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .iconcomment{
     width: 25px;
     height: 25px;
@@ -535,6 +549,7 @@
     position: absolute;
     z-index: 100;
     display: none;
+    right: -1px;
   }
   .myul  li a {
     border: 1px solid #ddd;
@@ -584,4 +599,36 @@
     background-color: transparent !important;
     border: none !important;
   }
+  .postLoading {
+    display: inline;
+}
+.postLoading .modal-dialog {
+    position: relative;
+    top: 150px;
+    width: 250px;
+}
+.postLoading .modal-dialog .modal-content {
+    height: 100px;
+}
+.postLoading .modal-dialog .modal-content .modal-body {
+    background-color: gray;
+}
+.loading-spinner{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #8224e3;
+    border-left-color:#8224e3 ;
+    border-top-color: #8224e3;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
 

@@ -6,3 +6,6 @@
     max-width: 400px !important;
     background-color: #FFF;
 }
+.tooltip{
+    --bs-tooltip-opacity: 1 !important;
+}

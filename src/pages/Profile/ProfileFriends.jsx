@@ -5,7 +5,7 @@ import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
-import { refresh } from "../../features/userSlice";
+import { changedProfile, refresh } from "../../features/userSlice";
 
 function ProfileFriends({appUser,friends,hideFriend,user_id}){
     const token = useSelector(selectCurrentToken);
@@ -13,6 +13,13 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
     const handleClick= async (typeClick,friend_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: friend_id, type: typeClick },token);
         dispatch(refresh());
+    }
+    if(hideFriend()){
+        return <Row className="mb-5">
+                    <Col xl={10} className=" profile-tab">
+                        <h3>You have no permission to see this user friends</h3>
+                    </Col>
+                </Row>
     }
     return (
         <Row className="mb-5">
@@ -54,7 +61,7 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                                                     </Col>
                                                     <Col xl={5} md={5} sm={6} className="d-flex flex-column ms-auto justify-content-center align-items-start ps-4">
                                                         <h4>
-                                                            <Link to={`/member/profile/${friend.username}`} className="text-decoration-none text-black">{friend.fullname} 
+                                                            <Link to={`/member/profile/${friend.username}`} onClick={()=>{dispatch(changedProfile());}} className="text-decoration-none text-black">{friend.fullname} 
                                                             {
                                                                 friend._banned?
                                                                 <Ban color="red" className="ms-4"/>    

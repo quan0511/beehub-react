@@ -1,15 +1,19 @@
 import { useState,useRef,useEffect,ChangeEvent } from 'react';
 // import api from '../api/apiPost';
 import { LuLink } from "react-icons/lu";
+import {Link} from "react-router-dom";
 import { FaXmark } from "react-icons/fa6";
 import { SlArrowLeft } from "react-icons/sl";
 import '../css/addPost.css';
 import { useGetUserFriendQuery, usePostMutation } from '../post/postApiSlice';
-import { useSelector } from 'react-redux';
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import { Image } from 'react-bootstrap';
 import APIService from '../features/APIService';
+import { Modal } from 'react-bootstrap';
 const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
+    const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser)
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
     const [create, {isLoading, isFetching, isError, isSuccess}] = usePostMutation();
@@ -71,6 +75,7 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
     };
     const handleSubmit = async (e) => {
       e.preventDefault();
+      setLoading(true);
       // Cập nhật giá trị của text trong formData dựa trên nội dung của div
       const inputElement = document.getElementById("myInput");
       const userInput = inputElement.textContent?.trim() || "";
@@ -84,13 +89,14 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
       console.log(formData);
       try {
         await create(formData);
-        refetchHomePage();
-        handleCloseModal()
+        handleCloseModal();
+        dispatch(showMessageAlert("Create new post successfully"));
+        dispatch(resetData());
       } catch (error) {
         console.error(error)
       }
     };
-    function handleInput() {
+  function handleInput() {
       const inputElement = document.getElementById("myInput") ;
       const ulElement = document.getElementById("myUL") ;
       let userInput = inputElement.textContent?.trim() || ""; 
@@ -146,7 +152,7 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
     
       // Nếu có kết quả, trả về phần mong muốn, ngược lại trả về toàn bộ chuỗi
       return match ? match[1] || match[2] || "" : inputValue;
-    }
+  }
   function handlePaste(event) {
     event.preventDefault();
     const pasteData = event.clipboardData.getData('text/plain');
@@ -187,8 +193,8 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
         selection.removeAllRanges();
         selection.addRange(range);
     }
-}
-function selectName(selectedName) {
+  }
+  function selectName(selectedName) {
     const currentInput = document.getElementById("myInput") ;
     let currentValue = currentInput.textContent?.trim() || "";
     // Loại bỏ các chuỗi '&nbsp;' trong văn bản hiện tại
@@ -203,29 +209,27 @@ function selectName(selectedName) {
     currentInput.innerHTML = "";
     // Tách các từ và thêm mỗi từ vào một thẻ span
     newValue.split(" ").forEach((word, index, array) => {
-        const span = document.createElement("span");
-  
-        // Thêm khoảng trắng vào đầu và cuối của danh mục
-        const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-        span.textContent = wordWithSpaces;
-  
-        // Kiểm tra xem từ có phải là danh mục đã chọn hay không
-        if (isInList(word)) {
-            span.contentEditable = "false"; // Ngăn chặn nhập liệu vào thẻ span chứ danh mục
-            span.classList.add("selected"); // Thêm className "selected" cho các thẻ span đã chọn
-            // Lấy link tương ứng với từng danh mục
-            const link = `${word}`; // Sử dụng từ hiện tại để tạo link
-            span.setAttribute("data-link", link);
-        } else {
-            span.contentEditable = "true"; // Cho phép nhập liệu vào các thẻ span khác
-        }
-        currentInput.appendChild(span);
-        // Thêm khoảng trắng nếu không phải là từ cuối cùng
-        if (index < array.length - 1) {
-            const space = document.createTextNode(" ");
-            currentInput.appendChild(space);
-        }
-    });
+      if (word.trim() !== "") {
+          const span = document.createElement("span");
+          const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+          span.textContent = wordWithSpaces;
+
+          // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+          if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+              span.contentEditable = "false";
+              span.classList.add("selected");
+              const link = `${word.trim()}`;
+              span.setAttribute("data-link", link);
+          } else {
+              span.contentEditable = "true";
+          }
+          currentInput.appendChild(span);
+          if (index < array.length - 1) {
+              const space = document.createTextNode(" ");
+              currentInput.appendChild(space);
+          }
+      }
+  });
     // Gửi sự kiện input để xử lý ngay lập tức sau khi dán
     const event = new Event('input', {
         bubbles: true,
@@ -235,31 +239,29 @@ function selectName(selectedName) {
   
     // Ẩn danh sách
     (document.getElementById("myUL") ).style.display = "none";
-}
-function isInList(word) {
-    const ulElement = document.getElementById("myUL") ;
-    const listItems = ulElement.getElementsByTagName("li");
-  
-    for (let i = 0; i < listItems.length; i++) {
-      const listItemText = listItems[i].textContent?.trim();
-      if (listItemText === word) {
-        return true;
+  }
+  function isInList(word) {
+      const ulElement = document.getElementById("myUL") ;
+      const listItems = ulElement.getElementsByTagName("li");
+    
+      for (let i = 0; i < listItems.length; i++) {
+        const listItemText = listItems[i].textContent?.trim();
+        if (listItemText === word) {
+          return true;
+        }
       }
-    }
-  
-    return false;
-}
-function getOverwrittenText(currentInput, selectedName){
-    const regex = /^@(.+)|\s@(.+)/;
-    const match = currentInput.match(regex);
-  
-    if (match) {
-      const prefix = match[1] || match[2] || "";
-      return currentInput.replace("@" + prefix, selectedName);
-    } else {
-      return selectedName;
-    }
-}
+      return false;
+  }
+  function getOverwrittenText(currentInput, selectedName){
+      const regex = /^@(.+)|\s@(.+)/;
+      const match = currentInput.match(regex);
+      if (match) {
+        const prefix = match[1] || match[2] || "";
+        return currentInput.replace("@" + prefix, selectedName);
+      } else {
+        return selectedName;
+      }
+  }
     const handleFocus = (e) => {
         if (e.target.textContent === "") {
           e.target.setAttribute("data-text", "");
@@ -271,128 +273,173 @@ function getOverwrittenText(currentInput, selectedName){
           e.target.setAttribute("data-text", "What do you think ?");
         }
       };
+      const [loading, setLoading] = useState(false);
+      console.log('user',getUserFriend);
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="modalpost-nameanh">
-            <div className="model-showbinhluananhdaidien">
-            <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
+    <div>
+
+      <Modal className="postLoading" show={loading} onHide={() => setLoading(false)}>
+          <Modal.Body>
+            <div className="loading-spinner">
+              <div className="loader"></div>
+              <span className="sr-only">Loading...</span>
             </div>
-            <div className="modalpost-name">Name</div>
-        </div>
-        {selectedFiles.length ?(
-          <div className="post-testandshowimage">
-          <input type="hidden" name="text" id="commentInput" value={formData.text} onChange={(e) => handleChangePost(e)} />
-          <div className={divClass.color !== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcommentimg'} style={{'--postcolor': divClass?.color, '--postbg': divClass?.background} }>
-            <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={handleInput} onPaste={handlePaste} data-text="What do you think ?" onFocus={handleFocus} onBlur={handleBlur}></div>
-          </div>
-          
-          <ul id="myUL" className="myul" >
-            {getUserFriend?.map((user) => (
-              <li onClick={() => selectName(user.username)} ><a>{user.fullname}</a></li>
-            ))}
-          </ul>
-          {selectedFiles.length > 0 && (
-              <div className="modalpost-image">
-                  {selectedFiles.map((file, index) => (
-                  <div>
-                    <button className="modalpost-xoafile" onClick={() => handleRemoveFile(index)}><FaXmark className="modalpost-iconxoafile" /></button>
-                    <div className="modalpost-imagechil" key={index}>
-                      <img src={URL.createObjectURL(file)} alt={`Selected file ${index}`} width="100%" height="100%"/>
-                  </div>
-                  </div>
-                  
-                  ))}
+          </Modal.Body>
+        </Modal>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="modalpost-nameanh">
+              <div className="model-showbinhluananhdaidien">
+              <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
               </div>
-          )}
+              <div className="modalpost-name">Name</div>
           </div>
-        ):(
-        <div className="">
-        <input type="hidden" name="text" id="commentInput" value={formData.text} onChange={(e) => handleChangePost(e)} />
-        <div className={divClass.color !== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcomment'} style={{'--postcolor': divClass?.color, '--postbg': divClass?.background} }>
-          <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={handleInput} onPaste={handlePaste} data-text="What do you think ?"></div>
-        </div>    
-        <ul id="myUL" className="myuladd " >
-          {getUserFriend?.map((user) => (
-            <li onClick={() => selectName(user.username)}>
-              <a >{user.fullname}</a>
-            </li>
-          ))}
-        </ul>
-        
-        </div>
-        )} 
-        {!selectedFiles.length && (
-        <div className="postfountbackground">
-          {viewFoundBackground ?(
-            <div className="clickchangefount" onClick={handleToggleBackground}>
-              Aa
+          {selectedFiles.length ?(
+            <div className="post-testandshowimage">
+            <input type="hidden" name="text" id="commentInput" value={formData.text} onChange={(e) => handleChangePost(e)} />
+            <div className={divClass.color !== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcommentimg'} style={{'--postcolor': divClass?.color, '--postbg': divClass?.background} }>
+              <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={handleInput} onPaste={handlePaste} data-text="What do you think ?" onFocus={handleFocus} onBlur={handleBlur}></div>
+            </div>
+            
+            <ul id="myUL" className="myuladd" >
+            {getUserFriend?.map((user) => (
+              <div>
+              <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                <a>
+                  <div className="showuserli">
+                    <div className="showuserlianhcomment"> {user.gender=='female'?(
+                    <Link to={"/member/profile/"+user.username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    ):(
+                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                  </a>
+                </li>
+              </div>
+            ))}
+            </ul>
+            {selectedFiles.length > 0 && (
+                <div className="modalpost-image">
+                    {selectedFiles.map((file, index) => (
+                    <div>
+                      <button className="modalpost-xoafile" onClick={() => handleRemoveFile(index)}><FaXmark className="modalpost-iconxoafile" /></button>
+                      <div className="modalpost-imagechil" key={index}>
+                        <img src={URL.createObjectURL(file)} alt={`Selected file ${index}`} width="100%" height="100%"/>
+                    </div>
+                    </div>
+                    
+                    ))}
+                </div>
+            )}
             </div>
           ):(
-            <div className="modalpost-fountcolorall">
-              <div className="modalpost-fountcolororBack" onClick={handleToggleBackground}><SlArrowLeft /></div>
-              <div className="modalpost-fountcolororigan" onClick={() => handleClassChange(0,{color: 'inherit', background: 'inherit'})}>0</div>
-              {[
-                { color: '#fff', background: '#8224e3' },
-                { color: 'black', background: 'aqua' },
-                { color: '#fff', background: 'brown' },
-                { color: '#fff', background: 'palevioletred' },
-                { color: '#fff', background: 'red' },
-                { color: '#000', background: 'rgb(153, 255, 0)' },
-                { color: '#fff', background: 'rgb(40, 56, 179)' },
-                { color: '#fff', background: 'rgb(0, 157, 255)' },
-                { color: '#fff', background: 'rgb(33, 68, 91)' }
-              ].map((colorObj,index)=>(
-                <div key={index} className={`modalpost-fountcolor${index + 1}${selectedColor === index ? ' borderpostcolor': ''}`}
-                onClick={() => handleClassChange(index,colorObj)}>
-                  1
-                </div>
-              ))}
-            </div>
-          )}    
-        </div>
-        )}
-        {selectedFiles.length ? (
-           <div>
-           <div className="modalpost-buttonmediadisable" > 
-           <span className="modalpost-media">
-               <LuLink className="modalpost-iconmedia" />
-           </span>
-           <span className="modalpost-font">Attach media</span>
-           </div>
-       </div>
-        ):(
-          <div >
-            <button className={`modalpost-buttonmedia${divClass.color !== 'inherit' ? 'disable': ''}`} onClick={(e) =>{
-              e.preventDefault();
-              if(divClass.color === 'inherit'){
-                fileInputRef.current?.click()
-              }
-            }} disabled={divClass.color !== 'inherit'}> 
+          <div className="">
+          <input type="hidden" name="text" id="commentInput" value={formData.text} onChange={(e) => handleChangePost(e)} />
+          <div className={divClass.color !== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcomment'} style={{'--postcolor': divClass?.color, '--postbg': divClass?.background} }>
+            <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={handleInput} onPaste={handlePaste} data-text="What do you think ?"></div>
+          </div>    
+          <ul id="myUL" className="myuladd " >
+            {getUserFriend?.map((user) => (
+              <div>
+              <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                <a>
+                  <div className="showuserli">
+                    <div className="showuserlianhcomment"> {user.gender=='female'?(
+                    <Link to={"/member/profile/"+user.username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    ):(
+                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                  </a>
+                </li>
+              </div>
+            ))}
+          </ul>
+          
+          </div>
+          )} 
+          {!selectedFiles.length && (
+          <div className="postfountbackground">
+            {viewFoundBackground ?(
+              <div className="clickchangefount" onClick={handleToggleBackground}>
+                Aa
+              </div>
+            ):(
+              <div className="modalpost-fountcolorall">
+                <div className="modalpost-fountcolororBack" onClick={handleToggleBackground}><SlArrowLeft /></div>
+                <div className="modalpost-fountcolororigan" onClick={() => handleClassChange(0,{color: 'inherit', background: 'inherit'})}>0</div>
+                {[
+                  { color: '#ffffff', background: '#7c4dff' },
+                  { color: '#000000', background: '#18ffff' },
+                  { color: '#ffffff', background: '#6d4c41' },
+                  { color: '#ffffff', background: '#f06292' },
+                  { color: '#ffffff', background: '#FF0000' },
+                  { color: '#000000', background: '#76ff03' },
+                  { color: '#ffffff', background: '#0d47a1' },
+                  { color: '#ffffff', background: '#42a5f5' },
+                  { color: '#ffffff', background: '#607d8b' }
+                ].map((colorObj,index)=>(
+                  <div key={index} className={`modalpost-fountcolor${index + 1}${selectedColor === index ? ' borderpostcolor': ''}`}
+                  onClick={() => handleClassChange(index,colorObj)}>
+                    1
+                  </div>
+                ))}
+              </div>
+            )}    
+          </div>
+          )}
+          {selectedFiles.length ? (
+            <div>
+            <div className="modalpost-buttonmediadisable" > 
             <span className="modalpost-media">
                 <LuLink className="modalpost-iconmedia" />
             </span>
             <span className="modalpost-font">Attach media</span>
-            </button>
-            <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple hidden/>
+            </div>
         </div>
-        )}     
-        <input type="hidden" name="color" value={formData.color} onChange={(e) => handleChangePost(e)}/>
-        <input type="hidden" name="background" value={formData.background} onChange={(e) => handleChangePost(e)}/>
-        <input type="hidden" name="group" value={formData.group} onChange={(e) => handleChangePost(e)}/>
-        {selectedFiles.length?(
-          <div className="modalpost-postst ">
-            <div className="modalpost-poststright">
-            <input className={`modalpost-buttonpost`} type="submit"  value={isLoading ? "Creating Post" : "Post"}/>
-            </div>
+          ):(
+            <div >
+              <button className={`modalpost-buttonmedia${divClass.color !== 'inherit' ? 'disable': ''}`} onClick={(e) =>{
+                e.preventDefault();
+                if(divClass.color === 'inherit'){
+                  fileInputRef.current?.click()
+                }
+              }} disabled={divClass.color !== 'inherit'}> 
+              <span className="modalpost-media">
+                  <LuLink className="modalpost-iconmedia" />
+              </span>
+              <span className="modalpost-font">Attach media</span>
+              </button>
+              <input name="medias" onChange={handleChange}  ref={fileInputRef} type="file" accept="image/png,image/jpg,video/mp4" multiple hidden/>
           </div>
-        ):(
-          <div className="modalpost-postst ">
-            <div className="modalpost-poststright">
-            <input className={`modalpost-buttonpost${!content ? 'disable' : ''}`} type="submit" disabled={!content} value={isLoading ? "Creating Post" : "Post"}/>
+          )}     
+          <input type="hidden" name="color" value={formData.color} onChange={(e) => handleChangePost(e)}/>
+          <input type="hidden" name="background" value={formData.background} onChange={(e) => handleChangePost(e)}/>
+          <input type="hidden" name="group" value={formData.group} onChange={(e) => handleChangePost(e)}/>
+          {selectedFiles.length?(
+            <div className="modalpost-postst ">
+              <div className="modalpost-poststright">
+              <input className={`modalpost-buttonpost`} type="submit"  value={isLoading ? "Creating Post" : "Post"}/>
+              </div>
             </div>
-          </div>
-        )}  
-    </form>
+          ):(
+            <div className="modalpost-postst ">
+              <div className="modalpost-poststright">
+              <input className={`modalpost-buttonpost${!content ? 'disable' : ''}`} type="submit" disabled={!content} value={isLoading ? "Creating Post" : "Post"}/>
+              </div>
+            </div>
+          )}  
+      </form>
+    </div>
   );
 };
 

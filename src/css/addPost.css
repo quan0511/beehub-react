@@ -181,7 +181,7 @@
 }
 .modalpost-fountcolor1{
     width: 35px;
-    background-color: #8224e3;
+    background-color: #7c4dff;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -189,7 +189,7 @@
   }
   .modalpost-fountcolor2{
     width: 35px;
-    background-color: aqua;
+    background-color: #18ffff;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -197,7 +197,7 @@
 }
 .modalpost-fountcolor3{
     width: 35px;
-    background-color: brown;
+    background-color: #6d4c41;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -205,7 +205,7 @@
 }
 .modalpost-fountcolor4{
     width: 35px;
-    background-color: palevioletred;
+    background-color: #f06292;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -213,7 +213,7 @@
 }
 .modalpost-fountcolor5{
     width: 35px;
-    background-color: red;
+    background-color: #FF0000;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -221,7 +221,7 @@
 }
 .modalpost-fountcolor6{
     width: 35px;
-    background-color: rgb(153, 255, 0);
+    background-color: #76ff03;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -229,7 +229,7 @@
 }
 .modalpost-fountcolor7{
     width: 35px;
-    background-color: rgb(40, 56, 179);
+    background-color: #0d47a1;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -237,7 +237,7 @@
 }
 .modalpost-fountcolor8{
     width: 35px;
-    background-color: rgb(0, 157, 255);
+    background-color: #42a5f5;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -245,7 +245,7 @@
 }
 .modalpost-fountcolor9{
     width: 35px;
-    background-color: rgb(33, 68, 91);
+    background-color: #607d8b;
     color: transparent;
     border-radius: 5px;
     height: 100%;
@@ -315,4 +315,40 @@
 .inputCreatePost:empty:before {
     content: attr(data-text);
     color: gray;
-  }
+}
+.postLoading {
+    display: inline;
+}
+.postLoading .modal-dialog {
+    position: relative;
+    top: 150px;
+    width: 250px;
+}
+.postLoading .modal-dialog .modal-content {
+    height: 100px;
+}
+.postLoading .modal-dialog .modal-content .modal-body {
+    background-color: gray;
+}
+.loading-spinner{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #8224e3;
+    border-left-color:#8224e3 ;
+    border-top-color: #8224e3;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+.showuserliname{
+    position: relative;
+    padding-left: 20px;
+}
