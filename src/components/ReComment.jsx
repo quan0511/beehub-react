@@ -47,7 +47,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       };
       const renderCommentWithLink = (comment) => {
         if (typeof comment === 'string') {
-          const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+          const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
           let match;
           const result = [];
           let lastIndex = 0;
@@ -63,7 +63,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
           }
           const restOfString = comment.substring(lastIndex);
           result.push(restOfString);
-          return result;
+          return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
         } else {
           return comment;
         }
@@ -140,10 +140,10 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
           setContent(initialContent.length > 0);
         }
       }, []);
-      function handleInput(inputId, divId, formType) {
+      const handleInput = (inputId, divId, formType) => {
         const inputElement = document.getElementById(divId);
         const ulElement = document.getElementById(`${divId}-ul`);
-        let userInput = inputElement.textContent?.trim() || "";
+        let userInput = inputElement.innerHTML.trim() || "";
         userInput = userInput.replace(/\s+/g, ' ');
         setContent(userInput.length > 0);
         const caretPosition = getCaretPosition(inputElement);
@@ -171,10 +171,14 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
                 } else {
                     return span.textContent?.trim() || "";
                 }
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "A") {
+                const linkText = node.textContent?.trim() || "";
+                const href = node.getAttribute("href") || "";
+                const link = href.split("/").pop(); // Extract the link part from href
+                return `tag=${linkText}&link=${link}`;
             }
             return "";
         }).join(" ");
-        console.log("allContent:", allContent);
         if (formType === "comment") {
             setFormComment({ ...formComment, comment: allContent.trim() });
         } else if (formType === "reComment") {
@@ -182,7 +186,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
         }
         commentInputElement.value = allContent.trim();
         setCaretPosition(inputElement, caretPosition);
-    }
+      };
       function getFilterText(inputValue) {
         // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
         const regex = /^@(.+)|\s@(.+)/;
@@ -225,7 +229,6 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       let currentValue = currentInput.textContent?.trim() || "";
       currentValue = currentValue.replace(/&nbsp;/g, '');
       currentValue = currentValue.replace(/\s+/g, ' ');
-  
       const newValue = getOverwrittenText(currentValue, selectedName);
       const commentInputElement = document.getElementById(inputId);
       if (!commentInputElement) {
@@ -239,7 +242,6 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
               const span = document.createElement("span");
               const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
               span.textContent = wordWithSpaces;
-  
               // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
               if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
                   span.contentEditable = "false";
@@ -262,7 +264,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       });
       currentInput.dispatchEvent(event);
       (document.getElementById(`${divId}-ul`)).style.display = "none";
-  }
+    }
     function isInList(word, divId) {
       const ulElement = document.getElementById(`${divId}-ul`) ;
       const listItems = ulElement.getElementsByTagName("li");

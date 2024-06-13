@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import APIService from '../features/APIService';
 import {Image} from "react-bootstrap";
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
     const [share] = useSharePostMutation();
     const user = useSelector(selectCurrentUser);
@@ -57,10 +58,18 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
       try {
         await share(sharePost);
         handleShareClose(post.id);
+        dispatch(showMessageAlert("Share post successfully"));
+        dispatch(resetData());
       } catch (error) {
         console.error(error)
       }
       };
+      const formatcolor = (color) =>{
+        if(color && color.length ===8){
+          return `#${color.slice(2)}`;
+        }
+        return color;
+      }
     return (  
     <div key={post.id} >
         <form onSubmit={handleSubmitSharePost} >
@@ -79,7 +88,7 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
                 <input type="hidden" name="text" id="editPostInput" value={formSharePost.text}/>
                 {formSharePost.medias  ? (                     
                     <div className="post-testandshowimage">
-                    <div className={divClass.color!== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcommentimg'} style={{'--postcolor': divClass.color, '--postbg': divClass.background}}>
+                    <div className={formatcolor(divClass.color)!== 'inherit' && formatcolor(divClass.background)!== '#ffffff' ? 'modalpost-divcommentcolore' : 'modalpost-divcommentimg'} style={{'--postcolor': formatcolor(divClass.color), '--postbg': formatcolor(divClass.background)}}>
                         <div className="inputCreatePost" id="myInput" onInput={() => handleInput('editPostInput', 'myInput','comment')}  >
                         {commentTagLink(formSharePost.text) ? renderCommentWithLink(formSharePost.text) : formSharePost.text}
                         </div>
@@ -92,7 +101,7 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
                     </div>
                 ):(
                     <div>
-                    <div className={formSharePost.color!== 'inherit' ? 'modalpost-divcommentcolore' : 'modalpost-divcomment'} style={{'--postcolor': formSharePost.color, '--postbg': formSharePost.background}}>
+                    <div className={formatcolor(formSharePost.color)!== 'inherit' && formatcolor(formSharePost.background)!== '#ffffff' ? 'modalpost-divcommentcolore' : 'modalpost-divcomment'} style={{'--postcolor': formatcolor(formSharePost.color), '--postbg': formatcolor(formSharePost.background)}}>
                         <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={() => handleInput('editPostInput', 'myInput','comment')} data-text="What do you think ?">
                         {commentTagLink(formSharePost.text) ? renderCommentWithLink(formSharePost.text) : formSharePost.text}
                         </div>
@@ -100,8 +109,8 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
                     </div>
                 )}                    
                 </div>
-            <input type="hidden" name="color" value={formSharePost.color} />
-            <input type="hidden" name="background" value={formSharePost.background} />
+            <input type="hidden" name="color" value={formatcolor(formSharePost.color)} />
+            <input type="hidden" name="background" value={formatcolor(formSharePost.background)} />
             <div className="modalpost-postst ">
                 <div className="modalpost-poststright">
                 <input className="modalpost-buttonpost" type="submit" value="Share"/>

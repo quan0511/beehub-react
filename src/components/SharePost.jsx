@@ -15,6 +15,12 @@ function SharePost({post,getSettingType}){
             return <span  style={{fontSize: "12px"}}>{datePost.toLocaleString("en-GB")}</span>
         }  
     }
+    const formatcolor = (color) =>{
+        if(color && color.length ===8){
+          return `#${color.slice(2)}`;
+        }
+        return color;
+      }
     return(
         <Col xl={12} className="text-start sharekhung">
             <div className="useshare row">
@@ -53,16 +59,16 @@ function SharePost({post,getSettingType}){
                     </Col>
                 }
             </div>
-            {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit") ?(
+            {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.background!== 'ffffffff' ) ?(
             <div
                 className={
-                post.color !== null
+                    formatcolor(post.color) !== null
                     ? 'postuser-showcommentBackgroundcolorshare'
                     : ''
                 }
                 style={{
-                '--showpostcolor': post.color || 'black' ,
-                '--showpostbackground': post.background || 'white'
+                '--showpostcolor': formatcolor(post.color) || 'black' ,
+                '--showpostbackground': formatcolor(post.background) || 'white'
                 } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                 >
                 {post.text}

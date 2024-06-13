@@ -41,6 +41,7 @@ function Post ({post, page,refetchHomePage}){
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
     const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
+    const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
     const [movePostId,setMovePostId] = useState(null);
     const [showReport,setShowReport] = useState(false);
@@ -54,6 +55,12 @@ function Post ({post, page,refetchHomePage}){
         [id]:false,
       }))
     };
+    const formatcolor = (color) =>{
+      if(color && color.length ===8){
+        return `#${color.slice(2)}`;
+      }
+      return color;
+    }
     const [showShareModal, setShowShareModal] = useState({});
     const handleShareClose = (id) => {
       setShowShareModal((prevState) => ({
@@ -61,7 +68,6 @@ function Post ({post, page,refetchHomePage}){
         [id]:false,
       }))
     };
-
     const handleShareShow = (id) =>{
       setFromSharePost({
         id:getPostById.id,
@@ -121,12 +127,10 @@ function Post ({post, page,refetchHomePage}){
                 </span>
         }
     }
-    const commentTagLink = (comments) => {
-      return /tag=.*&link=/.test(comments);
-    };
+
     const renderCommentWithLink = (comment) => {
       if (typeof comment === 'string') {
-        const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+        const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
         let match;
         const result = [];
         let lastIndex = 0;
@@ -142,7 +146,7 @@ function Post ({post, page,refetchHomePage}){
         }
         const restOfString = comment.substring(lastIndex);
         result.push(restOfString);
-        return result;
+        return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
       } else {
         return comment;
       }
@@ -192,22 +196,13 @@ function Post ({post, page,refetchHomePage}){
     user:user?.id,
     group:""
   });
-  const handleSharePost = async (postid,userid) =>{
-    const isConfirmed = window.confirm("Bạn muốn share bài post này?"); 
-    if(isConfirmed){
-      try{
-        await sharePost({postid,userid});
-      }catch(error){
-        console.log(error);
-      }
-    }
-  }
   const handleDeletePost = async (id) => {
-    const isConfirmed = window.confirm("Bạn chắc chắn muốn xóa bài post này?");
+    const isConfirmed = window.confirm("Are you sure you want to delete this post?");
     if (isConfirmed) {
       try {
         await deletePost({id});
-        
+        dispatch(showMessageAlert("Delete post successfully"));
+        dispatch(resetData());
       } catch (error) {
         console.log(error);
       }
@@ -375,7 +370,7 @@ function Post ({post, page,refetchHomePage}){
                   <SharePost getSettingType={getSettingType} post={post}/>
                 ):(
                   <Col xl={12} className="text-start">
-                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.color && post.color !== "ff000000" && post.background && post.background !== "ffffffff") ?(
+                {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.background && post.background !== "ffffffff") ?(
                   <div
                   className={
                     post.color !== null
@@ -383,8 +378,8 @@ function Post ({post, page,refetchHomePage}){
                       : ''
                   }
                   style={{
-                    '--showpostcolor': post.color || 'black' ,
-                    '--showpostbackground': post.background || 'white'
+                    '--showpostcolor': formatcolor(post.color) || 'black' ,
+                    '--showpostbackground': formatcolor(post.background) || 'white'
                   } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                   >
                     {renderCommentWithLink(post.text)}

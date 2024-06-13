@@ -1,16 +1,19 @@
 import { useState,useRef,useEffect,ChangeEvent } from 'react';
 // import api from '../api/apiPost';
 import { LuLink } from "react-icons/lu";
+import {Link} from "react-router-dom";
 import { FaXmark } from "react-icons/fa6";
 import { SlArrowLeft } from "react-icons/sl";
 import '../css/addPost.css';
 import { useGetUserFriendQuery, usePostMutation } from '../post/postApiSlice';
-import { useSelector } from 'react-redux';
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import { Image } from 'react-bootstrap';
 import APIService from '../features/APIService';
 import { Modal } from 'react-bootstrap';
 const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
+    const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser)
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
     const [create, {isLoading, isFetching, isError, isSuccess}] = usePostMutation();
@@ -86,13 +89,14 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
       console.log(formData);
       try {
         await create(formData);
-        handleCloseModal()
-        refetchHomePage();
+        handleCloseModal();
+        dispatch(showMessageAlert("Create new post successfully"));
+        dispatch(resetData());
       } catch (error) {
         console.error(error)
       }
     };
-    function handleInput() {
+  function handleInput() {
       const inputElement = document.getElementById("myInput") ;
       const ulElement = document.getElementById("myUL") ;
       let userInput = inputElement.textContent?.trim() || ""; 
@@ -148,7 +152,7 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
     
       // Nếu có kết quả, trả về phần mong muốn, ngược lại trả về toàn bộ chuỗi
       return match ? match[1] || match[2] || "" : inputValue;
-    }
+  }
   function handlePaste(event) {
     event.preventDefault();
     const pasteData = event.clipboardData.getData('text/plain');
@@ -189,8 +193,8 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
         selection.removeAllRanges();
         selection.addRange(range);
     }
-}
-function selectName(selectedName) {
+  }
+  function selectName(selectedName) {
     const currentInput = document.getElementById("myInput") ;
     let currentValue = currentInput.textContent?.trim() || "";
     // Loại bỏ các chuỗi '&nbsp;' trong văn bản hiện tại
@@ -205,29 +209,27 @@ function selectName(selectedName) {
     currentInput.innerHTML = "";
     // Tách các từ và thêm mỗi từ vào một thẻ span
     newValue.split(" ").forEach((word, index, array) => {
-        const span = document.createElement("span");
-  
-        // Thêm khoảng trắng vào đầu và cuối của danh mục
-        const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-        span.textContent = wordWithSpaces;
-  
-        // Kiểm tra xem từ có phải là danh mục đã chọn hay không
-        if (isInList(word)) {
-            span.contentEditable = "false"; // Ngăn chặn nhập liệu vào thẻ span chứ danh mục
-            span.classList.add("selected"); // Thêm className "selected" cho các thẻ span đã chọn
-            // Lấy link tương ứng với từng danh mục
-            const link = `${word}`; // Sử dụng từ hiện tại để tạo link
-            span.setAttribute("data-link", link);
-        } else {
-            span.contentEditable = "true"; // Cho phép nhập liệu vào các thẻ span khác
-        }
-        currentInput.appendChild(span);
-        // Thêm khoảng trắng nếu không phải là từ cuối cùng
-        if (index < array.length - 1) {
-            const space = document.createTextNode(" ");
-            currentInput.appendChild(space);
-        }
-    });
+      if (word.trim() !== "") {
+          const span = document.createElement("span");
+          const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+          span.textContent = wordWithSpaces;
+
+          // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+          if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+              span.contentEditable = "false";
+              span.classList.add("selected");
+              const link = `${word.trim()}`;
+              span.setAttribute("data-link", link);
+          } else {
+              span.contentEditable = "true";
+          }
+          currentInput.appendChild(span);
+          if (index < array.length - 1) {
+              const space = document.createTextNode(" ");
+              currentInput.appendChild(space);
+          }
+      }
+  });
     // Gửi sự kiện input để xử lý ngay lập tức sau khi dán
     const event = new Event('input', {
         bubbles: true,
@@ -248,13 +250,11 @@ function selectName(selectedName) {
           return true;
         }
       }
-    
       return false;
   }
   function getOverwrittenText(currentInput, selectedName){
       const regex = /^@(.+)|\s@(.+)/;
       const match = currentInput.match(regex);
-    
       if (match) {
         const prefix = match[1] || match[2] || "";
         return currentInput.replace("@" + prefix, selectedName);
@@ -274,8 +274,10 @@ function selectName(selectedName) {
         }
       };
       const [loading, setLoading] = useState(false);
+      console.log('user',getUserFriend);
   return (
     <div>
+
       <Modal className="postLoading" show={loading} onHide={() => setLoading(false)}>
           <Modal.Body>
             <div className="loading-spinner">
@@ -298,10 +300,27 @@ function selectName(selectedName) {
               <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={handleInput} onPaste={handlePaste} data-text="What do you think ?" onFocus={handleFocus} onBlur={handleBlur}></div>
             </div>
             
-            <ul id="myUL" className="myul" >
-              {getUserFriend?.map((user) => (
-                <li onClick={() => selectName(user.username)} ><a>{user.fullname}</a></li>
-              ))}
+            <ul id="myUL" className="myuladd" >
+            {getUserFriend?.map((user) => (
+              <div>
+              <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                <a>
+                  <div className="showuserli">
+                    <div className="showuserlianhcomment"> {user.gender=='female'?(
+                    <Link to={"/member/profile/"+user.username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    ):(
+                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                  </a>
+                </li>
+              </div>
+            ))}
             </ul>
             {selectedFiles.length > 0 && (
                 <div className="modalpost-image">
@@ -325,9 +344,24 @@ function selectName(selectedName) {
           </div>    
           <ul id="myUL" className="myuladd " >
             {getUserFriend?.map((user) => (
-              <li onClick={() => selectName(user.username)}>
-                <a >{user.fullname}</a>
-              </li>
+              <div>
+              <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                <a>
+                  <div className="showuserli">
+                    <div className="showuserlianhcomment"> {user.gender=='female'?(
+                    <Link to={"/member/profile/"+user.username}>
+                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    ):(
+                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    )}
+                    </div>
+                    <div className="showuserliname">
+                      {user.fullname}
+                    </div>
+                  </div>
+                  </a>
+                </li>
+              </div>
             ))}
           </ul>
           
@@ -344,15 +378,15 @@ function selectName(selectedName) {
                 <div className="modalpost-fountcolororBack" onClick={handleToggleBackground}><SlArrowLeft /></div>
                 <div className="modalpost-fountcolororigan" onClick={() => handleClassChange(0,{color: 'inherit', background: 'inherit'})}>0</div>
                 {[
-                  { color: '#fff', background: '#8224e3' },
-                  { color: 'black', background: 'aqua' },
-                  { color: '#fff', background: 'brown' },
-                  { color: '#fff', background: 'palevioletred' },
-                  { color: '#fff', background: 'red' },
-                  { color: '#000', background: 'rgb(153, 255, 0)' },
-                  { color: '#fff', background: 'rgb(40, 56, 179)' },
-                  { color: '#fff', background: 'rgb(0, 157, 255)' },
-                  { color: '#fff', background: 'rgb(33, 68, 91)' }
+                  { color: '#ffffff', background: '#7c4dff' },
+                  { color: '#000000', background: '#18ffff' },
+                  { color: '#ffffff', background: '#6d4c41' },
+                  { color: '#ffffff', background: '#f06292' },
+                  { color: '#ffffff', background: '#FF0000' },
+                  { color: '#000000', background: '#76ff03' },
+                  { color: '#ffffff', background: '#0d47a1' },
+                  { color: '#ffffff', background: '#42a5f5' },
+                  { color: '#ffffff', background: '#607d8b' }
                 ].map((colorObj,index)=>(
                   <div key={index} className={`modalpost-fountcolor${index + 1}${selectedColor === index ? ' borderpostcolor': ''}`}
                   onClick={() => handleClassChange(index,colorObj)}>

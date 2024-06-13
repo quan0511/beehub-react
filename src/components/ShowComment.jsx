@@ -91,32 +91,29 @@ function ShowComment({
       }
     };
 
-  const commentTagLink = (comments) => {
-    return /tag=.*&link=/.test(comments);
-  };
-  const renderCommentWithLink = (comment) => {
-    if (typeof comment === 'string') {
-      const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
-      let match;
-      const result = [];
-      let lastIndex = 0;
-      while ((match = regex.exec(comment)) !== null) {
-        const [fullMatch, tagName, link] = match;
-        const beforeTag = comment.substring(lastIndex, match.index);
-        result.push(beforeTag, (
-          <Link key={match.index} to={"/member/profile/" + link}>
-            {tagName}
-          </Link>
-        ));
-        lastIndex = regex.lastIndex;
+    const renderCommentWithLink = (comment) => {
+      if (typeof comment === 'string') {
+        const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
+        let match;
+        const result = [];
+        let lastIndex = 0;
+        while ((match = regex.exec(comment)) !== null) {
+          const [fullMatch, tagName, link] = match;
+          const beforeTag = comment.substring(lastIndex, match.index);
+          result.push(beforeTag, (
+            <Link key={match.index} to={"/member/profile/" + link}>
+              {tagName}
+            </Link>
+          ));
+          lastIndex = regex.lastIndex;
+        }
+        const restOfString = comment.substring(lastIndex);
+        result.push(restOfString);
+        return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
+      } else {
+        return comment;
       }
-      const restOfString = comment.substring(lastIndex);
-      result.push(restOfString);
-      return result;
-    } else {
-      return comment;
-    }
-  }; 
+    };
   
   function handleInput(inputId, divId, formType) {
     const inputElement = document.getElementById(divId);
@@ -206,40 +203,43 @@ function selectName(selectedName, inputId, divId) {
   let currentValue = currentInput.textContent?.trim() || "";
   currentValue = currentValue.replace(/&nbsp;/g, '');
   currentValue = currentValue.replace(/\s+/g, ' ');
+
   const newValue = getOverwrittenText(currentValue, selectedName);
-  const commentInputElement = document.getElementById(inputId) ;
-  if (commentInputElement) { // Kiểm tra phần tử trước khi đặt giá trị
-    commentInputElement.value = newValue;
-  } else {
-    console.error(`Element with id ${inputId} not found`);
+  const commentInputElement = document.getElementById(inputId);
+  if (!commentInputElement) {
+      console.error(`Element with id ${inputId} not found`);
+      return;
   }
-  currentInput.innerHTML = "";
+  commentInputElement.value = newValue;
+  currentInput.innerHTML = ""; // Xóa nội dung hiện tại
   newValue.split(" ").forEach((word, index, array) => {
-    const span = document.createElement("span");
-    const wordWithSpaces = index === 0 ? ` ${word} ` : word === "" ? "" : ` ${word} `;
-    span.textContent = wordWithSpaces;
+      if (word.trim() !== "") {
+          const span = document.createElement("span");
+          const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+          span.textContent = wordWithSpaces;
 
-    if (isInList(word, divId)) {
-      span.contentEditable = "false";
-      span.classList.add("selected");
-      const link = `${word}`;
-      span.setAttribute("data-link", link);
-    } else {
-      span.contentEditable = "true";
-    }
-    currentInput.appendChild(span);
-    if (index < array.length - 1) {
-      const space = document.createTextNode(" ");
-      currentInput.appendChild(space);
-    }
+          // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+          if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+              span.contentEditable = "false";
+              span.classList.add("selected");
+              const link = `${word.trim()}`;
+              span.setAttribute("data-link", link);
+          } else {
+              span.contentEditable = "true";
+          }
+          currentInput.appendChild(span);
+          if (index < array.length - 1) {
+              const space = document.createTextNode(" ");
+              currentInput.appendChild(space);
+          }
+      }
   });
-
   const event = new Event('input', {
-    bubbles: true,
-    cancelable: true,
+      bubbles: true,
+      cancelable: true,
   });
   currentInput.dispatchEvent(event);
-  (document.getElementById(`${divId}-ul`) ).style.display = "none";
+  (document.getElementById(`${divId}-ul`)).style.display = "none";
 }
 function isInList(word, divId) {
   const ulElement = document.getElementById(`${divId}-ul`) ;
@@ -326,6 +326,12 @@ const handleBlur = (e) => {
     post: postIdco.id,
     user:user?.id,
   })
+  const formatcolor = (color) =>{
+    if(color && color.length ===8){
+      return `#${color.slice(2)}`;
+    }
+    return color;
+  }
     return(
         <div className="modalshowpostandcomment">
               <div key={postIdco.id} className="modelkhung">           
@@ -362,28 +368,27 @@ const handleBlur = (e) => {
                         </div>
                         ):(
                           <div>
-                            {(postIdco.color && postIdco.color !== "inherit" && postIdco.background && postIdco.background !== "inherit") ?(
+                            {(formatcolor(postIdco.color) && formatcolor(postIdco.color) !== "inherit" && formatcolor(postIdco.background) && formatcolor(postIdco.background) !== "inherit" && formatcolor(postIdco.background)!== '#ffffff') ?(
                       <div
                         className={
-                            postIdco.color !== null
+                          formatcolor(postIdco.color) !== null
                             ? 'modal-showcommentBackgroundcolor'
                             : ''
                         }
                         style={{
-                          '--showpostcolor': postIdco.color || 'black' ,
-                          '--showpostbackground': postIdco.background || 'white'
+                          '--showpostcolor': formatcolor(postIdco.color) || 'black' ,
+                          '--showpostbackground': formatcolor(postIdco.background) || 'white'
                         } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                       >
-                        {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                        {renderCommentWithLink(postIdco?.text)}
                       </div>
                       ):(
                         <div className="modal-showcomment">
-                        {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                        {renderCommentWithLink(postIdco?.text)}
                         </div>
                       )}
                         </div>
                       )}
-                  
                       </div>
                     )}
                   <div className="postuser-alllikeModal" >
@@ -464,7 +469,7 @@ const handleBlur = (e) => {
                       </div>
                       <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
                       <input type="hidden" name="createdAt" value={formComment.createdAt} onChange={(e) => handleChangeComment(e)} />
-                      <button type="submit" className="commentpost" value="Comment"><IoMdSend className="iconcomment"/></button>
+                      <button type="submit" className={`commentpost${!content ? 'disable' : ''}`} value="Comment"><IoMdSend className="iconcomment"/></button>
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (

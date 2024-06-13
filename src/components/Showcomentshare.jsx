@@ -4,12 +4,9 @@ import APIService from '../features/APIService';
 import {Link} from "react-router-dom";
 import {Image} from "react-bootstrap";
 function Showcommentshare({postIdco,calculateTimeDifference}){
-    const commentTagLink = (comments) => {
-        return /tag=.*&link=/.test(comments);
-      };
       const renderCommentWithLink = (comment) => {
         if (typeof comment === 'string') {
-          const regex = /tag=(.*?)&link=(.*?)(?=\s+tag=|$)/g;
+          const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
           let match;
           const result = [];
           let lastIndex = 0;
@@ -25,11 +22,17 @@ function Showcommentshare({postIdco,calculateTimeDifference}){
           }
           const restOfString = comment.substring(lastIndex);
           result.push(restOfString);
-          return result;
+          return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
         } else {
           return comment;
         }
       };
+      const formatcolor = (color) =>{
+        if(color && color.length ===8){
+          return `#${color.slice(2)}`;
+        }
+        return color;
+      }
     return(
         <div className="showcommentsharekhung">
             <div className="modalshowcomment-anhtentime">
@@ -52,23 +55,23 @@ function Showcommentshare({postIdco,calculateTimeDifference}){
             </div>
             ):(
             <div>
-                {(postIdco.color && postIdco.color !== "inherit" && postIdco.background && postIdco.background !== "inherit") ?(
+                {(formatcolor(postIdco.color) && formatcolor(postIdco.color) !== "inherit" && formatcolor(postIdco.background) && formatcolor(postIdco.background) !== "inherit"&& formatcolor(postIdco.background) !== "#ffffff" ) ?(
                 <div
                 className={
-                    postIdco.color !== null
+                  formatcolor(postIdco.color) !== null
                     ? 'modal-showcommentBackgroundcolor'
                     : ''
                 }
                 style={{
-                    '--showpostcolor': postIdco.color || 'black' ,
-                    '--showpostbackground': postIdco.background || 'white'
+                    '--showpostcolor': formatcolor(postIdco.color) || 'black' ,
+                    '--showpostbackground': formatcolor(postIdco.background) || 'white'
                 } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                 >
-                {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                {renderCommentWithLink(postIdco?.text) }
                 </div>
                 ):(
                 <div className="modal-showcomment">
-                {commentTagLink(postIdco.text) ? renderCommentWithLink(postIdco?.text) : postIdco?.text}
+                {renderCommentWithLink(postIdco?.text)}
                 </div>
                 )}
             </div>
