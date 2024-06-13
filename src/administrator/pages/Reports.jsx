@@ -73,11 +73,10 @@ function Reports() {
         }
     }
 
-    if (isLoading || isFetching) return <div className="d-flex justify-content-center align-items-center h-100"><BeehubSpinner /></div>
     if (!reports) return
     return (
         <>
-            <ContentHeader pageName={'Reports'} />
+            <ContentHeader pageName={'Reports'} title={(isLoading || isFetching) && <BeehubSpinner />}/>
 
             <div className="admin-content">
                 <div className="container-fluid">
@@ -100,12 +99,13 @@ function Reports() {
                                     <td>
                                         {d.status === 'active' && <span className="badge text-bg-success">Active</span>}
                                         {d.status === 'inactive' && <span className="badge text-bg-danger">Inactive</span>}
+                                        {d.status === 'banned' && <span className="badge text-bg-secondary">Banned</span>}
                                         {d.status === 'blocked' && <span className="badge text-bg-secondary">Blocked</span>}
                                     </td>
                                     <td>
                                         {d.caseType === 'user' &&
                                             <ButtonGroup>
-                                                <BanButton size={'sm'} isBanned={d.status === "banned"} userId={d.caseId} />
+                                                <BanButton size={'sm'} isBanned={d.status === "banned"} userId={d.reportedCaseId} />
                                                 <DeleteButton
                                                     caseId={d.reportedCaseId}
                                                     caseType={d.caseType}
@@ -121,7 +121,7 @@ function Reports() {
                                                 size={'sm'}
                                             />}
                                         {d.caseType === 'post' &&
-                                            <BlockButton isBlocked={d.status === "blocked"} postId={d.caseId} size={'sm'} />}
+                                            <BlockButton isBlocked={d.status === "blocked"} postId={d.reportedCaseId} size={'sm'} />}
                                     </td>
                                 </tr>
                             )

@@ -121,10 +121,10 @@ function Users() {
                                     {isCreateLoading ? <BeehubSpinner /> : 'Add'}
                                 </Button>
                                 {(errors.username || errors.email || errors.password) && <Button className="ms-2" variant="secondary" onClick={resetForm}>Clear</Button>}
-                                <small className="text-danger ms-4">{error?.data?.message || updateError?.data?.message || deleteError?.data?.message}</small>
+                                <small className="text-danger ms-4">{error?.data?.message || updateError?.data?.message}</small>
                                 <small className="text-success ms-4">{successMessage}</small>
                             </div>
-                            {(isLoading || isFetching || isUpdating || isBanning || isDeleting) && <div className="ms-auto d-flex align-items-end"><BeehubSpinner /></div>}
+                            {(isLoading || isFetching || isUpdating) && <div className="ms-auto d-flex align-items-end"><BeehubSpinner /></div>}
                         </Form>
                     )}
                 </Formik>

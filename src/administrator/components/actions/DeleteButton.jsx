@@ -23,8 +23,8 @@ function DeleteButton({ caseId, caseType, size, confirmContent }) {
     }
     return (
         <>
-            {userErr && <small className="text-danger">{userErr.data.message}</small>}
-            {groupErr && <small className="text-danger">{groupErr.data.message}</small>}
+            {/* {userErr && <small className="text-danger">{userErr.data.message}</small>}
+            {groupErr && <small className="text-danger">{groupErr.data.message}</small>} */}
             <Button variant="danger" size={size} onClick={_ => setOpen(true)}>
                 {(userLoading || groupLoading) ? <BeehubSpinner /> : 'Delete'}
             </Button>

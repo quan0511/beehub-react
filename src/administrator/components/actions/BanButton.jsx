@@ -5,9 +5,14 @@ import BeehubSpinner from "../../../components/BeehubSpinner";
 function BanButton({userId, isBanned, size}) {
     const [banUser, {error, isError, isLoading}] = useAdminBanUserMutation()
 
+    const handleBan = async (e, id) => {
+        e.preventDefault()
+        e.stopPropagation()
+        await banUser(id)
+    }
     return ( <>
-        {isError && <small className="text-danger">{error.data.message}</small>}
-        <Button onClick={banUser(userId)} variant="secondary" size={size}>
+        {/* {isError && <small className="text-danger">{error.data.message}</small>} */}
+        <Button onClick={e => handleBan(e, userId)} variant="secondary" size={size}>
             {isLoading ? <BeehubSpinner/> : isBanned ? "Unban" : "Ban"}
         </Button>
     </> );
