@@ -7,7 +7,7 @@ import ProfileAbout from "./ProfileAbout";
 import ProfilePost from "./ProfilePost";
 import ProfileFriends from "./ProfileFriends";
 import ProfilePhotos from "./ProfilePhotos";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
@@ -21,8 +21,10 @@ function Profile (){
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
     const navigate = useNavigate();
+    const location = useLocation()
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
+    const newProfile = useSelector((state)=>state.user.newProfile);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
     const handleClose1 = () => setShow1(false);
@@ -53,8 +55,8 @@ function Profile (){
             case "posts": 
                 return <ProfilePost appUser={appUser} user={user}/>;
             case "friends":
-                let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED");
-                return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} />;
+                let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED"&& e.typeRelationship != "BE_BLOCKED");
+                return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} hideFriend={hideFriendCheck} />;
             case "about":
                 return <ProfileAbout user={user} appUser={appUser} />;
             case "photos":
@@ -152,9 +154,11 @@ function Profile (){
         }
     }
     useEffect(()=>{
-        dispatch(changedProfile());
+        if(!newProfile){
+            dispatch(changedProfile());
+        }
         setTab("posts");
-    },[username])
+    },[location.key])
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -312,7 +316,7 @@ function Profile (){
                                     <Col xl={2} lg={3} md={2} sm={12} className="d-flex justify-content-md-center align-items-center ms-md-3">
                                         <ListGroup horizontal>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">
-                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships.filter(e=>e.typeRelationship=='FRIEND').length}</span><span className="d-block text-black-50">Friends</span></p>
+                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships.length}</span><span className="d-block text-black-50">Friends</span></p>
                                                 
                                             </ListGroup.Item>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">
@@ -335,17 +339,13 @@ function Profile (){
                                                     <span>About</span>
                                                 </Nav.Link>
                                             </Nav.Item>
-                                            {hideFriendCheck()?
-                                                <></>
-                                                :
-                                                <Nav.Item>
-                                                    <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
-                                                        <People size={20}/>
-                                                        <span>Friends</span>
-                                                    </Nav.Link>
-                                                </Nav.Item>
-                                                
-                                            }
+                                            
+                                            <Nav.Item>
+                                                <Nav.Link eventKey="friends"  style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
+                                                    <People size={20}/>
+                                                    <span>Friends</span>
+                                                </Nav.Link>
+                                            </Nav.Item>
                                             <Nav.Item   >
                                                 <Nav.Link eventKey="photos" style={{width: "80px"}}  className="d-flex flex-column align-items-center justify-content-between p-2 text-dark">
                                                     <CardImage size={20}/>

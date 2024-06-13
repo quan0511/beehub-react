@@ -14,6 +14,13 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
         let resp = await APIService.createRequirement(appUser.id, {sender_id: appUser.id, receiver_id: friend_id, type: typeClick },token);
         dispatch(refresh());
     }
+    if(hideFriend()){
+        return <Row className="mb-5">
+                    <Col xl={10} className=" profile-tab">
+                        <h3>You have no permission to see this user friends</h3>
+                    </Col>
+                </Row>
+    }
     return (
         <Row className="mb-5">
             <Col xl={10} className=" profile-tab">
