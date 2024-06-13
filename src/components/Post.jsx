@@ -20,6 +20,7 @@ import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
 import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
 import axios from "axios";
+import ModalReport from "./ModalReport";
 function Post ({post, page,refetchHomePage}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
@@ -39,15 +40,13 @@ function Post ({post, page,refetchHomePage}){
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
-    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : countComment;
+    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
-    const {data: reportTypes} = useGetReportTypesQuery();
     const [movePostId,setMovePostId] = useState(null);
     const [showReport,setShowReport] = useState(false);
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
-    const [targetReport, setTargetReport] = useState(null);
     const [showSettingPost, setShowSettingPost] = useState(false);
     let reset = useSelector((state)=> state.user.reset);
     const handleCloseEditPost = (id) => {
@@ -271,8 +270,8 @@ function Post ({post, page,refetchHomePage}){
                     {
                         post.group_id!=null && page!='group'?(
                             post.group_image!=null?
-                                <Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle />
-                                : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle />
+                            <Link to={"/group/"+post.group_id}><Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                :  <Link to={"/group/"+post.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
                         )
                         :(
                             post.user_image!=null?
@@ -309,7 +308,7 @@ function Post ({post, page,refetchHomePage}){
                 </Col>
                 {togglePost[post.id] && (
                    <div >
-                   {post.user_id === user?.id ?(
+                   {post.user_id === user?.id && post.group_id==null?(
                      <div className="togglePost">
                       <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
                         <div><MdModeEdit className="iconefunctionpost" /></div>
@@ -324,7 +323,19 @@ function Post ({post, page,refetchHomePage}){
                         <div className="fonttextfunctionpost">Delete Post</div>
                       </div>
                      </div>
-                   ):(
+                   ):post.user_id === user?.id && post.group_id!=null?(
+                    <div className="togglePost2">
+                      <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
+                        <div><MdModeEdit className="iconefunctionpost" /></div>
+                        <div className="fonttextfunctionpost">Edit Post</div>
+                      </div>
+                      <div className="selectedfunction" onClick={() => handleDeletePost(post.id)}>
+                        <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                        <div className="fonttextfunctionpost">Delete Post</div>
+                      </div>
+                     </div>
+                   )
+                   :(
                      <div className="togglePost2">
                        {post.user_id != user.id?
                         <div className="selectedfunction" onClick={()=> setShowReport(true)}>
@@ -475,73 +486,7 @@ function Post ({post, page,refetchHomePage}){
                       } animation={false}>
                       <ShowComment postIdco={post}/>
                     </Modal>
-                    <Modal show={showReport} onHide={()=>setShowReport(false)}>
-                      <Modal.Header className="text-center" closeButton>
-                        <Modal.Title>Report</Modal.Title>
-                      </Modal.Header>
-                      <Formik
-                        initialValues={{
-                          sender_id: user.id,
-                          user_username: post.user_username,
-                          target_group_id: post.group_id,
-                          target_post_id: post.id,
-                          type_id: targetReport,
-                          add_description: ""
-                        }}
-                        onSubmit={async (values, { ...props }) => {
-                            try {
-                                if(targetReport==null){
-                                  props.setErrors({type_id : "Type Report is required"});
-                                }else{
-                                  values.type_id = targetReport;
-                                  await createReport({id:user.id,data:values });
-                                  dispatch(showMessageAlert("Send Report post successfully"));
-                                  setShowReport(false);
-                                  refetchHomePage();
-                                }
-                            } catch (error) {
-                                console.error('An error occurred while submitting the form.', error);
-                            }
-                        }}
-                    > {({ handleSubmit, handleChange, values, touched, errors }) => (
-                      <Form noValidate onSubmit={handleSubmit}>
-                      <Modal.Body>
-                             <Form.Label>Please select a problem</Form.Label>
-                             <Form.Select name="report_type" aria-label="select report type" defaultValue={values.type_id} className="mb-3"
-                                isInvalid={!!errors.type_id}
-                              onChange={(e)=>{
-                                let valueId = e.target.value;
-                                let des = reportTypes.find((element) => element.id == valueId);
-                                document.getElementById("descriptionReport").innerText = des.description;
-                                setTargetReport(valueId);
-                             }}>
-                              <option>Open this select menu</option>
-                              { reportTypes!=null && reportTypes.length !=0?
-                                reportTypes.map((re, index)=>{
-                                  return <option key={re.id} value={re.id}>{re.title}</option>
-                                })
-                                :<></>
-                              }
-                            </Form.Select>
-                            {errors.type_id && touched.type_id && (
-                                  <span className="text-danger">{errors.type_id}</span>
-                              )}
-                            <div id="descriptionReport" className="mb-3"></div>
-                            <Form.Control as="textarea" rows={3}  name="add_description"  className="mb-3"
-                                defaultValue={values.add_description} onChange={handleChange} />
-                          
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="secondary" onClick={()=>setShowReport(false)}>
-                          Close
-                        </Button>
-                        <Button variant="primary" type="submit">
-                          Send Report
-                        </Button>
-                      </Modal.Footer>
-                      </Form>
-                      )}</Formik>
-                    </Modal>
+                    <ModalReport showReport={showReport} setShowReport={setShowReport} postTarget={post} />
                     <Modal show={showSettingPost} onHide={()=> setShowSettingPost(false)}>
                       <Modal.Header className="text-center" closeButton>
                         <Modal.Title>Setting</Modal.Title>

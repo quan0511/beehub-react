@@ -64,15 +64,19 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 },
         }),
         groupPosts: builder.query({
-            query: ({id_user,id_group,page}) => ({
+            query: ({id_user,id_group,page, reset}) => ({
                 url: `/user/${id_user}/group/${id_group}/posts?limit=3&page=${page}`
             }),
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
             // Always merge incoming data to the cache entry
-            merge: (currentCache, newItems) => {
-            currentCache.push(...newItems)
+            merge: (currentCache, newItems,{arg: arg}) => {
+                if(!arg.reset){
+                    currentCache.push(...newItems)
+                }else{
+                    return newItems;
+                }
             },
             // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
@@ -85,6 +89,29 @@ export const userApiSlice = apiSlice.injectEndpoints({
             }),
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg
+            },
+        }),
+        profilePosts: builder.query({
+            query: ({id_user, username, page, reset,newProfile}) =>({
+                url: `/user/${id_user}/get-posts/${username}?limit=3&page=${page}`
+            }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems,{arg: arg}) => {
+                if(arg.newProfile){
+                    return newItems;
+                }
+                if(!arg.reset && !arg.newProfile&& arg.page!=0){
+                    currentCache.push(...newItems)
+                }else{
+                    return newItems;
+                }
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+            return currentArg !== previousArg
             },
         }),
         checkUsername: builder.query({
@@ -233,6 +260,7 @@ export const {
     useGroupPostsQuery,
     useGetReportTypesQuery,
     useProfileQuery,
+    useProfilePostsQuery,
     useCheckUsernameQuery,
     useCheckSetUpPostsQuery,
     useGetSettingItemsQuery,

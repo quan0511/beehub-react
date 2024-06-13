@@ -11,8 +11,8 @@ function GroupPeople({members}){
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
-    
     const getButton = (mem)=>{
+        console.log(mem);
         if(mem.username == appUser.username){
             return <></>
         }
@@ -21,10 +21,17 @@ function GroupPeople({members}){
                 return <Link to={"/member/profile/"+mem.username} role="button" className="btn btn-outline-primary" >
                     <EyeFill/> View Profile
                 </Link>
+            case "SENT_REQUEST":
+                return <Button variant="outline-warning" onClick={()=>{ handleClick("CANCEL_REQUEST",mem.user_id)}}>Cancel Request</Button>
+            case "NOT_ACCEPT":
+                if(mem._banned){
+                    return<></>
+                }
+                return <Button variant="outline-success"  onClick={()=>{ handleClick("ACCEPT",mem.user_id)}}>Accept</Button>
             case "BLOCKED": 
                 return <Button variant="secondary" disabled ><Ban/> Blocked</Button>
             default:
-                return <Button variant="primary" onClick={()=> handleClick("ADD_FRIEND",mem.id)} ><Plus/> Add Friend</Button>
+                return <Button variant="primary" onClick={()=> handleClick("ADD_FRIEND",mem.user_id)} ><Plus/> Add Friend</Button>
         }
     }
     const handleClick= async (typeClick,receiver_id)=>{

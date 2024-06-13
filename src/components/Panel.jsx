@@ -4,12 +4,13 @@ import {Cart3, GearFill, JournalBookmark, People, Person, PersonCircle, Play } f
 import { Link, Navigate, useLocation } from "react-router-dom";
 import Tooltip from 'react-bootstrap/Tooltip'; 
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 
 function Panel(){
     const userApp = useSelector(selectCurrentUser);
     let location = useLocation();
+    const dispatch = useDispatch();
     if(userApp==null){
         return <Navigate to="/login" state={{ from: location }} replace/>
     }
@@ -31,7 +32,7 @@ function Panel(){
                         )} 
                         placement="right"
                     >
-                        <Link to={"/member/profile/"+userApp.username} ><PersonCircle size={20}/></Link>
+                        <Link to={"/member/profile/"+userApp.username} onClick={()=>{dispatch(changedProfile());}} ><PersonCircle size={20}/></Link>
                         </OverlayTrigger> 
                     </ListGroup.Item>
                     <ListGroup.Item className="border-0 pb-3">

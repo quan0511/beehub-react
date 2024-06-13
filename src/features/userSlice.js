@@ -3,6 +3,7 @@ export const userSlice = createSlice({
     name: "userSlice",
     initialState: {
         reset: false,
+        newProfile: false,
         showMessage: false,
         message: ""
     },
@@ -16,6 +17,12 @@ export const userSlice = createSlice({
         cancelReset: (state)=>{
             state.reset = false;
         },
+        changedProfile: (state)=>{
+            state.newProfile = true;
+        },
+        oldProfile: (state)=>{
+            state.newProfile = false;
+        },
         showMessageAlert: (state,payload)=>{
             state.showMessage= true;
             state.message = payload.payload;
@@ -25,5 +32,5 @@ export const userSlice = createSlice({
         }
     }
 })
-export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset }= userSlice.actions;
+export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset, changedProfile, oldProfile }= userSlice.actions;
 export default userSlice.reducer
