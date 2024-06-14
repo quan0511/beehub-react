@@ -25,7 +25,7 @@ export const GroupAbout = ({group}) =>{
                                         </td>
                                         <td className="lh-sm"><span className="fw-bold">Public</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                            Anyone can see who's in the group and what they post.
+                                            Everyone can see who's in the group and what they post.
                                             </span>
                                         </td>
                                         
@@ -48,7 +48,7 @@ export const GroupAbout = ({group}) =>{
                                         <td><Eye /></td>
                                         <td className="lh-sm"><span className="fw-bold">Visible</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                            Anyone can find this group.
+                                            Everyone can find this group.
                                             </span>
                                         </td>
                                     </tr>
@@ -57,7 +57,7 @@ export const GroupAbout = ({group}) =>{
                                         <td><EyeSlash /></td>
                                         <td className="lh-sm"><span className="fw-bold">Invisible</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                                Anyone can's find this group.
+                                            Everyone can's find this group.
                                             </span>
                                         </td>
                                     </tr>
