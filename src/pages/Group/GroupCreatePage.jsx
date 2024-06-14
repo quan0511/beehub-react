@@ -6,12 +6,16 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 import { useCreateGroupMutation } from "../../features/userApiSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import APIService from "../../features/APIService";
 export const GroupCreatePage =()=>{
     const appUser = useSelector(selectCurrentUser);
+    const token = useSelector(selectCurrentToken);
     const navigator = useNavigate();
     const [bgGroup,setBgGroup ] = useState();
     const [imageGroup,setImageGround ] = useState();
     const [createGroup,{isLoading,isSuccess, isError}] = useCreateGroupMutation();
+    
     const schema = Yup.object().shape({
         groupname: Yup.string()
                 .required("Required!")
@@ -50,12 +54,18 @@ export const GroupCreatePage =()=>{
         bodyFormData.append("groupname",values.groupname);
         bodyFormData.append("description", values.description);
         bodyFormData.append("public_group",values.public);
-        bodyFormData.append('background',bgGroup);
-        bodyFormData.append("image", imageGroup);
+        bodyFormData.append('background',bgGroup??null);
+        bodyFormData.append("image", imageGroup??null);
         document.getElementById("loading").style.display = "block";
         try {
-           let response = await createGroup({id:appUser.id,data: bodyFormData});
-           if(!isError && !isLoading){
+        //    let response = await createGroup({id:appUser.id,data: bodyFormData});
+            let response = await axios.post(`${APIService.URL_REST_API}/user/create-group/${appUser.id}`,bodyFormData,{
+            headers: {
+                Authorization: 'Bearer '+token,
+                withCredentials: true
+            },
+            });
+           if(response.data !=null){
             //    console.log("data: "+response.data);
             navigator("/group/"+response.data);
             document.getElementById("loading").style.display = "none";

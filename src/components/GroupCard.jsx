@@ -59,6 +59,7 @@ const GroupCard =({group,image})=>{
         } 
         
     }
+    console.log(image);
     return (
         <Card className="mb-2 p-1 group-card">
             <Card.Body >

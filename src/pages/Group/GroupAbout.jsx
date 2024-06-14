@@ -3,13 +3,10 @@ import { Col, Container, Image, Row, Table } from "react-bootstrap";
 import { ChatRightText, ClockFill, Eye, EyeSlash, GlobeAmericas, LockFill, PeopleFill } from "react-bootstrap-icons";
 
 export const GroupAbout = ({group}) =>{
+    console.log(group);
     const getDateCreate = ()=>{
-        let datePost = new Date(group.created_at[0],group.created_at[1],group.created_at[2], group.created_at[3], group.created_at[4], group.created_at[5]);
-        return datePost.toLocaleDateString('en-GB', {
-            day : 'numeric',
-            month : 'short',
-            year : 'numeric'
-        });
+        let datePost = new Date(group.created_at);
+        return datePost.toLocaleString('en-GB');
     }
     return <Container>
         <Row className="group-section">
@@ -28,7 +25,7 @@ export const GroupAbout = ({group}) =>{
                                         </td>
                                         <td className="lh-sm"><span className="fw-bold">Public</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                            Anyone can see who's in the group and what they post.
+                                            Everyone can see who's in the group and what they post.
                                             </span>
                                         </td>
                                         
@@ -51,7 +48,7 @@ export const GroupAbout = ({group}) =>{
                                         <td><Eye /></td>
                                         <td className="lh-sm"><span className="fw-bold">Visible</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                            Anyone can find this group.
+                                            Everyone can find this group.
                                             </span>
                                         </td>
                                     </tr>
@@ -60,7 +57,7 @@ export const GroupAbout = ({group}) =>{
                                         <td><EyeSlash /></td>
                                         <td className="lh-sm"><span className="fw-bold">Invisible</span><br/>
                                             <span style={{fontSize:"13px"}}>
-                                                Anyone can's find this group.
+                                            Everyone can's find this group.
                                             </span>
                                         </td>
                                     </tr>
