@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Formik } from 'formik';
-import { Button, Col, Container,  Form,  Image,  Row } from "react-bootstrap";
+import { Button, Col, Container,  Form,  Image,  Row, Spinner } from "react-bootstrap";
 import * as Yup from 'yup';
 import APIService from "../../features/APIService";
 import axios from "axios";
@@ -8,13 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../auth/authSlice";
 import { refresh } from "../../features/userSlice";
 import { useUploadBgGroupMutation, useUploadImageGroupMutation } from "../../features/userApiSlice";
+import BeehubSpinner from "../../components/BeehubSpinner";
 export const GeneralSetting = ({user_id,group})=>{
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
     const [bgGroup,setBgGroup ] = useState();
     const [imageGroup,setImageGround ] = useState();
-    const [uploadImage, {isLoading1,isSuccess1, isError1}] = useUploadImageGroupMutation();
-    const [uploadBg, {isLoading2,isSuccess2, isError2}] = useUploadBgGroupMutation();
+    const [isLoadingImg,setIsLoadingImg] =useState(false);
+    const [isLoadingBg,setIsLoadingBg] =useState(false);
     const schema = Yup.object().shape({
         groupname: Yup.string()
                 .required("Required!")
@@ -26,10 +27,8 @@ export const GeneralSetting = ({user_id,group})=>{
             var reader = new FileReader();
             
             reader.onload = function (e) {
-                console.log(e.target.result);
                 document.getElementById("img-upload").setAttribute("src",e.target.result);
             }
-            
             reader.readAsDataURL(input.files[0]);
             setImageGround(input.files[0]);
             document.getElementById("submit-image").hidden= false;
@@ -40,7 +39,6 @@ export const GeneralSetting = ({user_id,group})=>{
             var reader = new FileReader();
             
             reader.onload = function (e) {
-                console.log(e.target.result);
                 document.getElementById("bg-upload").setAttribute("src",e.target.result);
             }
             
@@ -51,16 +49,44 @@ export const GeneralSetting = ({user_id,group})=>{
     }  
     const handleChangeImage =async (id_group)=>{
         try {
-            await uploadImage({id: user_id,image: imageGroup,id_group:id_group});
-            dispatch(refresh());
+            // await uploadImage({id: user_id,image: imageGroup,id_group:id_group});
+            var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',imageGroup);
+                setIsLoadingImg(true);
+            let response = await axios.post(`${APIService.URL_REST_API}/upload/group/image/${user_id}`,bodyFormData,{
+                headers: {
+                    Authorization: 'Bearer '+token,
+                    withCredentials: true
+                },
+            });
+            console.log(response.status==200);
+            if(response.status==200){
+                dispatch(refresh());
+                setIsLoadingImg(false);
+            }
         } catch (error) {
             console.log(error);
         }   
     }
     const handleChangeBackground =async (id_group)=>{
         try {
-            await uploadBg({id: user_id,background: bgGroup,id_group:id_group});
-            dispatch(refresh());
+            var bodyFormData = new FormData();
+                bodyFormData.append("id",id_group),
+                bodyFormData.append('media',bgGroup);
+                setIsLoadingBg(true);
+            let response = await axios.post(`${APIService.URL_REST_API}/upload/group/background/${user_id}`,bodyFormData,{
+                headers: {
+                    Authorization: 'Bearer '+token,
+                    withCredentials: true
+                },
+            });
+            console.log(response);
+            if(response.status==200){
+                dispatch(refresh());
+                setIsLoadingBg(false);
+            }
+            // await uploadBg({id: user_id,background: bgGroup,id_group:id_group});
         } catch (error) {
             console.log(error);
         }   
@@ -79,8 +105,9 @@ export const GeneralSetting = ({user_id,group})=>{
             </div>
             <div className="d-flex align-items-center justify-content-center">
                 <input type="file" name="background" id="background" className="form-control my-3" onChange={(e)=>readURLBg(e.target)} />
-                <Button variant="primary" id="submit-background" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeBackground(group.id)}>Save Change</Button>
+                <Button variant="primary" id="submit-background" className="me-2" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeBackground(group.id)}>Save Change</Button>
             </div>
+                {isLoadingBg? <Spinner animation="border"/>:<></>}
         </div>
         <div>
             <label className="mb-2">Change Image</label>
@@ -94,8 +121,9 @@ export const GeneralSetting = ({user_id,group})=>{
             </div>
             <div className="d-flex align-items-center justify-content-center">
                 <input type="file" name="image" id="image" className="form-control my-3" onChange={(e)=>readURLImage(e.target)}  />
-                <Button variant="primary" id="submit-image" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeImage(group.id)}>Save Change</Button>
+                <Button variant="primary" id="submit-image" className="me-2" hidden style={{width:"200px",marginLeft:"5px"}} onClick={()=>handleChangeImage(group.id)}>Save Change</Button>
             </div>
+                {isLoadingImg? <Spinner animation="border"  />:<></>}
         </div>
         <div>
             <Formik

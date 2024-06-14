@@ -18,7 +18,6 @@ export function AccountSetting(){
     const navigator = useNavigate();
     const reset = useSelector((state)=>state.user.reset);
     const {data: account, isLoading} = useProfileQuery({id: appUser.id,username: appUser.username,reset:reset});
-    const [ blockedUsers, setBlockedUsers] = useState([]);
     const [ messageToast, setMessageToast] = useState(false);
     const [ messageToastError, setMessageToastError] = useState(false);
     //For bootstrap
@@ -43,12 +42,7 @@ export function AccountSetting(){
             navigator("/logout")
         }
     }
-    useEffect(()=>{
-        if(!isLoading && account!=null&& account.relationships!=null){
-            let blockedList= account.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED');
-            setBlockedUsers(blockedList);
-        }
-    },[])
+    
     return (
         <Container >
             <Row  className="bg-white">
@@ -117,8 +111,8 @@ export function AccountSetting(){
                                     <h4>List User Blocked</h4>
                                     <hr/>
                                     <div className="mt-3 d-flex flex-column">
-                                        {blockedUsers.length>0?
-                                            blockedUsers.map((block, index)=>{
+                                        {account !=null && account.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED').length>0?
+                                            account.relationships.filter((e,i)=> e.typeRelationship == 'BLOCKED').map((block, index)=>{
                                                 let image = block.image!=null?block.image:(block.gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
                                                 return (<Card key={index} className="mb-2 p-1">
                                                 <Card.Body className="d-flex flex-row justify-content-between align-items-center" >

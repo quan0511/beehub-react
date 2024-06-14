@@ -54,6 +54,7 @@ function ProfileAbout({user,appUser}) {
                         validationSchema={Yup.object().shape({
                             bio: Yup.string().max(200, "Biography maximum 200 character")
                             })}
+                        validateOnBlur={false}
                         initialValues={{
                                 id: appUser.id,
                                 bio: user.bio??"",
@@ -67,13 +68,12 @@ function ProfileAbout({user,appUser}) {
                                         withCredentials: true
                                     }
                                 });
-                                if (response.status == '200') {
+                                console.log(response);
+                                if (response.status == 200) {
                                     props.setErrors({})
-                                    setTimeout(()=>{
-                                        dispatch(refresh())
-
-                                    },800)
-                                    props.resetForm();
+                                    dispatch(refresh())
+                                    setShowDiv(true);
+                                    document.getElementById("bio").readOnly = true;
                                 } else {
                                     console.error('An error occurred while submitting the form.');
                                 }

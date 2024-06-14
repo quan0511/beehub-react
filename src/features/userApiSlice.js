@@ -84,9 +84,16 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
         }),
         profile: builder.query({
-            query: ({id,username}) => ({
+            query: ({id,username,reset}) => ({
                 url: `/user/${id}/profile/${username}`
             }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName
+            },
+            // Always merge incoming data to the cache entry
+            merge: (currentCache, newItems) => {
+                return newItems;
+            },
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg
             },
