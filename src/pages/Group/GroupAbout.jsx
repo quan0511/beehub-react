@@ -3,13 +3,10 @@ import { Col, Container, Image, Row, Table } from "react-bootstrap";
 import { ChatRightText, ClockFill, Eye, EyeSlash, GlobeAmericas, LockFill, PeopleFill } from "react-bootstrap-icons";
 
 export const GroupAbout = ({group}) =>{
+    console.log(group);
     const getDateCreate = ()=>{
-        let datePost = new Date(group.created_at[0],group.created_at[1],group.created_at[2], group.created_at[3], group.created_at[4], group.created_at[5]);
-        return datePost.toLocaleDateString('en-GB', {
-            day : 'numeric',
-            month : 'short',
-            year : 'numeric'
-        });
+        let datePost = new Date(group.created_at);
+        return datePost.toLocaleString('en-GB');
     }
     return <Container>
         <Row className="group-section">
