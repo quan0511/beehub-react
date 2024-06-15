@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom'
+
 import { Button, Modal } from "react-bootstrap";
 
 function BeehubModal({open, children, onClose, centered}) {

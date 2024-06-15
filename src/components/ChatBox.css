@@ -1,0 +1,130 @@
+.chatbox {
+    position: fixed;
+    bottom: 0;
+}
+@media only screen and (max-width: 600px) {
+    .chatbox {
+        width: 300px;
+        height: 400px;
+        right: 1rem;
+    }
+}
+
+@media only screen and (min-width: 601px) {
+    .chatbox {
+        width: 380px;
+        height: 450px;
+        right: 2.5rem;
+    }
+}
+
+.chatbox-container {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 0;
+    padding: 5px 5px 0 5px;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    box-sizing: border-box;
+    border: 1px solid #e7edf2;
+    box-shadow: 0 0 80px rgba(58, 46, 68, 0.1);
+}
+
+.chatbox-title {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    line-height: 1.3;
+    padding-bottom: .25rem;
+    border-bottom: 1px solid #e7edf2;
+}
+
+.avatar-wrapper {
+    position: relative;
+    margin-right: .5rem;
+}
+
+img.avatar {
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
+}
+.close-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    color: red;
+    text-decoration: none;
+}
+
+.chatbox-message-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.chatbox-message-list .content {
+    display: block;
+    overflow: hidden scroll;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    box-sizing: content-box;
+    padding-right: 20px;
+}
+
+.chatbox-message-list .chat-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+}
+
+.chatbox-message-list .message--self {
+    overflow-wrap: break-word;
+    margin-bottom: .75rem;
+    padding: 0 .5em 0 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+.chatbox-inputarea {
+    display: flex;
+    border-top: 1px solid #e7edf2;
+}
+
+.message--self .message-block {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.message--self .messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.message--self .message-block .message {
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    white-space: pre-wrap;
+    max-width: calc(100% - 34px);
+    line-height: 1.25;
+    border: .5px solid #fff;
+    background-color: rgba(130, 36, 227, 0.05);
+}
+
+.chatbox-input {
+    width: 100%;
+    outline: none;
+    border: none;
+}

@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { axiosInstance } from "../hooks/useAxios";
+import ChatBox from "../components/ChatBox";
 
 function RequireAuth() {
     const [ token, setToken ] = useState(useSelector(selectCurrentToken))
@@ -28,7 +29,7 @@ function RequireAuth() {
 
     return ( 
         token
-            ? <Outlet/>
+            ? <><Outlet/><ChatBox/></>
             : <div className="w-100 min-vh-100 d-flex justify-content-center align-items-center">
                 <Spinner style={{color: '#8224e3'}}/>
             </div>

@@ -239,7 +239,7 @@ function Profile (){
                                     {
                                         appUser.id == user.id? 
                                         <>
-                                            <Button variant="outline-dark"  className="position-absolute rounded-circle bottom-0 edit-avatar"  onClick={handleShow1}>
+                                            <Button variant="dark"  className="position-absolute rounded-circle bottom-0 edit-avatar"  onClick={handleShow1}>
                                                 <PencilFill />
                                             </Button>
                                             <Modal show={show1}
