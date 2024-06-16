@@ -27,15 +27,7 @@ function Homepage() {
         if(preLocation!= location.key){
             window.scrollTo({ top: 0, behavior: 'auto' });
             dispatch(startResetHomepage());
-            console.log("Reset Home: "+resetHome);
         }
-        console.log(posts);
-        console.log("Reset: "+reset);
-        console.log("Check location"+location.key==preLocation);
-        console.log("Is fetch: "+isFetching);
-        console.log(preLocation);
-        console.log(location.key);
-        console.log("Reset Home 2: "+resetHome);
         dispatch(setPreLocation(location.key));
         const onScroll = () => {
             dispatch(cancelResetHomepage());

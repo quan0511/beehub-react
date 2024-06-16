@@ -10,7 +10,6 @@ import { selectCurrentUser } from "../auth/authSlice";
 function Panel(){
     const userApp = useSelector(selectCurrentUser);
     let location = useLocation();
-    const dispatch = useDispatch();
     if(userApp==null){
         return <Navigate to="/login" state={{ from: location }} replace/>
     }

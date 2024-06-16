@@ -19,10 +19,6 @@ function ProfilePost ({appUser,user,page,setPage}){
     const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
         setTimeout(()=>setRefreshPost(false),1200);
-        // if(window.innerHeight + window.scrollY==0 &&newProfile){
-        //     console.log("refetch:");
-        //     refetchHomePage();
-        // }
         const onScroll = () => {
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
             if(window.innerHeight + window.scrollY!=0){

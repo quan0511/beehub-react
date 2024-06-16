@@ -181,10 +181,6 @@ function Profile (){
             dispatch(userApiSlice.util.prefetch('profilePosts', {id_user: appUser.id, username: username,page:0,reset: false, newProfile:newProfile}, { force: true }));        
         }
         ,1000);
-        console.log("Page: "+page);
-        // if(user&&appUser.id!=user.id){
-        //     dispatch(changedProfile());
-        // }
     },[location.key,user])
     if(isLoading || !isSuccess){
         return (
