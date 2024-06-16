@@ -8,6 +8,7 @@ export const userSlice = createSlice({
         message: "",
         preLocation: "",
         resetHomepage: false,
+        resetGroup:false,
     },
     reducers: {
         refresh: (state)=>{
@@ -40,8 +41,14 @@ export const userSlice = createSlice({
         },
         cancelResetHomepage: (state)=>{
             state.resetHomepage =false;
+        },
+        startResetGroup: (state)=>{
+            state.resetGroup = true;
+        },
+        cancelResetGroup: (state)=>{
+            state.resetGroup = false;
         }
     }
 })
-export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset, changedProfile, oldProfile,setPreLocation,startResetHomepage, cancelResetHomepage}= userSlice.actions;
+export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset, changedProfile, oldProfile,setPreLocation,startResetHomepage, cancelResetHomepage,startResetGroup,cancelResetGroup}= userSlice.actions;
 export default userSlice.reducer

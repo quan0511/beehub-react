@@ -74,7 +74,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems,{arg: arg}) => {
-                if(!arg.reset){
+                if(arg.resetGroup){
+                    return newItems;
+                }
+                if(!arg.reset && arg.page!=0){
                     currentCache.push(...newItems)
                 }else{
                     return newItems;
