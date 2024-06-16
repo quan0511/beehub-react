@@ -5,7 +5,9 @@ export const userSlice = createSlice({
         reset: false,
         newProfile: false,
         showMessage: false,
-        message: ""
+        message: "",
+        preLocation: "",
+        resetHomepage: false,
     },
     reducers: {
         refresh: (state)=>{
@@ -29,8 +31,17 @@ export const userSlice = createSlice({
         },
         closeMessageAlert: (state)=>{
             state.showMessage = false;
+        },
+        setPreLocation:(state,payload)=>{
+            state.preLocation = payload.payload;
+        },
+        startResetHomepage:(state)=>{
+            state.resetHomepage = true;
+        },
+        cancelResetHomepage: (state)=>{
+            state.resetHomepage =false;
         }
     }
 })
-export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset, changedProfile, oldProfile }= userSlice.actions;
+export const {refresh,showMessageAlert,closeMessageAlert, resetData, cancelReset, changedProfile, oldProfile,setPreLocation,startResetHomepage, cancelResetHomepage}= userSlice.actions;
 export default userSlice.reducer

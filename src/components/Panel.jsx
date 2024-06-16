@@ -32,7 +32,7 @@ function Panel(){
                         )} 
                         placement="right"
                     >
-                        <Link to={"/member/profile/"+userApp.username} onClick={()=>{dispatch(changedProfile());}} ><PersonCircle size={20}/></Link>
+                        <Link to={"/member/profile/"+userApp.username} ><PersonCircle size={20}/></Link>
                         </OverlayTrigger> 
                     </ListGroup.Item>
                     <ListGroup.Item className="border-0 pb-3">

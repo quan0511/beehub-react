@@ -1,5 +1,5 @@
 import { Col, Container, Row, Form, Image, Spinner, Button  } from 'react-bootstrap';
-import { useGroupInfoQuery, useHomepageQuery } from '../features/userApiSlice';
+import { useGroupInfoQuery, useHomepageQuery, userApiSlice } from '../features/userApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import APIService from '../features/APIService';
@@ -9,19 +9,36 @@ import { useEffect, useState } from 'react';
 import AddPost from '../components/AddPost';
 import Modal from 'react-bootstrap/Modal';
 import '../css/addPost.css';
-import { cancelReset, refresh } from '../features/userSlice';
+import { cancelReset, cancelResetHomepage, refresh, resetData, setPreLocation, startResetHomepage } from '../features/userSlice';
+import { useLocation } from 'react-router-dom';
 function Homepage() {
     const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
     const reset = useSelector((state)=>state.user.reset);
     const dispatch = useDispatch();
-    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page, reset:reset});
+    const location = useLocation();
+    const preLocation = useSelector((state)=>state.user.preLocation);
+    const resetHome = useSelector((state)=>state.user.resetHomepage);
+    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page, reset:reset,resetHome: resetHome});
     const [showInputModal, setShowInputModal] = useState(false);
     const handleOpenInputModal = () => setShowInputModal(true);
     const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
-        
+        if(preLocation!= location.key){
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            dispatch(startResetHomepage());
+            console.log("Reset Home: "+resetHome);
+        }
+        console.log(posts);
+        console.log("Reset: "+reset);
+        console.log("Check location"+location.key==preLocation);
+        console.log("Is fetch: "+isFetching);
+        console.log(preLocation);
+        console.log(location.key);
+        console.log("Reset Home 2: "+resetHome);
+        dispatch(setPreLocation(location.key));
         const onScroll = () => {
+            dispatch(cancelResetHomepage());
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY)>= (document.body.offsetHeight-1);
             if(!scrolledToBottom && reset){
                 setPage(page);
@@ -40,7 +57,7 @@ function Homepage() {
         return function () {
           document.removeEventListener("scroll", onScroll);
         };
-      }, [page, isFetching]);
+      }, [page,isFetching]);
     return (
         <Container fluid className='ps-4' style={{marginTop: "50px",marginBottom: "10px"}}>
             <Row>
