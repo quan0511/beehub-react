@@ -52,14 +52,13 @@ const GroupCard =({group,image})=>{
                         </Col>);
                 default:
                     return (<Col xl="4" lg={4} md={4} sm={4}xs={5}className="d-flex flex-row justify-content-start align-items-center">
-                            <Button variant="outline-secondary" className="me-2" style={{width: "85px"}} onClick={()=>{handleButton("OUT_GROUP")}}>Joined</Button>
+                            <Button variant="outline-secondary" className="me-2" style={{width: "85px"}} onClick={()=>{handleButton("LEAVE_GROUP")}}>Joined</Button>
                             <Link role="button" className="btn btn-outline-primary" to={"/group/"+group.id} style={{width: "85px"}}>Visit</Link>
                         </Col>);
             }
         } 
         
     }
-    console.log(image);
     return (
         <Card className="mb-2 p-1 group-card">
             <Card.Body >

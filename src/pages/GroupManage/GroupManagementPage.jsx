@@ -25,8 +25,8 @@ export const GroupManagementPage=()=>{
    
     const handleButton= async(typeClick,user_id)=>{
         let resp = await APIService.createRequirement(appUser.id, {receiver_id: user_id, group_id: group.id, type: typeClick },token);
-        console.log(resp.response);
-        if(resp.result!='unsuccess'||resp.result != 'error'){
+        console.log(resp);
+        if(resp.response!='unsuccess'&&resp.response != 'error'){
             if(resp.response=="RETIRE"){
                 navigator("/group/"+id);
             }
