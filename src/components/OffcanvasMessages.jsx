@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Offcanvas, Spinner } from "react-bootstrap";
+import { Button, Form, Spinner } from "react-bootstrap";
+import Offcanvas from 'react-bootstrap/Offcanvas'
 import { ChatRightHeartFill, XLg } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
 import ListGroups from "./ListGroups";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import { useGetFriendsAndGroupQuery } from "../features/userApiSlice";
 
@@ -18,7 +19,7 @@ function OffcanvasMessages({show,handleClose}){
         return <></>
     }
     return (
-        <Offcanvas show={show} placement="end">
+        <Offcanvas show={show} onHide={handleClose} placement="end" >
             <Offcanvas.Header className="pb-0">
                 <Offcanvas.Title style={{padding: "0.4rem 1.2rem"}} className="d-flex flex-row justify-content-between algin-items-center w-100 p-0">                                        
                     <div>
@@ -51,7 +52,7 @@ function OffcanvasMessages({show,handleClose}){
                                 <Spinner animation="grow" size="sm" />&ensp;
                                 <Spinner animation="grow" size="sm" />        
                             </div> 
-                        : typeSearch === "Friends"?<ListFriend friends={data["friends"]} />:<ListGroups groups={data['groups']} />}
+                        : typeSearch === "Friends"?<ListFriend onClose={handleClose} friends={data["friends"]} />:<ListGroups onClose={handleClose} groups={data['groups']} />}
             </Offcanvas.Body>
             
         </Offcanvas>

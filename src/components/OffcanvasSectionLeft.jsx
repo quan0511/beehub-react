@@ -25,7 +25,7 @@ export const OffcanvasSectionLeft =({show,handleClose})=>{
                     </ListGroup.Item>
                     <ListGroup.Item className="px-5 py-3"  >
                         <Link to="/" className="text-decoration-none text-dark">
-                            <JournalBookmark size={20}/><span className="ms-3 fs-5">Homepage</span>
+                            <JournalBookmark size={20}/><span className="ms-3 fs-5">Activities</span>
                         </Link>
                     </ListGroup.Item>
                     <ListGroup.Item className="px-5 py-3" >
