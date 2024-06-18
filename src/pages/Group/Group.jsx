@@ -7,12 +7,12 @@ import GroupPeople from "./GroupPeople";
 import GroupDiscussion from "./GroupDiscussion";
 import axios from "axios";
 import APIService from "../../features/APIService";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { GroupAbout } from "./GroupAbout";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useGroupInfoQuery, useGroupPostsQuery } from "../../features/userApiSlice";
-import { refresh } from "../../features/userSlice";
+import { useGroupInfoQuery, useGroupPostsQuery, userApiSlice } from "../../features/userApiSlice";
+import { refresh, startResetGroup } from "../../features/userSlice";
 import { GroupError } from "./GroupError";
 import BeehubSpinner from "../../components/BeehubSpinner";
 import ModalReport from "../../components/ModalReport";
@@ -22,9 +22,11 @@ function Group (){
     const token = useSelector(selectCurrentToken);
     const [page, setPage] = useState(0);
     const [showReport,setShowReport] = useState(false);
+    const location = useLocation();
     const reset = useSelector((state)=>state.user.reset);
+    const resetGroup = useSelector((state)=>state.user.resetGroup);
     const {data:group, isLoading, isSuccess} = useGroupInfoQuery({id_user: appUser.id, id_group: id, reset:reset});
-    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page, reset:reset});
+    const {data: posts, isFetching} =useGroupPostsQuery({id_user: appUser.id, id_group: id,page:page, reset:reset,resetGroup:resetGroup});
     const [tab, setTab] = useState('discussion');
     const dispatch = useDispatch();
     const handleButton= async(typeClick)=>{
@@ -76,7 +78,13 @@ function Group (){
                 setTab("about");
             }
         }
-    },[])
+        setPage(0);
+        dispatch(startResetGroup());
+        setTimeout(()=>{
+            dispatch(userApiSlice.util.prefetch('groupPosts', {id_user: appUser.id, id_group: id,page:page, reset:reset,resetGroup:resetGroup}, { force: true }));        
+        }
+        ,800);
+    },[location.key,group])
     if(isLoading || !isSuccess ){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
             {BeehubSpinner()}

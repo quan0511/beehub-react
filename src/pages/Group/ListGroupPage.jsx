@@ -36,7 +36,7 @@ const ListGroupPage =()=>{
              return (
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     {data["joined_groups"].map((group, index)=>{
-                        let urlImage =  group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
+                        let urlImage =  group.image_group!=null ? group.image_group: APIService.URL_REST_API+"/files/group_image.png";
                         return <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>
@@ -47,7 +47,8 @@ const ListGroupPage =()=>{
                 <Col xl={10} className="mx-auto d-flex flex-column text-start">
                     <Link to={"/group/create-group"} role="button" className="btn btn-outline-primary mb-3">Create New Group</Link>
                     {data["own_group"].map((group, index)=>{
-                        let urlImage = group.image_group!=null ? group.image: APIService.URL_REST_API+"/files/group_image.png";
+                        let urlImage = group.image_group!=null ? group.image_group: APIService.URL_REST_API+"/files/group_image.png";
+
                         return  <GroupCard key={index} group={group} image={urlImage}/>
                     })}
                 </Col>);

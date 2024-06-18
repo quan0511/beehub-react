@@ -11,22 +11,23 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
-import userSlice, { changedProfile, refresh } from "../../features/userSlice";
+import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation, userApiSlice } from "../../features/userApiSlice";
+import { changedProfile, refresh } from "../../features/userSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
 import ModalReport from "../../components/ModalReport";
+import axios from "axios";
 
 function Profile (){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
-    const navigate = useNavigate();
-    const location = useLocation()
+    const location = useLocation();
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
     const newProfile = useSelector((state)=>state.user.newProfile);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
+    const [page, setPage] =useState(0);
     const handleClose1 = () => setShow1(false);
     const [show1, setShow1] = useState(false);
     const handleShow1 = () => setShow1(true);
@@ -34,8 +35,6 @@ function Profile (){
     const [showReport,setShowReport] = useState(false);
     const [fileImage,setFileImage] = useState();
     const [fileBackground, setFileBackground] = useState();
-    const [saveImg,{isLoadingImage, isFetchingImage, isErrorImage, isSuccessImage}] = useUploadImageProfileMutation();
-    const [saveBg,{isLoadingBg, isFetchingBg,isErrorBg, isSuccessBg}] = useUploadBackgroundProfileMutation();
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -53,7 +52,7 @@ function Profile (){
     const tabSession = ()=>{
         switch(tab){
             case "posts": 
-                return <ProfilePost appUser={appUser} user={user}/>;
+                return <ProfilePost appUser={appUser} user={user} page={page} setPage={setPage} />;
             case "friends":
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED"&& e.typeRelationship != "BE_BLOCKED");
                 return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} hideFriend={hideFriendCheck} />;
@@ -131,11 +130,21 @@ function Profile (){
         e.preventDefault();
         document.getElementById("waiting-bg").style.display = "block";
         try {
-            await saveBg({id:appUser.id,background:fileBackground });
-            setShow2(false);
-            dispatch(refresh());
-            document.getElementById("waiting-bg").style.display = "none";
-            navigate("/member/profile/"+username);
+            // await saveBg({id:appUser.id,background:fileBackground });
+            var bodyFormData = new FormData();
+            bodyFormData.append('media', fileBackground);
+            let response = await axios.post(`${APIService.URL_REST_API}/upload/profile/background/${appUser.id}`,bodyFormData,{
+                headers: {
+                    Authorization: 'Bearer '+token,
+                    withCredentials: true
+                }
+            });
+            if(response.data ){
+                setShow2(false);
+                setFileBackground("");
+                document.getElementById("waiting-bg").style.display = "none";
+                dispatch(refresh())
+            }
         } catch (error) {
             console.log(error);
         }
@@ -144,21 +153,35 @@ function Profile (){
         e.preventDefault();
         document.getElementById("waiting-img").style.display = "block";
         try {
-            await saveImg({id: appUser.id,image: fileImage})
-            handleClose1();
-            document.getElementById("waiting-img").style.display = "none";
-            dispatch(refresh())
-            navigate("/member/profile/"+username);
+            // let response= await saveImg({id: appUser.id,image: fileImage})
+            var bodyFormData = new FormData();
+            bodyFormData.append('media', fileImage);
+            let response= await axios.post(`${APIService.URL_REST_API}/upload/profile/image/${appUser.id}`,bodyFormData,{
+                headers: {
+                    Authorization: 'Bearer '+token,
+                    withCredentials: true
+                }
+            });
+            if(response.data ){
+                handleClose1();
+                setFileImage("");
+                document.getElementById("waiting-img").style.display = "none";
+                dispatch(refresh())
+            }
         } catch (error) {
             console.log(error);
         }
     }
     useEffect(()=>{
-        if(!newProfile){
-            dispatch(changedProfile());
-        }
+        window.scrollTo({ top: 0, behavior: 'auto' });
         setTab("posts");
-    },[location.key])
+        setPage(0);
+        dispatch(changedProfile());
+        setTimeout(()=>{
+            dispatch(userApiSlice.util.prefetch('profilePosts', {id_user: appUser.id, username: username,page:0,reset: false, newProfile:newProfile}, { force: true }));        
+        }
+        ,1000);
+    },[location.key,user])
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>
@@ -228,7 +251,7 @@ function Profile (){
                                 <Col xl={2} lg={2} md={2} sm={2} className="position-relative mb-3" style={{height: "120px"}} >
                                     {
                                         user.image!=null?
-                                        <Image src={user.image}  className="object-fit-cover border-0 rounded position-absolute" style={{width: "220px", height: "220px",top:"-100px"}}  />
+                                        <Image src={user.image}  className="object-fit-cover border-0 rounded position-absolute bg-white" style={{width: "220px", height: "220px",top:"-100px"}}  />
                                         :
                                         (user.gender=='female'?
                                         <Image src={`${APIService.URL_REST_API}/files/user_female.png`}  className="object-fit-cover border-0 rounded position-absolute"  style={{width: "220px", height: "220px",top:"-100px"}} />

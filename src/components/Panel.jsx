@@ -11,7 +11,6 @@ import { changedProfile } from "../features/userSlice";
 function Panel(){
     const userApp = useSelector(selectCurrentUser);
     let location = useLocation();
-    const dispatch = useDispatch();
     if(userApp==null){
         return <Navigate to="/login" state={{ from: location }} replace/>
     }
@@ -33,8 +32,8 @@ function Panel(){
                         )} 
                         placement="right"
                     >
-                        <Link to={"/member/profile/"+userApp.username} onClick={(e)=>{e.preventDefault(); dispatch(changedProfile());}} ><PersonCircle size={20}/></Link>
-                        </OverlayTrigger> 
+                        <Link to={"/member/profile/"+userApp.username} ><PersonCircle size={20}/></Link>
+                    </OverlayTrigger> 
                     </ListGroup.Item>
                     <ListGroup.Item className="border-0 pb-3">
                     <OverlayTrigger delay={{ hide: 350, show: 300 }} 
