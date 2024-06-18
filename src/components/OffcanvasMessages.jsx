@@ -4,7 +4,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas'
 import { ChatRightHeartFill, XLg } from "react-bootstrap-icons";
 import ListFriend from "./ListFriend";
 import ListGroups from "./ListGroups";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import { useGetFriendsAndGroupQuery } from "../features/userApiSlice";
 
@@ -52,7 +52,7 @@ function OffcanvasMessages({show,handleClose}){
                                 <Spinner animation="grow" size="sm" />&ensp;
                                 <Spinner animation="grow" size="sm" />        
                             </div> 
-                        : typeSearch === "Friends"?<ListFriend onClose={handleClose} friends={data["friends"]} />:<ListGroups groups={data['groups']} />}
+                        : typeSearch === "Friends"?<ListFriend onClose={handleClose} friends={data["friends"]} />:<ListGroups onClose={handleClose} groups={data['groups']} />}
             </Offcanvas.Body>
             
         </Offcanvas>

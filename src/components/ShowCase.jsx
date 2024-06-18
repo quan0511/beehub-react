@@ -4,7 +4,7 @@ import "./ShowCase.css"
 
 function ShowCase() {
     return (
-        <div className="showcase shadow-sm p-3">
+        <div className="d-none d-md-block showcase shadow-sm p-3">
             <h5 className="title">Products</h5>
             <ul className="product-list">
                 <li>

@@ -2,25 +2,35 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     open: false,
-    userId: '',
-    groupId: ''
+    chat: {
+        id: '',
+        isGroup: false,
+        name: '',
+        avatar: ''
+    }
 }
 
 export const chatboxSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        openChat: (state, _) => {state.open = true},
-        closeChat: (state, _) => {state.open = false},
-        setUserId: (state, action) => {state.userId = action.payload.id},
-        setGroupId: (state, action) => {state.groupId = action.payload.id},
+        openChat: (state, _) => { state.open = true },
+        closeChat: (state, _) => { state.open = false },
+        setChat: (state, { payload }) => {
+            state.chat =
+            {
+                id: payload.id,
+                isGroup: payload.isGroup,
+                name: payload.name,
+                avatar: payload.avatar
+            }
+        },
     }
 })
 
 export const isOpen = (state) => state.chat.open
-export const userId = (state) => state.chat.userId
-export const groupId = (state) => state.chat.groupId
+export const chat = (state) => state.chat.chat
 
-export const { openChat, closeChat, setUserId, setGroupId } = chatboxSlice.actions
+export const { openChat, closeChat, setChat } = chatboxSlice.actions
 
 export default chatboxSlice.reducer

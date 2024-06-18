@@ -9,6 +9,13 @@ export const messageApiSlice = apiSlice.injectEndpoints({
             providesTags: ['Message']
         }),
 
+        getMessagesForGroup: builder.query({
+            query: id => ({
+                url: '/messages/group/' + id,
+            }),
+            providesTags: ['Message']
+        }),
+
         createMessageForUser: builder.mutation({
             query: ({ recipientId, content }) => ({
                 url: '/messages/user',
@@ -20,15 +27,18 @@ export const messageApiSlice = apiSlice.injectEndpoints({
 
         createMessageForGroup: builder.mutation({
             query: ({ recipientId, content }) => ({
-                url: '/messages',
+                url: '/messages/group',
                 method: 'POST',
                 body: { recipientId, content },
-            })
+            }),
+            invalidatesTags: ['Message']
         })
     })
 })
 
 export const {
     useGetMessagesForUserQuery,
-    useCreateMessageForUserMutation
+    useGetMessagesForGroupQuery,
+    useCreateMessageForUserMutation,
+    useCreateMessageForGroupMutation
 } = messageApiSlice

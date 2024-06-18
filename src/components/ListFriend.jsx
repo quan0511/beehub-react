@@ -1,10 +1,10 @@
 import React from "react";
 import { Badge, Dropdown, Image, ListGroup } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import APIService from "../features/APIService";
 import { ThreeDots } from "react-bootstrap-icons";
 import { useDispatch } from "react-redux";
-import { openChat, setUserId } from "../messages/chatboxSlice";
+import { openChat, setChat } from "../messages/chatboxSlice";
 
 const CustomToggle = React.forwardRef(({ onClick }, ref) => (
     <ThreeDots style={{ cursor: 'pointer' }} ref={ref} onClick={(e) => {
@@ -23,18 +23,22 @@ function ListFriend({ friends, onClose }) {
         onClose()
     }
 
-    const openChatbox = (event, id) => {
+    const openChatbox = (event, id, name, avatar) => {
         event.preventDefault()
+        dispatch(setChat({
+            id,
+            isGroup: false,
+            name,
+            avatar
+        }))
         dispatch(openChat())
-        dispatch(setUserId({id}))
         onClose()
     }
     return (
         <ListGroup className=" w-100" >
             {friends.map((e, index) => {
                 let imageSrc = e.image != null ? e.image : (e.gender == 'female' ? APIService.URL_REST_API + "/files/user_female.png" : APIService.URL_REST_API + "/files/user_male.png");
-                let username = e.username
-                return <ListGroup.Item onClick={(event) => openChatbox(event, e.id)} key={index} className='text-start p-2 border-bottom-1 border-start-0 border-end-0 border-top-0' style={{cursor: 'pointer'}}>
+                return <ListGroup.Item onClick={(event) => openChatbox(event, e.id, e.username, imageSrc)} key={index} className='text-start p-2 border-bottom-1 border-start-0 border-end-0 border-top-0' style={{cursor: 'pointer'}}>
                     <Image src={imageSrc} style={{ marginRight: "15px", width: "37px", height: "37px" }} roundedCircle />
                     <span>{e.fullname}</span>
                     {
@@ -47,10 +51,10 @@ function ListFriend({ friends, onClose }) {
                     <Dropdown drop="start" className="float-end">
                         <Dropdown.Toggle as={CustomToggle}></Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item href={"/member/profile/" + e.username} onClick={event => handleClick(event, username)}>
+                            <Dropdown.Item href={"/member/profile/" + e.username} onClick={event => handleClick(event, e.username)}>
                                 Profile
                             </Dropdown.Item>
-                            <Dropdown.Item href={`message/user/${e.id}`} onClick={(event) => openChatbox(event, e.id)}>Send Message</Dropdown.Item>
+                            <Dropdown.Item href={`message/user/${e.id}`} onClick={(event) => openChatbox(event, e.id, e.username, imageSrc)}>Send Message</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </ListGroup.Item>

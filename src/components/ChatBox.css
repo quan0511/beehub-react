@@ -1,6 +1,6 @@
 .chatbox {
     position: fixed;
-    bottom: 0;
+    bottom: 5px;
 }
 @media only screen and (max-width: 600px) {
     .chatbox {
@@ -54,6 +54,15 @@ img.avatar {
     height: auto;
     border-radius: 50%;
 }
+.small-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    margin-right: .5rem;
+}
+.small-avatar img.avatar {
+    width: 30px;
+}
 .close-button {
     position: absolute;
     right: 5px;
@@ -102,7 +111,6 @@ img.avatar {
 
 .message--self .message-block {
     display: flex;
-    flex-wrap: wrap;
 }
 
 .message--self .messages {
