@@ -11,8 +11,8 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import APIService from "../../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "../../auth/authSlice";
-import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation } from "../../features/userApiSlice";
-import userSlice, { changedProfile, refresh } from "../../features/userSlice";
+import { useProfileQuery, useUploadBackgroundProfileMutation, useUploadImageProfileMutation, userApiSlice } from "../../features/userApiSlice";
+import { changedProfile, refresh } from "../../features/userSlice";
 import BeehubSpinner from "../../components/BeehubSpinner";
 import ModalReport from "../../components/ModalReport";
 import axios from "axios";
@@ -21,13 +21,13 @@ function Profile (){
     const appUser = useSelector(selectCurrentUser);
     const token = useSelector(selectCurrentToken);
     const { username } = useParams();
-    const navigate = useNavigate();
-    const location = useLocation()
+    const location = useLocation();
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
     const newProfile = useSelector((state)=>state.user.newProfile);
     const {data: user, isLoading, isSuccess} = useProfileQuery({id: appUser.id,username: username,reset:reset});
     const [tab, setTab] = useState('posts');
+    const [page, setPage] =useState(0);
     const handleClose1 = () => setShow1(false);
     const [show1, setShow1] = useState(false);
     const handleShow1 = () => setShow1(true);
@@ -35,8 +35,6 @@ function Profile (){
     const [showReport,setShowReport] = useState(false);
     const [fileImage,setFileImage] = useState();
     const [fileBackground, setFileBackground] = useState();
-    const [saveImg,{isLoadingImage, isFetchingImage, isErrorImage, isSuccessImage}] = useUploadImageProfileMutation();
-    const [saveBg,{isLoadingBg, isFetchingBg,isErrorBg, isSuccessBg}] = useUploadBackgroundProfileMutation();
     const handelSelectTab = (selectKey)=>{
         setTab(selectKey);
     }
@@ -54,7 +52,7 @@ function Profile (){
     const tabSession = ()=>{
         switch(tab){
             case "posts": 
-                return <ProfilePost appUser={appUser} user={user}/>;
+                return <ProfilePost appUser={appUser} user={user} page={page} setPage={setPage} />;
             case "friends":
                 let listsfriend =  user.relationships.filter((e)=> e.typeRelationship != "BLOCKED"&& e.typeRelationship != "BE_BLOCKED");
                 return <ProfileFriends appUser={appUser} friends={listsfriend} user_id={user.id} hideFriend={hideFriendCheck} />;
@@ -175,11 +173,15 @@ function Profile (){
         }
     }
     useEffect(()=>{
-        if(!newProfile){
-            dispatch(changedProfile());
-        }
+        window.scrollTo({ top: 0, behavior: 'auto' });
         setTab("posts");
-    },[location.key])
+        setPage(0);
+        dispatch(changedProfile());
+        setTimeout(()=>{
+            dispatch(userApiSlice.util.prefetch('profilePosts', {id_user: appUser.id, username: username,page:0,reset: false, newProfile:newProfile}, { force: true }));        
+        }
+        ,1000);
+    },[location.key,user])
     if(isLoading || !isSuccess){
         return (
             <Container style={{marginTop: "150px"}}>

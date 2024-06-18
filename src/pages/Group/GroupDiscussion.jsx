@@ -8,7 +8,7 @@ import { selectCurrentUser } from "../../auth/authSlice";
 import {  useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import AddPost from "../../components/AddPost";
-import { cancelReset } from "../../features/userSlice";
+import { cancelReset, cancelResetGroup } from "../../features/userSlice";
 function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_media, isActive, isPublic , joined,page, setPage,isFetching}){
     const appUser = useSelector(selectCurrentUser);
     const dispatch = useDispatch();
@@ -16,6 +16,9 @@ function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_m
     useEffect(() => {
         const onScroll = () => {
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
+            if(window.innerHeight + window.scrollY!=0){
+                dispatch(cancelResetGroup());
+            }
             if(!scrolledToBottom && reset){
                 setPage(page);
                 return;
@@ -33,7 +36,7 @@ function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_m
         return function () {
           document.removeEventListener("scroll", onScroll);
         };
-      }, [page, isFetching]);
+      }, [page]);
       const [showInputModal, setShowInputModal] = useState(false);
         const handleOpenInputModal = () => setShowInputModal(true);
         const handleCloseInputModal = () => setShowInputModal(false);

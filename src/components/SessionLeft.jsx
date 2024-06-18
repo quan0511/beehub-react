@@ -15,7 +15,6 @@ function SessionLeft ({appUser}){
         let childitem = document.getElementsByClassName("link-item");
         for (let index = 0; index < childitem.length; index++) {
             const element = childitem[index];
-            console.log(element.getAttribute("href") == location.pathname)
             if(element.getAttribute("href") == location.pathname){
                 element.parentNode.classList.add("active");
             } else {

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function ProfilePhotos({galleries}){
     const [showPhoto, setShowPhoto] = useState(false);
     const [selectGallery, setSelectGallery] = useState({});
-    console.log(galleries);
+
     const getTimeOfPost = (date)=>{
         let datePost = new Date(date);
         let diffDay = Math.round(Math.abs(new Date() - datePost)/ 86400000);

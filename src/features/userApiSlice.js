@@ -10,18 +10,20 @@ export const userApiSlice = apiSlice.injectEndpoints({
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName
             },
-            // Always merge incoming data to the cache entry
             merge: (currentCache, newItems,{arg: arg}) => {
-                if(!arg.reset){
+                if(arg.resetHome){
+                    return newItems;
+                }
+                if(!arg.reset&& arg.page!=0){
                     currentCache.push(...newItems)
                 }else{
                     return newItems;
                 }
             },
-            // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
             },
+            
         }),
         friends: builder.query({
             query: ({id}) => ({
@@ -72,7 +74,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
             },
             // Always merge incoming data to the cache entry
             merge: (currentCache, newItems,{arg: arg}) => {
-                if(!arg.reset){
+                if(arg.resetGroup){
+                    return newItems;
+                }
+                if(!arg.reset && arg.page!=0){
                     currentCache.push(...newItems)
                 }else{
                     return newItems;
@@ -110,7 +115,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 if(arg.newProfile){
                     return newItems;
                 }
-                if(!arg.reset && !arg.newProfile&& arg.page!=0){
+                if(!arg.reset && arg.page!=0 ){
                     currentCache.push(...newItems)
                 }else{
                     return newItems;
