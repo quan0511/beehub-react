@@ -1,5 +1,4 @@
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
-import { GearFill, Sliders2 } from "react-bootstrap-icons";
 import Post from "../../components/Post";
 import APIService from "../../features/APIService";
 import { useEffect, useState } from 'react';
@@ -9,28 +8,32 @@ import { useHomepageQuery, useProfilePostsQuery } from "../../features/userApiSl
 import { useDispatch, useSelector } from "react-redux";
 import BeehubSpinner from "../../components/BeehubSpinner";
 import { cancelReset, changedProfile, oldProfile } from "../../features/userSlice";
-function ProfilePost ({appUser,user}){
-    const [page, setPage] =useState(0);
+function ProfilePost ({appUser,user,page,setPage}){
     const dispatch = useDispatch();
     const reset = useSelector((state)=>state.user.reset);
     const newProfile = useSelector((state)=>state.user.newProfile);
-    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useProfilePostsQuery({id_user:appUser.id, username: user.username, page:page, reset: reset,newProfile:newProfile},{skip : user==null});
+    const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useProfilePostsQuery({id_user:appUser.id, username: user.username, page:page, reset: reset,newProfile: newProfile},{skip : user==null});
     const [showInputModal, setShowInputModal] = useState(false);
     const handleOpenInputModal = () => setShowInputModal(true);
-    const [refreshPost, setRefreshPost] = useState(newProfile??true);
+    const [refreshPost, setRefreshPost] = useState(true);
     const handleCloseInputModal = () => setShowInputModal(false);
     useEffect(() => {
-        setTimeout(()=>setRefreshPost(false),800);
+        setTimeout(()=>setRefreshPost(false),1200);
         const onScroll = () => {
-            dispatch(oldProfile());
             const scrolledToBottom =Math.round(window.innerHeight + window.scrollY) >= (document.body.offsetHeight);
-            if(!scrolledToBottom && reset){
+            if(window.innerHeight + window.scrollY!=0){
+                dispatch(oldProfile());
+            }
+            if( !scrolledToBottom && reset){
                 setPage(0);
                 return;
-            }else if (scrolledToBottom && !reset){
+            }else if (scrolledToBottom ){
                 setPage(page + 1);
             }
         };
+        if(posts!=null&&posts.length==0&& page!=0){
+            setPage(0);
+        }
         document.addEventListener("scroll", onScroll);
         if(reset!=null && reset){
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -66,7 +69,7 @@ function ProfilePost ({appUser,user}){
                             
                         </Row>
                     </Col>
-                    <Col xl={7} lg={8} md={12} sm={12} className="me-lg-auto mb-4">
+                    <Col xl={7} lg={8} md={12} sm={12} className="me-lg-auto "style={{marginBottom: "70px"}}>
                         {appUser.id == user.id?<div>
                             <div className="border-1 rounded-2 border mt-2" style={{paddingTop:"10px", paddingLeft: "1px"}}>
                                 <div  className="row pe-2" onClick={handleOpenInputModal}>
