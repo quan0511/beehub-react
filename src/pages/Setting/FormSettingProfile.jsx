@@ -38,25 +38,29 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
         let res1= await axios.get(APIService.URL_REST_API+"/check-user?username="+values.username,{
             headers: {
               Authorization: 'Bearer ' + token,
+              "Content-Type": 'application/json',
               withCredentials: true
             }
         });
         let res2 = await axios.get(APIService.URL_REST_API+"/check-email?email="+values.email,{
             headers: {
                 Authorization: 'Bearer ' + token,
+                "Content-Type": 'application/json',
                 withCredentials: true
             }
         });
         let checkUsername = res1.data;
         let checkEmail = res2.data;
+        let check = true;
         if(checkUsername && values.username!=user.username){
+            check=false;
             props.setErrors({username : "Username exists! Try another"})
         }
         if(checkEmail && values.email!=user.email){
+            check=false;
             props.setErrors({email : "Email exists! Try another"})
         }
-        console.log(checkEmail && checkEmail );
-        if((!checkEmail && !checkEmail )||(values.username==user.username && values.email==user.email) ){
+        if(check  ){
             try {
                 const response = await axios.post(`${APIService.URL_REST_API}/update/profile/${user.id}`,JSON.stringify(values),{
                     headers: {
@@ -66,7 +70,6 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
                     },
                 })
                 if (response.status == '200') {
-                    console.log('Form submitted:', values);
                     // Perform actions after successfully handling the request here
                     setMessageToast(true);
                     props.setErrors({})

@@ -10,29 +10,34 @@ import Post from "../../components/Post";
 function PostPage(){
     const appUser = useSelector(selectCurrentUser);
     const {id} = useParams(); 
-    const {data:post, isLoading, isSuccess} = useGetPostQuery({id_user: appUser.id, id_post: id});
+    const {data:post, isLoading, isSuccess,status} = useGetPostQuery({id_user: appUser.id, id_post: id});
     console.log(post);
-    if(post==null){
+    console.log(isLoading);
+    console.log(status);
+    if(post==null &&!isLoading && status == 'rejected'){
+        return (<Container fluid className='ps-4' style={{marginTop: "160px"}}>
+            <Row>
+                <Col xl={12} className="mt-2">
+                    
+                    <Container fluid>
+                        <Row >
+                            <Col xl={4} lg={4} md={6} sm={8} className="mx-auto">
+                                <h1 className="text-secondary">
+                                    Not Found Post
+                                </h1>
+                            </Col>
+                        </Row>
+                    </Container>
+                </Col>
+            </Row>
+        </Container>); 
+    }
+    if(isLoading || !isSuccess){
        return (<Container fluid className='ps-4' style={{marginTop: "160px"}}>
         <Row>
-            {isLoading || !isSuccess ?
             <Col xl={4} className="mx-auto d-flex justify-content-center align-items-center" style={{height: "400px"}}>
                 <BeehubSpinner/>
             </Col>
-            :
-            <Col xl={12} className="mt-2">
-                
-                <Container fluid>
-                    <Row >
-                        <Col xl={4} lg={4} md={6} sm={8} className="mx-auto">
-                            <h1 className="text-secondary">
-                                Not Found Post
-                            </h1>
-                        </Col>
-                    </Row>
-                </Container>
-            </Col>
-            }
         </Row>
     </Container>)
     }
