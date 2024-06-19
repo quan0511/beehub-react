@@ -58,7 +58,7 @@ export const FormSettingPassword = ({user, setMessageToast})=>{
                                 props.setErrors({})
                                 setTimeout(()=>{
                                     dispatch(refresh());
-                                    // window.location.reload();
+                                    window.location.reload();
                                 },1000)
                             } else {
                                 
