@@ -1,7 +1,8 @@
 import { Badge } from "react-bootstrap"
 
 export default function GetReportType({number, type}) {
-    let count = number > 1 ? `${number} ` : ''
+    let count = ''
+    if (number) count = number > 1 ? `${number} ` : ''
     switch (type) {
         case "violence":
         case "involve a child":
@@ -10,5 +11,6 @@ export default function GetReportType({number, type}) {
         case "spam":
         case "nudity":
             return <Badge bg="warning" text="dark">{count}{type}</Badge>
+        default: return <Badge bg="secondary">{count}{type}</Badge>
     }
 }
