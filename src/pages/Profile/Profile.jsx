@@ -187,7 +187,7 @@ function Profile (){
             <Container style={{marginTop: "150px"}}>
                 <Row>
                     <Col xl={4} className="mx-auto" style={{height: "400px"}}>
-                    {BeehubSpinner()}
+                    <BeehubSpinner/>
                     </Col>
                 </Row>
             </Container>

@@ -67,7 +67,7 @@ function NavigatorBar() {
     const tooltipAddFriend = isLoading ?
         (
             <Tooltip id="tooltip-loading" >
-                {BeehubSpinner()}
+                <BeehubSpinner/>
             </Tooltip>
         ) : (<Tooltip id="tooltip-add-friend" >
             <ListGroup>

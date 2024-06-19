@@ -61,7 +61,7 @@ function PeoplePage(){
                     <Row>
                         {isLoading || !isSuccess ?
                         <Col xl={4} className="mx-auto d-flex justify-content-center align-items-center" style={{height: "400px"}}>
-                            {BeehubSpinner()}
+                            <BeehubSpinner/>
                         </Col>
                         :
                         <Col xl={12} className="mt-2">

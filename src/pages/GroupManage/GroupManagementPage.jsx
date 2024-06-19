@@ -43,7 +43,7 @@ export const GroupManagementPage=()=>{
     }
     if(!group){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
-        {BeehubSpinner()}
+        <BeehubSpinner/>
     </div>;
     }
     return (

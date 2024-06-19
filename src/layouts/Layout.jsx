@@ -19,7 +19,7 @@ function Layout(){
             <Row >
                 <Col xl={9} className='p-0 d-flex flex-column justify-content-center align-items-center mx-auto'style={{height: "600px"}}>
                     <div >
-                        {BeehubSpinner ()}
+                        <BeehubSpinner/>
                     </div>
                 </Col>
             </Row>

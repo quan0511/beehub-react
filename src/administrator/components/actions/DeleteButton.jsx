@@ -6,27 +6,25 @@ import BeehubSpinner from "../../../components/BeehubSpinner";
 
 function DeleteButton({ caseId, caseType, size, confirmContent }) {
     const [open, setOpen] = useState(false);
-    const [deleteUser, { error: userErr, isLoading: userLoading }] = useAdminDeleteUserMutation()
-    const [deleteGroup, { error: groupErr, isLoading: groupLoading }] = useAdminDeleteGroupMutation()
-
+    const [deleteUser, { error: userErr, isLoading: userLoading, isSuccess: deleteUserSuccess }] = useAdminDeleteUserMutation()
+    const [deleteGroup, { error: groupErr, isLoading: groupLoading, isSuccess: deleteGroupSuccess }] = useAdminDeleteGroupMutation()
+    const [errMsg, setErrMsg] = useState('')
     const handleAction = async () => {
         try {
             if (caseType === 'user') {
-                await deleteUser(caseId)
+                await deleteUser(caseId).unwrap()
             } else {
-                await deleteGroup(caseId)
+                await deleteGroup(caseId).unwrap()
             }
             setOpen(false)
         } catch (e) {
-            console.log(e)
+            setErrMsg(e.data.message)
         }
     }
     return (
         <>
-            {/* {userErr && <small className="text-danger">{userErr.data.message}</small>}
-            {groupErr && <small className="text-danger">{groupErr.data.message}</small>} */}
             <Button variant="danger" size={size} onClick={_ => setOpen(true)}>
-                {(userLoading || groupLoading) ? <BeehubSpinner /> : 'Delete'}
+                Delete
             </Button>
             <ConfirmModal
                 open={open}
@@ -34,7 +32,7 @@ function DeleteButton({ caseId, caseType, size, confirmContent }) {
                 onAction={handleAction}
                 content={confirmContent}
                 confirmText={'Do it anyway'}
-                errorMessage={userErr}
+                errorMessage={errMsg}
             />
         </>
     );

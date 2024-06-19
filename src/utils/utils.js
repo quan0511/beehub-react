@@ -11,3 +11,14 @@ export const getAvatar = (avatar) => {
         return avatar
     }
 }
+
+/**
+     * 
+     * @param {Array} reports 
+     * @returns A Dictionary which has key of the duplicate element and value of the duplicate times.
+     */
+export const countDuplicate = (reports) => {
+    const count = {}
+    reports.forEach(r => count[r] = (count[r] || 0) + 1)
+    return count
+}

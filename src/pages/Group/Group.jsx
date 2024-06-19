@@ -87,7 +87,7 @@ function Group (){
     },[location.key,group])
     if(isLoading || !isSuccess ){
         return <div className="d-flex justify-content-center align-items-center" style={{marginTop: "400px"}}> 
-            {BeehubSpinner()}
+            <BeehubSpinner/>
         </div>
     }
     return (
