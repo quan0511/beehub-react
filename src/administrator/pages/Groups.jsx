@@ -8,6 +8,8 @@ import GroupModal from "../components/modals/GroupModal";
 import { MdPublic } from "react-icons/md";
 import { CgLock } from "react-icons/cg";
 import DeleteButton from "../components/actions/DeleteButton";
+import GetMultipleReportType from "../../utils/GetMultipleReportType";
+import GetStatus from "../../utils/GetStatus";
 
 const groupHeaders = [
     { style: { width: 10 }, content: 'Id' },
@@ -15,6 +17,7 @@ const groupHeaders = [
     { content: 'Visibility' },
     { content: 'Members' },
     { content: 'Create Date' },
+    { content: 'Reports'},
     { content: 'Status' },
     { content: 'Action' },
 ]
@@ -56,14 +59,15 @@ function Groups() {
                         <tr key={g.id}>
                             <td>{g.id}.</td>
                             <td>
-                                <a href={`group/${g.id}`} onClick={(e) => handleOpenModal(e, g.id, 'group')}>{g.groupname}</a>
+                                <a href={`group/${g.id}`} onClick={(e) => handleOpenModal(e, g.id, 'group')}>{g.name}</a>
                             </td>
                             <td>
-                                {g.public_group ? <MdPublic /> : <CgLock />} {g.public_group ? 'public' : 'private'}
+                                {g.public ? <MdPublic /> : <CgLock />} {g.public ? 'public' : 'private'}
                             </td>
-                            <td>{g.member_count}</td>
-                            <td>{dateFormat(g.created_at, "dddd, mmmm dS, yyyy, h:MM:ss TT")}</td>
-                            <td>{g.active ? <Badge bg="success">active</Badge> : <Badge bg="danger">inactive</Badge>}</td>
+                            <td>{g.noOfMembers}</td>
+                            <td>{dateFormat(g.createdAt, "dddd, mmmm dS, yyyy")}</td>
+                            <td><GetMultipleReportType reports={g.reportTitleList}/></td>
+                            <td><GetStatus status={g.active ? 'active' : 'inactive'}/></td>
                             <td>
                                 <DeleteButton
                                     caseId={g.id}

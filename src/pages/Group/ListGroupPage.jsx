@@ -63,7 +63,7 @@ const ListGroupPage =()=>{
             <Row>
                 {isLoading ||!isSuccess ?
                 <Col xl={4} className="mx-auto" style={{marginTop:"300px"}}>
-                    {BeehubSpinner()}
+                    <BeehubSpinner/>
                 </Col>
                 :
                 <Col xl={12} className="mt-2">

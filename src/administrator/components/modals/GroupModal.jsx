@@ -20,9 +20,9 @@ function GroupModal({ open, onClose, groupId }) {
                     </div>
                     <div className="info">
                         <ul>
-                            <li>{group.groupname}</li>
+                            <li>{group.name}</li>
                             <li>{group.public_group ? "Public" : "Private"}</li>
-                            <li>{group.group_members.length} members</li>
+                            <li>{group.noOfMembers} members</li>
                             <li>{group.post_count} posts</li>
                             <li><small>{group.active ? 'active' : 'banned'}</small></li>
                         </ul>
@@ -30,7 +30,7 @@ function GroupModal({ open, onClose, groupId }) {
                 </div>
                 <h4>Gallery</h4>
                 <div className="d-flex flex-wrap gap-1">
-                    {group.group_medias?.map((img, i) =>
+                    {group.gallery?.map((img, i) =>
                         <Image key={i} src={img} width={'30%'} height={150} className='rounded-2 shadow-lg' />
                     )}
                 </div>

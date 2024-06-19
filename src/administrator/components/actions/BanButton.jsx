@@ -12,8 +12,8 @@ function BanButton({userId, isBanned, size}) {
     }
     return ( <>
         {/* {isError && <small className="text-danger">{error.data.message}</small>} */}
-        <Button onClick={e => handleBan(e, userId)} variant="secondary" size={size}>
-            {isLoading ? <BeehubSpinner/> : isBanned ? "Unban" : "Ban"}
+        <Button onClick={e => handleBan(e, userId)} variant="secondary" size={size} style={{width: 62}}>
+            {isLoading ? '...' : isBanned ? "Unban" : "Ban"}
         </Button>
     </> );
 }

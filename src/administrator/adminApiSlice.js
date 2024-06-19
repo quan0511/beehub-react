@@ -42,7 +42,8 @@ export const adminApiSlice = apiSlice.injectEndpoints({
             query: ({id, role}) => ({
                 url: `/admin/users/${id}/${role}`,
                 method: 'PATCH',
-            })
+            }),
+            invalidatesTags: ['User', 'Report']
         }),
 
         adminBanUser: builder.mutation({

@@ -47,7 +47,7 @@ function ProfilePost ({appUser,user,page,setPage}){
         return <Container fluid>
             <Row className="profile-tab">
                 <Col xl={4} lg={4} md={12} sm={12} className="mx-auto mt-5">
-                    {BeehubSpinner()}
+                    <BeehubSpinner/>
                 </Col>
             </Row>
         </Container>

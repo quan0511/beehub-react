@@ -95,7 +95,7 @@ export function AccountSetting(){
                         <Col xl={8} lg={8} md={7} sm={12} xs={12}>
                             {isLoading ? 
                                 <div className="tab-content  text-center" id="myTabContent" style={{width: "800px"}}>
-                                {BeehubSpinner()}</div>
+                                <BeehubSpinner/></div>
                             :
                             <div className="tab-content " id="myTabContent" >
                                 <div className="tab-pane fade show active text-start px-5" id="v-tabs-profile" role="tabpanel" aria-labelledby="v-tabs-profile" tabIndex="0">

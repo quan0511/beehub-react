@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Yup from 'yup';
-import { Badge, Button, ButtonGroup } from "react-bootstrap";
-import { IoFemale, IoMale } from "react-icons/io5";
+import dateFormat from "dateformat";
+import { Button, ButtonGroup } from "react-bootstrap";
 import { Field, Form, Formik } from "formik";
 import {
     useAdminCreateUserMutation,
@@ -15,15 +15,20 @@ import FullWidthTable from "../components/FullWidthTable";
 import UserModal from "../components/modals/UserModal";
 import DeleteButton from "../components/actions/DeleteButton";
 import BanButton from "../components/actions/BanButton";
+import GetStatus from "../../utils/GetStatus";
+import GetGender from "../../utils/GetGender";
+import GetMultipleReportType from "../../utils/GetMultipleReportType";
+import UpdateRole from "../components/actions/UpdateRole";
 
 const userHeader = [
     { style: { width: 10 }, content: 'id' },
     { content: 'Username' },
     { content: 'Email' },
-    { content: 'Full Name' },
+    { content: 'Create Date' },
     { content: 'Gender' },
     { style: { width: 60 }, content: 'No of posts' },
     { style: { width: 60 }, content: 'No of friends' },
+    { content: 'Reports' },
     { style: { width: 110, textAlign: 'center' }, content: 'Role' },
     { content: 'Status' },
     { style: { width: 80, textAlign: 'center' }, content: 'Action' },
@@ -39,9 +44,8 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
 });
 
 function Users() {
-    const { data: users, isLoading, isFetching } = useAdminUsersQuery()
-    const [createUser, { error, isLoading: isCreateLoading, isSuccess }] = useAdminCreateUserMutation()
-    const [updateRole, { error: updateError, isLoading: isUpdating }] = useAdminPatchUserRoleMutation()
+    const { data: users, isLoading } = useAdminUsersQuery()
+    const [createUser, { error, isLoading: isCreateLoading }] = useAdminCreateUserMutation()
 
     const [successMessage, setSuccessMessage] = useState('')
 
@@ -66,20 +70,9 @@ function Users() {
         }
     }
 
-    const getGender = (gender) => {
-        if (gender === 'female') return <IoFemale color="red" />
-        if (gender === 'male') return <IoMale color="blue" />
-    }
-
-    const getStatus = (status) => {
-        if (status === 'active') return <Badge bg="success">active</Badge>
-        if (status === 'inactive') return <Badge bg="danger">inactive</Badge>
-        if (status === 'banned') return <Badge bg="secondary">banned</Badge>
-    }
-
-    const handleOpenModal = (e, reportedCase, caseType) => {
+    const handleOpenModal = (e, userId) => {
         e.preventDefault()
-        setChosenUser(reportedCase)
+        setChosenUser(userId)
         setOpenUserModal(true)
     }
 
@@ -101,30 +94,30 @@ function Users() {
                 >
                     {({ errors, touched, resetForm }) => (
                         <Form className="d-md-flex gap-2 mb-4">
-                            <div className="form-group">
+                            <div className="form-group mb-3 mb-md-0">
                                 <label htmlFor="username" className="form-label">Username</label>
-                                <Field id="username" name="username" className="form-control" placeholder="Enter username" />
+                                <Field id="username" name="username" className="form-control" placeholder="Enter username" autoComplete="username" />
                                 <small className="text-danger position-absolute ps-2">{touched.username && errors.username && <div>{errors.username}</div>}</small>
                             </div>
-                            <div className="form-group">
+                            <div className="form-group mb-3 mb-md-0">
                                 <label htmlFor="email" className="form-label">Email address</label>
-                                <Field id="email" name="email" className="form-control" placeholder="Enter email" />
+                                <Field id="email" name="email" className="form-control" placeholder="Enter email" autoComplete="email" />
                                 <small className="text-danger position-absolute ps-2">{touched.email && errors.email && <div>{errors.email}</div>}</small>
                             </div>
-                            <div className="form-group">
+                            <div className="form-group mb-3 mb-md-0">
                                 <label htmlFor="password" className="form-label">Password</label>
-                                <Field type="password" id="password" name="password" className="form-control" placeholder="Enter password" />
+                                <Field type="password" id="password" name="password" className="form-control" placeholder="Enter password" autoComplete="current-password" />
                                 <small className="text-danger position-absolute ps-2">{touched.password && errors.password && <div>{errors.password}</div>}</small>
                             </div>
-                            <div className="form-group d-flex align-items-end ms-3">
+                            <div className="form-group mb-3 mb-md-0 d-flex align-items-end ms-3">
                                 <Button type="submit" size="md" variant="success" className="">
                                     {isCreateLoading ? <BeehubSpinner /> : 'Add'}
                                 </Button>
                                 {(errors.username || errors.email || errors.password) && <Button className="ms-2" variant="secondary" onClick={resetForm}>Clear</Button>}
-                                <small className="text-danger ms-4">{error?.data?.message || updateError?.data?.message}</small>
+                                <small className="text-danger ms-4">{error?.data?.message}</small>
                                 <small className="text-success ms-4">{successMessage}</small>
                             </div>
-                            {(isLoading || isFetching || isUpdating) && <div className="ms-auto d-flex align-items-end"><BeehubSpinner /></div>}
+                            {isLoading && <div className="ms-auto d-flex align-items-end"><BeehubSpinner /></div>}
                         </Form>
                     )}
                 </Formik>
@@ -142,30 +135,31 @@ function Users() {
                             <tr key={i}>
                                 <td>{u.id}</td>
                                 <td>
-                                    <a href={`user/${u.id}`} onClick={e => handleOpenModal(e, u.id, 'user')}>{u.username}</a>
+                                    <a href={`user/${u.id}`} onClick={e => handleOpenModal(e, u.id)}>{u.username}</a>
                                 </td>
                                 <td>{u.email}</td>
-                                <td>{u.fullName}</td>
-                                <td className="text-center">{getGender(u.gender)}</td>
-                                <td className="text-center">{u.noOfPosts}</td>
-                                <td className="text-center">{u.noOfFriends}</td>
+                                <td>{dateFormat(u.createdAt, "dddd, mmmm dS, yyyy")}</td>
+                                <td><GetGender gender={u.gender} /></td>
+                                <td>{u.noOfPosts}</td>
+                                <td>{u.noOfFriends}</td>
                                 <td>
-                                    <select className="form-select form-select-sm py-0" defaultValue={u.role} onChange={e => updateRole({ id: u.id, role: e.currentTarget.value })}>
-                                        <option value="ROLE_ADMIN">Admin</option>
-                                        <option value="ROLE_USER">User</option>
-                                    </select>
+                                    <GetMultipleReportType reports={u.reportTitleList} />
                                 </td>
-                                <td>{getStatus(u.status)}</td>
                                 <td>
-                                    <ButtonGroup>
-                                        <BanButton size={'sm'} isBanned={u.status === 'banned'} userId={u.id} />
-                                        <DeleteButton
-                                            caseId={u.id}
-                                            caseType={'user'}
-                                            confirmContent={'Are you sure you want to delete this user?'}
-                                            size={'sm'}
-                                        />
-                                    </ButtonGroup>
+                                    <UpdateRole id={u.id} role={u.role}/>
+                                </td>
+                                <td>{<GetStatus status={u.status} />}</td>
+                                <td>
+                                    {u.role === 'ROLE_USER' &&
+                                        <ButtonGroup>
+                                            <BanButton size={'sm'} isBanned={u.status === 'banned'} userId={u.id} />
+                                            <DeleteButton
+                                                caseId={u.id}
+                                                caseType={'user'}
+                                                confirmContent={'Are you sure you want to delete this user?'}
+                                                size={'sm'}
+                                            />
+                                        </ButtonGroup>}
                                 </td>
                             </tr>
                         )}
