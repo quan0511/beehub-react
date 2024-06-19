@@ -17,7 +17,7 @@ function TopBar({ sidebarOpen, setSidebarOpen }) {
                 <Nav className="me-auto">
                     <Nav.Link onClick={() => setSidebarOpen(!sidebarOpen)} role="button"><List className="text-black" /></Nav.Link>
                     <Link to={'/admin'} className="nav-link d-none d-md-block fw-medium">Dashboard</Link>
-                    <Link to={'/'} className="nav-link d-none d-md-block fw-medium">Home</Link>
+                    <Link to={'/'} className="nav-link d-none d-md-block fw-medium">Activities</Link>
                 </Nav>
                 <Nav className="ms-auto">
                     <Nav.Item className="d-flex align-items-center me-4">
