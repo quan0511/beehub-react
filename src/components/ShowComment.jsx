@@ -15,7 +15,7 @@ import {Image} from "react-bootstrap";
 import APIService from '../features/APIService';
 function ShowComment({
   setFromSharePost,formSharePost,getPostById,
-  postIdco,getLikeUser,countLike,checkLike,getEnumEmo,refetchCountComment,refetchGetLikeUser,refetchCountLike,refetchCheckLike,refetchGetEnumEmo
+  postIdco,getLikeUser,countLike,checkLike,getEnumEmo,refetchCountComment,refetchGetLikeUser,refetchCountLike,refetchCheckLike,refetchGetEnumEmo,refectGetNoteByUser,refetchCheckSeenNote
 }){
   const {data:getComment,refetch:refetchGetComment} = useCommentQuery({id:postIdco.id})
   const [createComment] = usePostCommentMutation();
@@ -273,6 +273,8 @@ const handleChangeAddLike = async (postId, enumEmo) => {
     refetchCountLike();
     refetchCheckLike();
     refetchGetEnumEmo();
+    refectGetNoteByUser();
+    refetchCheckSeenNote();
     console.log(response);
   } catch (error) {
     console.error('Error occurred while liking:', error);

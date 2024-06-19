@@ -26,6 +26,7 @@ import { GroupCreatePage } from "./pages/Group/GroupCreatePage"
 import { GroupManagementPage } from "./pages/GroupManage/GroupManagementPage"
 import Shop from "./pages/Shop/Shop"
 import NotFoundGroup from "./pages/Group/NotFoundGroup"
+import PostNote from "./components/PostNote"
 
 function App() {
   return (
@@ -45,10 +46,9 @@ function App() {
           <Route path='listgroup' element={<ListGroupPage />} />
           <Route path="post/:id" element={<PostPage />}/>
         </Route>
+        <Route path='/postnote/:postid' element={<Layout />}>
+          <Route index element={<PostNote />} />
 
-        <Route path='/member' element={<Layout2 />}>
-          <Route path='profile/:username' element={<Profile />} />
-          <Route path='account-setting' element={<AccountSetting />} />
         </Route>
 
         <Route path='/group' element={<Layout2 />}>

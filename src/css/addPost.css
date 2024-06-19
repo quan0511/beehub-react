@@ -38,8 +38,6 @@
     display: flex;
 }
 .model-showbinhluananhdaidien{
-    border-radius: 50%;
-    background-color: lab(91 -0.71 -0.32);
     width: 43px;
     height: 43px;
     position: relative;

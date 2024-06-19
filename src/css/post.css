@@ -169,3 +169,46 @@
     position: relative;
     right: 19px !important;
 }
+.commentNote{
+    position: relative;
+    margin-bottom: 20px;
+    bottom: 15px;
+}
+.inputcommentNote{
+    position: relative;
+    border: 2px solid;
+    background-color: #f7f7f7;
+    height: 90px;
+    top: -4px;
+    width: 630px;
+    border-radius: 10px;
+    left: 0px;
+}
+.commentpostNote{
+    background-color: transparent;
+    color: #8224e3;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    height: 25px;
+    border: 0px;
+    left: 522px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.commentpostNotedisable{
+    background-color: transparent;
+    color: #b5a9a9;
+    border-radius: 5px;
+    position: relative;
+    cursor: not-allowed !important;
+    height: 25px;
+    border: 0px;
+    left: 522px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
