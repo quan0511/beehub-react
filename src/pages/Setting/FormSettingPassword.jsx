@@ -51,24 +51,29 @@ export const FormSettingPassword = ({user, setMessageToast})=>{
                                     withCredentials: true
                                 },
                             })
-                        if (response.status == '200') {
-                            console.log('Form submitted:', values);
-                            // Perform actions after successfully handling the request here
-                            setMessageToast(true);
-                            props.setErrors({})
-                            setTimeout(()=>{
-                                dispatch(refresh())
-                            },1000)
-                        } else {
-                            console.error('An error occurred while submitting the form.');
-                        }
+                            let res = response.data;
+                            if (response.status == '200' && res) {
+                                console.log('Form submitted:', values);
+                                setMessageToast(true);
+                                props.setErrors({})
+                                setTimeout(()=>{
+                                    dispatch(refresh());
+                                    window.location.reload();
+                                },1000)
+                            } else {
+                                
+                                console.error('An error occurred while submitting the form.');
+                            }
                         } catch (error) {
                         console.error('An error occurred while submitting the form.', error);
                         }
                     
                         // Set isSubmitting to false when the form submission is complete
                         props.setSubmitting(false);
+                    }else{
+                        props.setErrors({currentPassword : "Current Password incorrect! Try again"});
                     }
+
                 }}
             > {({ handleSubmit, handleChange, values, touched, errors }) => (
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
