@@ -12,7 +12,7 @@ import { selectCurrentUser } from '../auth/authSlice';
 import { Image } from 'react-bootstrap';
 import APIService from '../features/APIService';
 import { Modal } from 'react-bootstrap';
-const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
+const AddPost = ({handleCloseModal,group}) => {
     const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser)
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
@@ -262,19 +262,18 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
         return selectedName;
       }
   }
-    const handleFocus = (e) => {
-        if (e.target.textContent === "") {
-          e.target.setAttribute("data-text", "");
-        }
-      };
-    
-      const handleBlur = (e) => {
-        if (e.target.textContent === "") {
-          e.target.setAttribute("data-text", "What do you think ?");
-        }
-      };
-      const [loading, setLoading] = useState(false);
-      console.log('user',getUserFriend);
+  const handleFocus = (e) => {
+    if (e.target.textContent === "") {
+      e.target.setAttribute("data-text", "");
+    }
+  };
+
+  const handleBlur = (e) => {
+    if (e.target.textContent === "") {
+      e.target.setAttribute("data-text", "What do you think ?");
+    }
+  };
+  const [loading, setLoading] = useState(false);
   return (
     <div>
 

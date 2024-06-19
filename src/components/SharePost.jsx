@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import APIService from "../features/APIService";
 function SharePost({post,getSettingType}){
     const getTimeOfPost = ()=>{
-        let datePost = new Date(post.usershare_createdat);
+        let datePost = new Date(post.timeshare);
         let diffDay = Math.round(Math.abs(new Date() - datePost)/ 86400000);
         if(diffDay<1){
             let diffHour =Math.round(Math.abs(new Date() - datePost)/ 3600000);
@@ -15,6 +15,29 @@ function SharePost({post,getSettingType}){
             return <span  style={{fontSize: "12px"}}>{datePost.toLocaleString("en-GB")}</span>
         }  
     }
+    const renderCommentWithLink = (comment) => {
+        if (typeof comment === 'string') {
+          const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
+          let match;
+          const result = [];
+          let lastIndex = 0;
+          while ((match = regex.exec(comment)) !== null) {
+            const [fullMatch, tagName, link] = match;
+            const beforeTag = comment.substring(lastIndex, match.index);
+            result.push(beforeTag, (
+              <Link key={match.index} to={"/member/profile/" + link}>
+                {tagName}
+              </Link>
+            ));
+            lastIndex = regex.lastIndex;
+          }
+          const restOfString = comment.substring(lastIndex);
+          result.push(restOfString);
+          return result.filter(Boolean); // Lọc ra các phần tử không phải null hoặc undefined
+        } else {
+          return comment;
+        }
+      };
     const formatcolor = (color) =>{
         if(color && color.length ===8){
           return `#${color.slice(2)}`;
@@ -71,10 +94,10 @@ function SharePost({post,getSettingType}){
                 '--showpostbackground': formatcolor(post.background) || 'white'
                 } } // Sử dụng kiểu dữ liệu CustomCSSProperties
                 >
-                {post.text}
+                {renderCommentWithLink(post.text)}
                 </div>
                 ):(
-                <p className="h6 mx-5 mb-3 text-dark textshare">{post.text}</p>
+                <p className="h6 mx-5 mb-3 text-dark textshare">{renderCommentWithLink(post.text)}</p>
                 )}
                 
                 <div className="mb-2 img-media">

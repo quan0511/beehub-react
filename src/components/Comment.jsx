@@ -398,11 +398,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                     <li onClick={() => selectName(user.username, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}>
                       <a>
                         <div className="showuserlicomment">
-                          <div className="showuserlianh"> {postIdco.user_gender=='female'?(
-                          <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                          <div className="showuserlianh"> {user.gender=='female'?(
+                          <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
                           <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                           ):(
-                            <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                           )}
                           </div>
                           <div className="showuserliname">
@@ -414,7 +414,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                   ))}
                 </ul>
                 </div>
-                <input type="submit" className="commentRecommentmodal" value="Save"/>
+                <input type="submit" className={`commentRecommentmodal${!content ? 'disable' : ''}`} disabled={!content} value="Save"/>
                 <button className="cancelEditCommentmodal" onClick={handleCancelEditComment}>Cancel</button>
               </form>
             </div>
@@ -459,11 +459,11 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
               <li onClick={() => selectName(user.username, 'RecommentInput', 'RemyInput')}>
                 <a>
                   <div className="showuserlicomment">
-                    <div className="showuserlianh"> {postIdco.user_gender=='female'?(
-                    <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
+                    <div className="showuserlianh"> {user.gender=='female'?(
+                    <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
                     <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                     ):(
-                      <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                     )}
                     </div>
                     <div className="showuserliname">
@@ -476,7 +476,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           </ul>
           </div>
           <input type="hidden" name="createdAt" value={formReComment.createdAt} onChange={(e) => handleChangeReComment(e)} />
-          <input type="button" className="commentRecomment" value="Reply" onClick={(e) => handleSubmitReComment(e, postIdco, comment)} />
+          <input type="button" className={`commentRecomment${!content ? 'disable' : ''}`} disabled={!content} value="Reply" onClick={(e) => handleSubmitReComment(e, postIdco, comment)} />
         </form>
       </div>
       )}                                

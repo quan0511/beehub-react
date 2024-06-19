@@ -469,7 +469,7 @@ const handleBlur = (e) => {
                       </div>
                       <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
                       <input type="hidden" name="createdAt" value={formComment.createdAt} onChange={(e) => handleChangeComment(e)} />
-                      <button type="submit" className={`commentpost${!content ? 'disable' : ''}`} value="Comment"><IoMdSend className="iconcomment"/></button>
+                      <button type="submit" className={`commentpost${!content ? 'disable' : ''}`} disabled={!content} value="Comment"><IoMdSend className="iconcomment"/></button>
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
@@ -477,11 +477,11 @@ const handleBlur = (e) => {
                         <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                           <a>
                             <div className="showuserli">
-                              <div className="showuserlianhcomment"> {postIdco.user_gender=='female'?(
-                              <Link to={"/member/profile/"+postIdco.user_username}>
+                              <div className="showuserlianhcomment"> {user.gender=='female'?(
+                              <Link to={"/member/profile/"+user.username}>
                               <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                               ):(
-                                <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                               )}
                               </div>
                               <div className="showuserliname">

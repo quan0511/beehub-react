@@ -4,13 +4,15 @@ import '../css/showcomment.css';
 import {Image } from "react-bootstrap";
 import APIService from '../features/APIService';
 import { useGetUserFriendQuery, useUpdatePostMutation } from "../post/postApiSlice";
+import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 import { FaXmark } from 'react-icons/fa6';
 import { LuLink } from 'react-icons/lu';
-import { useSelector } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import { SlArrowLeft } from 'react-icons/sl';
 import { Modal } from 'react-bootstrap';
 function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost}){
+    const dispatch = useDispatch();
     const [viewFoundBackground, setViewFoundBackground] = useState(false);
     const [editPost] = useUpdatePostMutation();
     const handleToggleBackground= () =>{
@@ -107,7 +109,9 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
         try {
           await editPost(updatedPost);
           handleCloseEditPost(post.id);
-          refetchHomePage();
+          dispatch(showMessageAlert("Edit post successfully"));
+          dispatch(resetData());
+          console.log('resetData dispatched');
         } catch (error) {
           console.error(error);
         }

@@ -332,11 +332,11 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
                       <li  onClick={() => selectName(user.username, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)}>
                         <a>
                           <div className="showuserlicomment">
-                            <div className="showuserlianh"> {postIdco.user_gender=='female'?(
-                            <Link className="showuserlianhrecomment"  to={"/member/profile/"+postIdco.user_username}>
+                            <div className="showuserlianh"> {user.gender=='female'?(
+                            <Link className="showuserlianhrecomment"  to={"/member/profile/"+user.username}>
                             <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                             ):(
-                              <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                             )}
                             </div>
                             <div className="showuserliname">
@@ -348,7 +348,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
                     ))}
                 </ul>
                 </div>
-                <input type="button" className="commentEditRecomment" value="Save" onClick={(e) => handleSubmitEditReComment(e)}/>
+                <input type="button" className={`commentEditRecomment${!content ? 'disable' : ''}`} disabled={!content} value="Save" onClick={(e) => handleSubmitEditReComment(e)}/>
                 <button className="cancelEditReComment" onClick={handleCancelEditReComment}>Cancel</button>
                 </form>
             </div>

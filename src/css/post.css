@@ -129,7 +129,8 @@
 }
 .textshare{
     position: relative;
-    top:10px
+    top:10px;
+    right: 12px;
 }
 .sharepublic{
     position: relative;
@@ -163,4 +164,8 @@
     font-size: 35px;
     /* bottom: 20px; */
     gap: 9px;
+}
+.postText{
+    position: relative;
+    right: 19px !important;
 }

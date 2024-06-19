@@ -32,7 +32,7 @@ function Post ({post, page,refetchHomePage}){
     const [updateLike] = useUpdateLikePostMutation();
     const [deletePost] = useDeletePostMutation();
     const [sharePost] = useSharePostMutation();
-    const {data: countShare} = useCountShareQuery({id:post.id}) 
+    const {data: countShare,refetch:refetchCountShare} = useCountShareQuery({id:post.id}) 
     const {data:getPostById} = useFetchPostQuery({id:post.id});
     const {data:countComment,refetch:refetchCountComment} = useCountCommentQuery({id:post.id});
     const {data:countReacitonByPost,refetch:refetchCountReactionByPost} = useCountReactionByPostQuery({id:post.id});
@@ -40,7 +40,7 @@ function Post ({post, page,refetchHomePage}){
     const { data: countLike, refetch: refetchCountLike } = useCountLikeQuery({ id: post.id });
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
-    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : 0;
+    const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : countComment;
     const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
     const [movePostId,setMovePostId] = useState(null);
@@ -201,8 +201,10 @@ function Post ({post, page,refetchHomePage}){
     if (isConfirmed) {
       try {
         await deletePost({id});
+        refetchCountShare();
         dispatch(showMessageAlert("Delete post successfully"));
         dispatch(resetData());
+        
       } catch (error) {
         console.log(error);
       }
@@ -385,7 +387,7 @@ function Post ({post, page,refetchHomePage}){
                     {renderCommentWithLink(post.text)}
                   </div>
                   ):(
-                    <p className="h6 mx-5 mb-3 text-dark">{renderCommentWithLink(post.text)}</p>
+                    <p className="h6 mx-5 mb-3 text-dark postText">{renderCommentWithLink(post.text)}</p>
                   )}
                     
                     <div className="mb-2 img-media">
@@ -425,7 +427,7 @@ function Post ({post, page,refetchHomePage}){
                   <ListLike post={post} getLikeUser={getLikeUser} getEnumEmo={getEnumEmo} currentPostId={currentPostId}/>              
                 </Modal>
                 <Col md={8} lg={8} xl={8} sm={8} xs={6} className="d-flex flex-row justify-content-end align-items-center">
-                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>{total} <span className="d-none d-md-block ">comments</span><span className="d-md-none"><ChatLeft/></span></p>
+                    <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50 click"  onClick={() => handleShow(post.id)}>{total}<span className="d-none d-md-block ">comments</span><span className="d-md-none"><ChatLeft/></span></p>
                     <p style={{marginRight: "20px",fontSize: "13px"}} className="h6 text-black-50">{countShare} <span className="d-none d-md-block ">shares</span><span className="d-md-none"><Shuffle/></span></p>                
                 </Col>
                 <hr className="mx-auto"style={{ width:"90%"}} />
@@ -475,7 +477,7 @@ function Post ({post, page,refetchHomePage}){
                           <Modal.Title>Share Post</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                      <ShareForm post={post} handleShareClose={handleShareClose} setFromSharePost={setFromSharePost} formSharePost={formSharePost} show={showShareModal} handleClose={handleShareClose} />
+                      <ShareForm post={post} handleShareClose={handleShareClose} setFromSharePost={setFromSharePost} formSharePost={formSharePost} show={showShareModal} refetchCountShare={refetchCountShare} handleClose={handleShareClose} />
                       </Modal.Body>
                     </Modal>
                     <Modal className="modalShowComment"  show={showPostModal[post.id]} onHide={() =>
