@@ -304,7 +304,7 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
               <input type="hidden" name="text" id="editPostInput" value={formUpdatePost.text} onChange={(e) => handleChangeEditPost(e)} />
               <div className={formatcolor(divClass.color)!== 'inherit'&& formatcolor(divClass.background)!== '#ffffff' ? 'modalpost-divcommentcolore' : 'modalpost-divcommentimg'} style={{'--postcolor': formatcolor(divClass.color), '--postbg': formatcolor(divClass.background)} }>
                 <div className="inputCreatePost" id="myInput" contentEditable="true"  onInput={() => handleInput('editPostInput', 'myInput','comment')} onPaste={handlePaste} data-text="What do you think ?">
-                {commentTagLink(formUpdatePost.text) ? renderCommentWithLink(formUpdatePost.text) : formUpdatePost.text}
+                {renderCommentWithLink(formUpdatePost.text)}
                 </div>
               </div>
               <ul id="myInput-ul" className="myul" >
