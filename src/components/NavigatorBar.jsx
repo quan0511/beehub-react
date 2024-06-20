@@ -15,6 +15,7 @@ import BeehubSpinner from "./BeehubSpinner";
 import { refresh } from "../features/userSlice";
 import '../css/navigatorBar.css';
 import dateFormat from "dateformat";
+import { BiMinus } from "react-icons/bi";
 import { useChangeSeenNoteMutation, useCheckNoteSeenQuery, useGetNoteByUserQuery } from "../post/postApiSlice";
 
 function NavigatorBar() {
@@ -159,7 +160,7 @@ function NavigatorBar() {
                                     </p>
                                 </Col>
                                 <Col xl={4} lg={4} md={4} sm={4} className="d-lg-inline-flex d-flex flex-wrap justify-content-center align-items-center" >
-                                    <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><Ban size={20}/></Button>
+                                    <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><BiMinus size={20}/></Button>
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -184,7 +185,7 @@ function NavigatorBar() {
                                     </p>
                                 </Col>
                                 <Col xl={4} lg={4} md={4} sm={4} className="d-lg-inline-flex d-flex flex-wrap justify-content-center align-items-center" >
-                                     <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><Ban size={20}/></Button>
+                                     <Button variant="btn-sm" onClick={() => { handleClickRemove("REMOVE_NOTIFICATION", req.id) }}><BiMinus size={20}/></Button>
                                 </Col>
                             </Row>
                         </ListGroup.Item>

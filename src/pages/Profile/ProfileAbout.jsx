@@ -19,22 +19,22 @@ function ProfileAbout({user,appUser}) {
                 const setting = user.user_settings[index];
                 switch (setting.setting_item) {
                     case "phone":
-                        if(setting.setting_type=="HIDDEN"){
+                        if((setting.setting_type=="HIDDEN" && appUser.id!=user.id)|| !(setting.setting_type=="FOR_FRIEND" && user.relationship_with_user=="FRIEND" || appUser.id==user.id)){
                             document.getElementById("userPhone").innerText = "";
                         }
                         break;
                     case "birthday":
-                        if(setting.setting_type=="HIDDEN"){
+                        if((setting.setting_type=="HIDDEN"&& appUser.id!=user.id) ||!(setting.setting_type=="FOR_FRIEND" && user.relationship_with_user=="FRIEND"|| appUser.id==user.id)){
                             document.getElementById("userBirthday").innerText = "";
                         }
                         break;
                     case "email":
-                        if(setting.setting_type=="HIDDEN"){
+                        if((setting.setting_type=="HIDDEN"&& appUser.id!=user.id)|| !(setting.setting_type=="FOR_FRIEND" && user.relationship_with_user=="FRIEND"|| appUser.id==user.id)){
                             document.getElementById("userEmail").innerText = "";
                         }
                         break;
                     case "gender":
-                        if(setting.setting_type=="HIDDEN"){
+                        if((setting.setting_type=="HIDDEN"&& appUser.id!=user.id)|| !(setting.setting_type=="FOR_FRIEND" && user.relationship_with_user=="FRIEND" || appUser.id==user.id)){
                             document.getElementById("userGender").innerText = "";
                         }
                         break;
@@ -68,7 +68,6 @@ function ProfileAbout({user,appUser}) {
                                         withCredentials: true
                                     }
                                 });
-                                console.log(response);
                                 if (response.status == 200) {
                                     props.setErrors({})
                                     dispatch(refresh())

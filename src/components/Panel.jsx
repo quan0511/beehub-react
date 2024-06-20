@@ -86,31 +86,6 @@ function Panel(){
                         <a href="" ><Cart3 size={20}/></a>
                     </OverlayTrigger>
                     </ListGroup.Item>
-                    <ListGroup.Item  className="border-0 py-3">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Setting 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <Link to="/member/account-setting" ><GearFill size={20}/></Link>
-                    </OverlayTrigger>
-                    </ListGroup.Item>
-                    {/* 
-                    <ListGroup.Item  className="border-0 py-3">
-                    <OverlayTrigger delay={{ hide: 350, show: 300 }} 
-                        overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                               Blog 
-                            </Tooltip> 
-                        )} 
-                        placement="right"
-                    >
-                        <a href="" ><Newspaper size={20}/></a>
-                    </OverlayTrigger>
-                    </ListGroup.Item> */}
                 </ListGroup>
             </div>
         </div>
