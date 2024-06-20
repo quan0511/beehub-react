@@ -368,10 +368,6 @@ function Post ({post, page,refetchHomePage}){
                         </div>
                          :<></>
                        }
-                       <div className="selectedfunction" >
-                         <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
-                         <div className="fonttextfunctionpost">chưa biết</div>
-                       </div>
                      </div>
                    )}
                  </div>
