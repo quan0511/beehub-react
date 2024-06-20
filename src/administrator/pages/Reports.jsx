@@ -1,7 +1,7 @@
 import dateFormat from "dateformat";
 import { useState } from 'react';
 import { ArrowRight } from "react-bootstrap-icons";
-import { Badge, ButtonGroup } from "react-bootstrap";
+import { ButtonGroup } from "react-bootstrap";
 import { useReportsQuery } from "../adminApiSlice";
 
 import ContentHeader from "../components/ContentHeader";
@@ -13,6 +13,8 @@ import BeehubSpinner from "../../components/BeehubSpinner";
 import DeleteButton from "../components/actions/DeleteButton";
 import BanButton from "../components/actions/BanButton";
 import BlockButton from "../components/actions/BlockButton";
+import GetReportType from "../../utils/GetReportType";
+import GetStatus from "../../utils/GetStatus";
 
 const tableHeader = [
     { style: { width: 10 }, content: 'Id' },
@@ -61,46 +63,47 @@ function Reports() {
         }
     }
 
-    const getType = (type) => {
-        switch (type) {
-            case "violence":
-            case "involve a child":
-                return <Badge bg="danger">{type}</Badge>
-            case "drugs":
-            case "spam":
-            case "nudity":
-                return <Badge bg="warning" text="dark">{type}</Badge>
-        }
-    }
-
     if (!reports) return
     return (
         <>
-            <ContentHeader pageName={'Reports'} title={(isLoading || isFetching) && <BeehubSpinner />}/>
+            <ContentHeader pageName={'Reports'} title={(isLoading || isFetching) && <BeehubSpinner />} />
 
             <div className="admin-content">
                 <div className="container-fluid">
-                    <FullWidthTable title={'Reports'} header={tableHeader} total={reports.length} perPage={perPage} setCurrentPage={setCurrentPage} currentPage={currentPage}>
+                    <FullWidthTable
+                        title={'Reports'}
+                        header={tableHeader}
+                        total={reports.length}
+                        perPage={perPage}
+                        setCurrentPage={setCurrentPage}
+                        currentPage={currentPage}
+                    >
                         {currentData.length > 0 &&
                             currentData.map(d =>
                                 <tr key={d.id} className="align-middle">
-                                    <td>{d.id}.</td>
+                                    <td>{d.id}</td>
                                     <td>
                                         <a href={d.reporter} onClick={e => handleOpenModal(e, d.reporterId, 'user')}>{d.reporter}</a>
                                     </td>
                                     <td>
                                         {d.caseType}: {' '}
-                                        {d.caseType === 'user' && <a href={`user/${d.reportedCaseName}`} onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}>{d.reportedCaseName}</a>}
-                                        {d.caseType === 'group' && <a href={`group/${d.reportedCaseName}`} onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}>{d.reportedCaseName}</a>}
-                                        {d.caseType === 'post' && <a href={`post/${d.reportedCaseName}`} onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}>Post#{d.reportedCaseName}</a>}
+                                        {d.caseType === 'user' &&
+                                            <a href={`user/${d.reportedCaseName}`}
+                                                onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}
+                                            >{d.reportedCaseName}</a>}
+                                        {d.caseType === 'group' &&
+                                            <a href={`group/${d.reportedCaseName}`}
+                                                onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}
+                                            >{d.reportedCaseName}</a>}
+                                        {d.caseType === 'post' &&
+                                            <a href={`post/${d.reportedCaseName}`}
+                                                onClick={e => handleOpenModal(e, d.reportedCaseId, d.caseType)}
+                                            >Post#{d.reportedCaseName}</a>}
                                     </td>
-                                    <td>{getType(d.type)}</td>
+                                    <td>{<GetReportType type={d.type}/>}</td>
                                     <td>{dateFormat(d.timestamp, "dddd, mmmm dS, yyyy, h:MM:ss TT")}</td>
                                     <td>
-                                        {d.status === 'active' && <span className="badge text-bg-success">Active</span>}
-                                        {d.status === 'inactive' && <span className="badge text-bg-danger">Inactive</span>}
-                                        {d.status === 'banned' && <span className="badge text-bg-secondary">Banned</span>}
-                                        {d.status === 'blocked' && <span className="badge text-bg-secondary">Blocked</span>}
+                                        <GetStatus status={d.status}/>
                                     </td>
                                     <td>
                                         {d.caseType === 'user' &&

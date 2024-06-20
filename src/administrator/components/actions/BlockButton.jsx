@@ -11,8 +11,8 @@ function BlockButton({ postId, isBlocked, size }) {
     }
     return (<>
         {/* {isError && <small className="text-danger">{error.data.message}</small>} */}
-        <Button onClick={e => handleBlock(e, postId)} variant="secondary" size={size}>
-            {isLoading ? <BeehubSpinner/> : isBlocked ? "Unblock" : "Block"}
+        <Button onClick={e => handleBlock(e, postId)} variant="secondary" size={size} style={{width: 80}}>
+            {isLoading ? '...' : isBlocked ? "Unblock" : "Block"}
         </Button>
     </>);
 }

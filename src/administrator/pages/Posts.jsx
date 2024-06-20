@@ -9,11 +9,14 @@ import FullWidthTable from "../components/FullWidthTable";
 import PostModal from "../components/modals/PostModal";
 import UserModal from "../components/modals/UserModal";
 import BlockButton from "../components/actions/BlockButton";
+import GetMultipleReportType from "../../utils/GetMultipleReportType";
+import GetStatus from "../../utils/GetStatus";
 
 const header = [
     { content: 'Id' },
     { content: 'Creator' },
     { content: 'Timestamp' },
+    { content: 'Reports' },
     { content: 'Status' },
     { content: 'Action' },
 ]
@@ -59,10 +62,11 @@ function Posts() {
                         <tr key={i}>
                             <td>{p.id}</td>
                             <td>
-                                <a href={`user/${p.creatorId}`} onClick={e => handleOpenModal(e, p.creatorId, 'user')}>{p.creator}</a>
+                                <a href={`user/${p.creatorId}`} onClick={e => handleOpenModal(e, p.creatorId, 'user')}>{p.creatorUsername}</a>
                             </td>
                             <td>{dateFormat(p.timestamp, "dddd, mmmm dS, yyyy, h:MM:ss TT")}</td>
-                            <td>{p.isBlocked ? <Badge bg="secondary">blocked</Badge> : <Badge bg="success">active</Badge>}</td>
+                            <td><GetMultipleReportType reports={p.reportTitleList}/></td>
+                            <td><GetStatus status={p.isBlocked ? 'blocked' : 'active'}/></td>
                             <td>
                                 <Button className="me-1" size="sm" onClick={(e) => handleOpenModal(e, p.id, 'post')}><Eye /> Content</Button>
                                 <BlockButton postId={p.id} isBlocked={p.isBlocked} size={'sm'} />

@@ -19,7 +19,7 @@ function PostModal({ open, onClose, postId }) {
                     <Image className="me-2 float-start" src={post.creatorImage} alt="creator" roundedCircle width={40} />
                 }
                 <Badge className="float-end" bg={post.isBlocked ? "danger" : "success"}>{post.isBlocked ? "blocked" : "active"}</Badge>
-                <span>{post.creator}</span>
+                <span className="fw-bold">{post.creatorUsername}</span>
                 <span className="d-block" >{dateFormat(post.timestamp, "h:MM:ss TT, dd/mm/yy")}</span>
                 <p>{post.content}</p>
                 {post.image &&
