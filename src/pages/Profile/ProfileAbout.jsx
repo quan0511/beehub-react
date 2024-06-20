@@ -12,7 +12,11 @@ function ProfileAbout({user,appUser}) {
     const token = useSelector(selectCurrentToken);
     const dispatch = useDispatch();
     const [showDiv, setShowDiv ]=useState(true);
-    
+    const formatDate = (dateStr) => {
+        let [year, month, day] = dateStr.split('-');
+        let newDate = `${day}/${month}/${year}`;
+        return newDate;
+      };
     useEffect(()=>{
         if(user!=null && user.user_settings.length>0){
             for (let index = 0; index < user.user_settings.length; index++) {
@@ -145,7 +149,7 @@ function ProfileAbout({user,appUser}) {
                                     </tr>
                                     <tr>
                                         <td>Birthday</td>
-                                        <td id="userBirthday">{user.birthday}</td>
+                                        <td id="userBirthday">{formatDate(user.birthday)}</td>
                                     </tr>
                                     <tr>
                                         <td>Email</td>
