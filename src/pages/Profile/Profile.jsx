@@ -214,37 +214,39 @@ function Profile (){
                     }
                     
                     </div>
-                    <Modal show={show2}
-                        onHide={()=>setShow2(false)}
-                        backdrop="static"
-                        keyboard={false}
-                        fullscreen={false}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Upload Background</Modal.Title>
-                        </Modal.Header>
-                        <form onSubmit={handleSubmitBackground} encType="multipart/form-data">
-                        <Modal.Body className="d-flex flex-column align-items-center justify-content-center">
-                            <div className="border rounded-2" style={{height: "150px",width: "450px"}}>
-                                {user.background !=null? 
-                                    <Image src={user.background} id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
-                                    : <div style={{height: "inherit",objectPosition: "center",width: "100%",backgroundColor: "rgb(57,59,70,0.2)",}}>
-                                        <img id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
-                                    </div>
-                                }
-                            </div>
-                            <div className="d-flex align-items-center justify-content-center">
-                                <input type="file" name="bg" id="bg" className="form-control my-3 mx-auto" onChange={(e)=>readURLBackground(e.target)}  />
+                    {appUser.id == user.id?
+                        <Modal show={show2}
+                            onHide={()=>setShow2(false)}
+                            backdrop="static"
+                            keyboard={false}
+                            fullscreen={false}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Upload Background</Modal.Title>
+                            </Modal.Header>
+                            <form onSubmit={handleSubmitBackground} encType="multipart/form-data">
+                            <Modal.Body className="d-flex flex-column align-items-center justify-content-center">
+                                <div className="border rounded-2" style={{height: "150px",width: "450px"}}>
+                                    {user.background !=null? 
+                                        <Image src={user.background} id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                        : <div style={{height: "inherit",objectPosition: "center",width: "100%",backgroundColor: "rgb(57,59,70,0.2)",}}>
+                                            <img id="bg-upload"  style={{height: "inherit",width:"inherit",objectFit:"fill"}}/>
+                                        </div>
+                                    }
+                                </div>
+                                <div className="d-flex align-items-center justify-content-center">
+                                    <input type="file" name="bg" id="bg" className="form-control my-3 mx-auto" onChange={(e)=>readURLBackground(e.target)}  />
 
-                            </div>
-                            <div id="waiting-bg" style={{display:"none"}}>
-                                <Spinner animation="border" /> Uploading
-                            </div>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="primary" id="submit-bg" type="submit" disabled>Save</Button>
-                        </Modal.Footer>
-                        </form>
-                    </Modal>
+                                </div>
+                                <div id="waiting-bg" style={{display:"none"}}>
+                                    <Spinner animation="border" /> Uploading
+                                </div>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="primary" id="submit-bg" type="submit" disabled>Save</Button>
+                            </Modal.Footer>
+                            </form>
+                        </Modal>:<></>
+                    }
                     <div className="position-absolute " id="profile-menu">
                         <div className="d-flex flex-column ps-lg-5 ps-md-1 bg-white rounded-3 shadow p-2">
                             <Row>
@@ -325,9 +327,12 @@ function Profile (){
                                         :<></>
                                         }
                                     </div>
+                                    {appUser.id == user.id? 
                                     <Button variant="outline-light" className="position-absolute rounded-circle " onClick={()=>setShow2(true)} style={{top: "-50px", right:0}}>
                                         <PencilFill/>
                                     </Button>
+                                    :<></>
+                                    }
                                 </Col>
                                 {appUser.id != user.id?
                                     <ModalReport showReport={showReport} setShowReport={setShowReport} userTarget={user} />
