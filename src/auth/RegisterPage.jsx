@@ -66,7 +66,8 @@ function RegisterPage() {
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
         try {
-            await register(values)
+            const {passwordConfirm, ...credentials} = values
+            await register(credentials)
         } catch (err) {
             if (!err.data) {
                 console.log(err.data)
