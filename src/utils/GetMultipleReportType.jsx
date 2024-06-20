@@ -3,8 +3,8 @@ import { countDuplicate } from "./utils";
 
 function GetMultipleReportType({ reports }) {
     if (!reports || reports.length == 0) return
-    let o = Object.keys(countDuplicate(reports));
-    return <>{o.map((key, i) => <GetReportType key={i} number={o[key]} type={key} />)}</>
+    let o = countDuplicate(reports);
+    return <>{Object.keys(o).map((key, i) => <GetReportType key={i} number={o[key]} type={key} />)}</>
 }
 
 export default GetMultipleReportType;

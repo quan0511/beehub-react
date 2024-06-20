@@ -62,7 +62,7 @@ function Posts() {
                         <tr key={i}>
                             <td>{p.id}</td>
                             <td>
-                                <a href={`user/${p.creatorId}`} onClick={e => handleOpenModal(e, p.creatorId, 'user')}>{p.creator}</a>
+                                <a href={`user/${p.creatorId}`} onClick={e => handleOpenModal(e, p.creatorId, 'user')}>{p.creatorUsername}</a>
                             </td>
                             <td>{dateFormat(p.timestamp, "dddd, mmmm dS, yyyy, h:MM:ss TT")}</td>
                             <td><GetMultipleReportType reports={p.reportTitleList}/></td>
