@@ -31,7 +31,7 @@ function ListLike({ post, getLikeUser, getEnumEmo, currentPostId }) {
                 <Modal.Header closeButton>
                     <Modal.Title className="modalpost-title">
                         <div className="modalpost-emoji">
-                            <div className="modalpost-emojiall" onClick={() => handleLikeEmoUser('all')}>Tất cả</div>
+                            <div className="modalpost-emojiall" onClick={() => handleLikeEmoUser('all')}>All</div>
                             {emojiList.includes('👍') && (
                                 <div className="modalpost-emojiall" onClick={() => handleLikeEmoUser('👍')}>👍</div>
                             )}

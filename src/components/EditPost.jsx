@@ -11,6 +11,7 @@ import { useDispatch,useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import { SlArrowLeft } from 'react-icons/sl';
 import { Modal } from 'react-bootstrap';
+import { uniqueTerms } from '../utils/words';
 function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost}){
     const dispatch = useDispatch();
     const [viewFoundBackground, setViewFoundBackground] = useState(false);
@@ -76,11 +77,8 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
       }
     };
       const handleSubmitEditPost = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+        e.preventDefault(); 
         const inputElement = document.getElementById("myInput");
-        let userInput = inputElement.textContent?.trim() || "";
-        // Parse the input content to include tag and link format
         const parsedContent = Array.from(inputElement.childNodes).map((node) => {
           if (node.nodeType === Node.TEXT_NODE) {
             return node.textContent?.trim() || "";
@@ -96,6 +94,16 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
           }
           return "";
         }).join(" ");
+      const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+      const forbiddenWords = lowerforbiddenWords.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(parsedContent);
+      });
+      if(forbiddenWords){
+        alert("Your content contains vulgar and inappropriate language");
+        return;
+      }
+      setLoading(true);
         const prevColor = formUpdatePost.color;
         const prevBackground = formUpdatePost.background;
         const updatedColor = selectedStyle.color || prevColor;
@@ -312,11 +320,16 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                   <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}>
                     <a>
                       <div className="showuserli">
-                        <div className="showuserlianhcomment"> {user.gender=='female'?(
-                        <Link to={"/member/profile/"+user.username}>
-                        <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                        ):(
-                          <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        <div className="showuserlianhcomment"> 
+                        {user.image!=null?
+                          <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                              <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                          </Link> 
+                          : (
+                          user.gender=='female'?
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                            :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                         )}
                         </div>
                         <div className="showuserliname">
@@ -353,11 +366,16 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                     <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}>
                       <a>
                         <div className="showuserli">
-                          <div className="showuserlianhcomment"> {user.gender=='female'?(
-                          <Link to={"/member/profile/"+user.username}>
-                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                          ):(
-                            <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                          <div className="showuserlianhcomment"> 
+                          {user.image!=null?
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                            </Link> 
+                            : (
+                            user.gender=='female'?
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                           )}
                           </div>
                           <div className="showuserliname">
@@ -388,11 +406,16 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                     <li onClick={() => selectName(user.username, 'editPostInput', 'myInput')}>
                       <a>
                         <div className="showuserli">
-                          <div className="showuserlianhcomment"> {user.gender=='female'?(
-                          <Link to={"/member/profile/"+user.username}>
-                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                          ):(
-                            <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                          <div className="showuserlianhcomment"> 
+                          {user.image!=null?
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                            </Link> 
+                            : (
+                            user.gender=='female'?
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                           )}
                           </div>
                           <div className="showuserliname">
@@ -450,12 +473,12 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
             </div>
           ):(
             <div>
-              <button className={`modalpost-buttonmedia${formUpdatePost.color !== 'inherit' ? 'disable': ''}`} onClick={(e) =>{
+              <button className={`modalpost-buttonmedia${formatcolor(divClass.color) !== 'inherit' && formatcolor(divClass.background) != "#ffffff" ? 'disable': ''}`} onClick={(e) =>{
                 e.preventDefault();
                 if(divClass.color === 'inherit'){
                   fileInputRef.current?.click()
                 }
-              }} disabled={post.color !== 'inherit'}> 
+              }} disabled={formatcolor(divClass.color) !== 'inherit' && formatcolor(divClass.background)}> 
               <span className="modalpost-media">
                   <LuLink className="modalpost-iconmedia" />
               </span>

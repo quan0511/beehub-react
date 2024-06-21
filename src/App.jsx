@@ -48,9 +48,11 @@ function App() {
         </Route>
         <Route path='/postnote/:postid' element={<Layout />}>
           <Route index element={<PostNote />} />
-
         </Route>
-
+        <Route path='/member' element={<Layout2 />}>
+          <Route path='profile/:username' element={<Profile />} />
+          <Route path='account-setting' element={<AccountSetting />} />
+        </Route>
         <Route path='/group' element={<Layout2 />}>
           <Route path=':id' element={<Group />} />
           <Route path='manage/:id' element={<GroupManagementPage />} />

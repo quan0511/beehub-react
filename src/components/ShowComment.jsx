@@ -5,6 +5,7 @@ import { FaRegCommentAlt } from "react-icons/fa";
 import {Link} from "react-router-dom";
 import { PiShareFat} from "react-icons/pi";
 import '../css/showcomment.css';
+import { uniqueTerms } from '../utils/words';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
 import {  useAddLikePostMutation, useCommentQuery, useDeleteLikeMutation, useGetUserFriendQuery, useGetUserQuery, usePostCommentMutation, useUpdateLikePostMutation } from '../post/postApiSlice';
@@ -76,6 +77,15 @@ function ShowComment({
       e.preventDefault();
       const inputElement = document.getElementById("newMyInput") ;
       const userInput = inputElement.textContent?.trim() || "";
+      const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+      const forbiddenWords = lowerforbiddenWords.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(userInput);
+      });
+      if(forbiddenWords){
+        alert("Your comment contains vulgar and inappropriate language");
+        return;
+      }
       setFormComment({...formComment, comment: userInput});
       try {
         await createComment(formComment)
@@ -114,7 +124,6 @@ function ShowComment({
         return comment;
       }
     };
-  
   function handleInput(inputId, divId, formType) {
     const inputElement = document.getElementById(divId);
     const ulElement = document.getElementById(`${divId}-ul`) ;
@@ -346,12 +355,25 @@ const handleBlur = (e) => {
                 <Modal.Body className="modalbodyshowcomment">
                   <div className="modalshowcomment-anhtentime">
                     <div className="modalanhdaidien">
-                      {postIdco.user_gender=='female'?(
+                    {
+                      postIdco.group_id!=null && page!='group'?(
+                        postIdco.group_image!=null?
+                          <Link to={"/group/"+postIdco.group_id}><Image src={postIdcot.group_image} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
+                              :  <Link to={"/group/"+postIdco.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
+                      )
+                      :(
+                        postIdco.user_image!=null?
                         <Link to={"/member/profile/"+postIdco.user_username}>
-                        <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                      ):(
-                        <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                      )}
+                            <Image src={postIdco.user_image} style={{width:"47px",height: "47px"}} roundedCircle />
+                        </Link> 
+                        : (
+                          postIdco.user_gender=='female'?
+                            <Link to={"/member/profile/"+postIdco.user_username}>
+                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
+                            :<Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
+                        )
+                      ) 
+                    }
                     </div>
                     <div className="modalnametime">
                       <div className="modalname">{postIdco.user_username}</div>
@@ -479,11 +501,16 @@ const handleBlur = (e) => {
                         <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                           <a>
                             <div className="showuserli">
-                              <div className="showuserlianhcomment"> {user.gender=='female'?(
-                              <Link to={"/member/profile/"+user.username}>
-                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                              ):(
-                                <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              <div className="showuserlianhcomment"> 
+                              {user.image!=null?
+                                <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                    <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                                </Link> 
+                                : (
+                                user.gender=='female'?
+                                  <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                  <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                  :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                               )}
                               </div>
                               <div className="showuserliname">

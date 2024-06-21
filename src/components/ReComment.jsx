@@ -7,6 +7,7 @@ import { useDeletePostReCommentMutation,  useRecommentPostQuery, useUpdateReComm
 import { MdModeEdit } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
 import {Link} from "react-router-dom";
+import { uniqueTerms } from '../utils/words';
 import {Image } from "react-bootstrap";
 import APIService from '../features/APIService';
 function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend,refetchCountReComment}){
@@ -102,26 +103,34 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
       e.preventDefault();
       const inputElement = document.getElementById(`editReCommentInput-${recomment.id}`);
       const userInput = inputElement.value;
+      const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+      const forbiddenWords = lowerforbiddenWords.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(userInput);
+      });
+      if(forbiddenWords){
+        alert("Your comment contains vulgar and inappropriate language");
+        return;
+      }
       const updateReComment = {
         ...formEditReComment,
         reaction:userInput
       };
-      console.log("edit",updateReComment)
-          try{
-            await editReComment(updateReComment)
-            handleCancelEditReComment();
-            setToggleReComment((prevState) => ({
-              ...prevState,
-              [formEditReComment.id]: false 
-            }));
-            refetchGetReCommentById();
-            refetchGetReComment();
-          }catch(error){
-            console.error(error)
-          }
+      try{
+        await editReComment(updateReComment)
+        handleCancelEditReComment();
+        setToggleReComment((prevState) => ({
+          ...prevState,
+          [formEditReComment.id]: false 
+        }));
+        refetchGetReCommentById();
+        refetchGetReComment();
+      }catch(error){
+        console.error(error)
+      }
     }
     const handleDeleteReComment = async (id) => {
-        const isConfirmed = window.confirm("Bạn chắc chắn muốn xóa comment này?");
+        const isConfirmed = window.confirm("Are you sure you want to delete reply comment ?");
         if (isConfirmed) {
           try {
             await deleteReComment({id});
@@ -332,11 +341,16 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
                       <li  onClick={() => selectName(user.username, `editReCommentInput-${recomment.id}`, `editReMyInput-${recomment.id}`)}>
                         <a>
                           <div className="showuserlicomment">
-                            <div className="showuserlianh"> {user.gender=='female'?(
-                            <Link className="showuserlianhrecomment"  to={"/member/profile/"+user.username}>
-                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
-                            ):(
-                              <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                            <div className="showuserlianh"> 
+                            {user.image!=null?
+                              <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                  <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                              </Link> 
+                              : (
+                              user.gender=='female'?
+                                <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                             )}
                             </div>
                             <div className="showuserliname">
