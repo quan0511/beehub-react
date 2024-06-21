@@ -21,8 +21,16 @@ function Homepage() {
     const resetHome = useSelector((state)=>state.user.resetHomepage);
     const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page, reset:reset,resetHome: resetHome});
     const [showInputModal, setShowInputModal] = useState(false);
-    const handleOpenInputModal = () => setShowInputModal(true);
-    const handleCloseInputModal = () => setShowInputModal(false);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const handleOpenInputModal = (post) => {
+        setSelectedPost(post);
+        setShowInputModal(true);
+    };
+
+    const handleCloseInputModal = () => {
+        setShowInputModal(false);
+        setSelectedPost(null);
+    };
     useEffect(() => {
         if(preLocation!= location.key){
             window.scrollTo({ top: 0, behavior: 'auto' });

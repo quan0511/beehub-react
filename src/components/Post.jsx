@@ -5,6 +5,7 @@ import { ChatLeft, Dot, GearFill, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUp
 import APIService from "../features/APIService";
 import { Link, json } from "react-router-dom";
 import '../css/post.css';
+import { SlLike } from "react-icons/sl";
 import { MdReport,MdModeEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
@@ -475,9 +476,9 @@ function Post ({post, page,refetchHomePage}){
                     
                     </div>
                         {checkLike ? (             
-                        <span onClick={() => handleChangeRemoveLike(post.id)} className="click">{getEnumEmo}</span>
+                        <span onClick={() => handleChangeRemoveLike(post.id)} className="clicklike">{getEnumEmo}</span>
                         ) : (
-                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click">👍</span>
+                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="clicklike"><SlLike /></span>
                         )}           
                         <p className="h6 mx-2 text-black-50">Like</p>
                     </div>

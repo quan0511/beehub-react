@@ -298,12 +298,25 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
       <input type="hidden" name="id" value={formUpdatePost.id} onChange={(e) => handleChangeEditPost(e)}/>
           <div className="modalpost-nameanh">
               <div className="model-showbinhluananhdaidien">
-              {post.user_gender=='female'?(
-              <Link to={"/member/profile/"+post.user_username}>
-                <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-              ):(
-                <Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-              )}
+              {
+                      post.group_id!=null && page!='group'?(
+                        postI.group_image!=null?
+                          <Link to={"/group/"+post.group_id}><Image src={post.group_image} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              :  <Link to={"/group/"+post.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                      )
+                      :(
+                        post.user_image!=null?
+                        <Link to={"/member/profile/"+post.user_username}>
+                            <Image src={post.user_image} style={{width:"40px",height: "40px"}} roundedCircle />
+                        </Link> 
+                        : (
+                          post.user_gender=='female'?
+                            <Link to={"/member/profile/"+post.user_username}>
+                            <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                            :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        )
+                      ) 
+                    }
               </div>
               <div className="modalpost-name">Name</div>
           </div>

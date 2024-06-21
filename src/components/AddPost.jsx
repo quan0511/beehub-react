@@ -22,6 +22,7 @@ const AddPost = ({handleCloseModal,group}) => {
     const handleToggleBackground= () =>{
       setViewFoundBackground((prevSate) => !prevSate);
     }
+    console.log('user',user);
     const [divClass, setDivClass] = useState({color: 'inherit', background: 'inherit'});
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState({ color: '', background: '' });
@@ -301,9 +302,17 @@ const AddPost = ({handleCloseModal,group}) => {
       <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="modalpost-nameanh">
               <div className="model-showbinhluananhdaidien">
-              <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
+              {
+                user?.image?
+                    <Image src={user.image} style={{width:"43px",height: "43px"}}roundedCircle />
+                :(
+                    user?.gender=='female'?
+                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"43px",height: "43px"}}roundedCircle />
+                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"43px",height: "43px"}}roundedCircle />
+                )
+              }
               </div>
-              <div className="modalpost-name">Name</div>
+              <div className="modalpost-name">{user.fullname}</div>
           </div>
           {selectedFiles.length ?(
             <div className="post-testandshowimage">
