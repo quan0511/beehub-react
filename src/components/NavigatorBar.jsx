@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Container, Form, Image, InputGroup, ListGroup, Nav, Navbar, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
 import { Bag, Ban, Bell, ChatRightHeartFill, EnvelopeOpen, PersonAdd, Search, Trash2 } from "react-bootstrap-icons";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { FaExclamationCircle } from "react-icons/fa";
 import OffcanvasMessages from "./OffcanvasMessages";
 import APIService from "../features/APIService";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +16,7 @@ import { refresh } from "../features/userSlice";
 import '../css/navigatorBar.css';
 import dateFormat from "dateformat";
 import { BiMinus } from "react-icons/bi";
+import { useChangeSeenNoteMutation, useCheckNoteSeenQuery, useGetNoteByUserQuery } from "../post/postApiSlice";
 
 function NavigatorBar() {
     const user = useSelector(selectCurrentUser);
@@ -22,6 +24,9 @@ function NavigatorBar() {
     const reset = useSelector((state) => state.user.reset);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [changeSeen] = useChangeSeenNoteMutation();
+    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
+    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id });
     const [show, setShow] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
@@ -30,13 +35,25 @@ function NavigatorBar() {
     const [addFriendNotification, setAddFriendNotification] = useState([]);
     const [newFriendNotification, setNewFriendNotification] = useState([]);
     const [joinedGroupNotification, setJoinedGroupNotification] = useState([]);
-   
+    const [toggleNote,setToggleNote] = useState(false);
+    const handleToggleNote = () =>{
+        setToggleNote(!toggleNote);
+    }
     const handleClose = () => setShow(false);
     const handleSubmit = (event) => {
         event.preventDefault();
         setSearchParams({ search: searchQuery });
         navigate(`/search?search=${encodeURIComponent(searchQuery)}`);
     };
+    const handleChangeSeenNote = async (id)=>{
+        try{
+            await changeSeen({id});
+            refectGetNoteByUser();
+            refetchCheckSeenNote();
+        }catch(error){
+            console.error('Đã xảy ra lỗi khi thay đổi trạng thái seen', error);
+        }
+    }
     const heroImage = () => {
         if (user?.image) return user.image
         else if (user?.gender === "female") return `${APIService.URL_REST_API}/files/user_female.png`
@@ -65,6 +82,26 @@ function NavigatorBar() {
             dispatch(refresh());
         }
     }
+    const calculateTimeDifference = (createdAt) => {
+        const createdDate = new Date(createdAt);
+        const currentDate = new Date();
+        const timeDifference = currentDate - createdDate; // Lấy thời gian chênh lệch tính bằng milliseconds
+        const secondsDifference = Math.floor(timeDifference / 1000);
+        const minutesDifference = Math.floor(secondsDifference / 60);
+        const hoursDifference = Math.floor(minutesDifference / 60);
+        const daysDifference = Math.floor(hoursDifference / 24);
+      
+        if (daysDifference > 0) {
+          return `${daysDifference} days ago`;
+        } else if (hoursDifference > 0) {
+          return `${hoursDifference} hours ago`;
+        } else if (minutesDifference > 0) {
+          return `${minutesDifference} minutes ago`;
+        } else {
+          return `${secondsDifference} seconds ago`;
+        }
+      };
+      console.log('check seen: ',checkSeenNote)
     const tooltipAddFriend = isLoading ?
         (
             <Tooltip id="tooltip-loading" >
@@ -200,8 +237,11 @@ function NavigatorBar() {
                     {/* <Col  ></Col> */}
                     <Col xl={4} lg={4} md={3} sm={5} xs={6} className="ms-auto">
                         <Nav className="justify-content-end d-flex flex-row" variant="none" defaultActiveKey="/home">
-                            <Nav.Item  className="me-2">
-                                <Nav.Link  href="/friend">
+                            {checkSeenNote === true &&(
+                                <div className="iconnotecheckseen"><FaExclamationCircle /></div>
+                            )}
+                            <Nav.Item className="me-2" style={{marginTop: "1.5px"}} onClick={handleToggleNote}>
+                                <Nav.Link >
                                     <Bell size={20}/>
                                 </Nav.Link>
                             </Nav.Item>
@@ -244,6 +284,45 @@ function NavigatorBar() {
                                 <OffcanvasMessages show={show} handleClose={handleClose} />
                             </Nav.Item>
                         </Nav>
+                        {toggleNote && (
+                            <div className="toggleNotification">           
+                                <div>
+                                <div className="toggleNotification-header">Notification</div>
+                                {getNoteByUser?.map((note) =>(
+                                <div key={note.id}>
+                                {note.length === 0 ? (
+                                <div className="toggleNotification-noNote">
+                                    No Notification
+                                </div>
+                                ):(
+                                    <div>
+                                        <div className="toggleNotificationkhung">
+                                            <div className="link-as-div" onClick={async () => {
+                                                await handleChangeSeenNote(note.id);
+                                                navigate(`/postnote/${note.post}`);
+  
+                                            }}>
+                                                <div className="toggleNotification-avatarAndnoteTrue">
+                                                    <div>
+                                                        <div className="toggleNotification-note">{note.content}</div>
+                                                        <div className="toggleNotification-time">{calculateTimeDifference(note.createdAt)}</div>
+                                                    </div>
+                                                    {note.seen === false ? (
+                                                        <div className="toggleNotificationstatusfalse"></div>
+                                                    ):(
+                                                        <div className="toggleNotificationstatustrue"></div>
+                                                    )}
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    )}
+                                </div>
+                            ))}
+                            </div>                              
+                        </div> 
+                        )}
                     </Col>
                 </Row>
             </Container>

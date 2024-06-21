@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import '../css/showcomment.css';
 import { useState,useEffect } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { uniqueTerms } from '../utils/words';
 import { selectCurrentUser } from '../auth/authSlice';
 import { useCommentByIdQuery,  useCountReactionQuery, useDeletePostCommentMutation, useGetUserFriendQuery, usePostReCommentMutation, useRecommentQuery, useUpdateCommentMutation } from '../post/postApiSlice';
 import { MdModeEdit } from "react-icons/md";
@@ -59,7 +60,6 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           return updatedReplyStates;
         });
       };     
-      
         const [editCommentId, setEditCommentId] = useState(null);
         const handleShowEditComment = (commentId) =>{
           setEditCommentId((prevEditComment) =>(
@@ -90,11 +90,19 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           e.preventDefault();
           const inputElement = document.getElementById(`editCommentInput-${comment.id}`);
           const userInput = inputElement.value;
+          const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+          const forbiddenWords = lowerforbiddenWords.some(term => {
+            const regex = new RegExp(`\\b${term}\\b`, 'i');
+            return regex.test(userInput);
+          });
+          if(forbiddenWords){
+            alert("Your comment contains vulgar and inappropriate language");
+            return;
+          }
           const updateComment = {
             ...formEditComment,
             comment: userInput
           };
-          console.log("edit",updateComment)
           try{
             await editComment(updateComment)
             handleCancelEditComment();
@@ -109,7 +117,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           }
         }
         const handleDeleteComment = async (id) => {
-          const isConfirmed = window.confirm("Bạn chắc chắn muốn xóa comment này?");
+          const isConfirmed = window.confirm("Are you sure you want to delete comment ?");
           if (isConfirmed) {
             try {
               await deleteComment({id});
@@ -177,8 +185,15 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         e.preventDefault();
         const inputElement = document.getElementById("RemyInput");
         const userInput = formReComment.reaction;
-             
-        // Tạo một bản sao của formReComment và cập nhật reaction và các trường khác
+        const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+        const forbiddenWords = lowerforbiddenWords.some(term => {
+          const regex = new RegExp(`\\b${term}\\b`, 'i');
+          return regex.test(userInput);
+        });
+        if(forbiddenWords){
+          alert("Your comment contains vulgar and inappropriate language");
+          return;
+        }
         const updatedFormReComment = {
           ...formReComment,
           reaction: userInput,
@@ -353,12 +368,25 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       <div className="modalthreedotcomment">
         <div className="modal-showbinhluankhungcon">
           <div className="model-showbinhluananhdaidien">
-          {postIdco.user_gender=='female'?(
-            <Link to={"/member/profile/"+postIdco.user_username}>
-              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-            ):(
-              <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-            )}
+          {
+            postIdco.group_id!=null && page!='group'?(
+              postIdco.group_image!=null?
+                <Link to={"/group/"+postIdco.group_id}><Image src={postIdcot.group_image} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    :  <Link to={"/group/"+postIdco.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+            )
+            :(
+              postIdco.user_image!=null?
+              <Link to={"/member/profile/"+postIdco.user_username}>
+                  <Image src={postIdco.user_image} style={{width:"40px",height: "40px"}} roundedCircle />
+              </Link> 
+              : (
+                postIdco.user_gender=='female'?
+                  <Link to={"/member/profile/"+postIdco.user_username}>
+                  <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                  :<Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+              )
+            ) 
+          }
           </div>
           <div className="modalbinhluanthreedottraloi" style={{display:editCommentId !== comment.id ? 'block':'none'}}>
             <div className="modalanhbinhluanithreedot">
@@ -380,7 +408,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
               <div className="modal-showbinhluantime">{calculateTimeDifference(comment.createdAt)}</div>
               <div className="modal-showbinhluantraloi" onClick={() => {
                 toggleReply(comment.id);
-              }}>Trả lời
+              }}>Reply
               </div>
             </div>
           </div>
@@ -398,11 +426,16 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                     <li onClick={() => selectName(user.username, `editCommentInput-${comment.id}`, `editMyInput-${comment.id}`)}>
                       <a>
                         <div className="showuserlicomment">
-                          <div className="showuserlianh"> {postIdco.user_gender=='female'?(
-                          <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
-                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
-                          ):(
-                            <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          <div className="showuserlianh">
+                          {user.image!=null?
+                            <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                <Image src={user.image} style={{width:"30px",height: "30px"}} roundedCircle />
+                            </Link> 
+                            : (
+                              user.gender=='female'?
+                                <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                                <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                                :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                           )}
                           </div>
                           <div className="showuserliname">
@@ -414,7 +447,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
                   ))}
                 </ul>
                 </div>
-                <input type="submit" className="commentRecommentmodal" value="Save"/>
+                <input type="submit" className={`commentRecommentmodal${!content ? 'disable' : ''}`} disabled={!content} value="Save"/>
                 <button className="cancelEditCommentmodal" onClick={handleCancelEditComment}>Cancel</button>
               </form>
             </div>
@@ -436,9 +469,9 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       {countReComment ? (
         <div className="modalshowhiderecomment">
           {viewReplies[comment.id] ? (
-            <div className="showReComment" onClick={() => handleHideReComments(comment.id)}>Ẩn trả lời</div>
+            <div className="showReComment" onClick={() => handleHideReComments(comment.id)}>Hide Reply</div>
           ):(
-            <div className="showReComment" onClick={() => handleViewReComments(comment.id)}>xem {countReComment} trả lời</div>
+            <div className="showReComment" onClick={() => handleViewReComments(comment.id)}>Show {countReComment} Reply</div>
           )}
         </div>
       ):(
@@ -459,11 +492,16 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
               <li onClick={() => selectName(user.username, 'RecommentInput', 'RemyInput')}>
                 <a>
                   <div className="showuserlicomment">
-                    <div className="showuserlianh"> {postIdco.user_gender=='female'?(
-                    <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}>
-                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
-                    ):(
-                      <Link className="showuserlianhrecomment" to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                    <div className="showuserlianh"> 
+                    {user.image!=null?
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                          <Image src={user.image} style={{width:"30px",height: "30px"}} roundedCircle />
+                      </Link> 
+                      : (
+                        user.gender=='female'?
+                          <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                          <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
+                          :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"30px",height: "30px"}} roundedCircle /></Link>
                     )}
                     </div>
                     <div className="showuserliname">
@@ -476,7 +514,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           </ul>
           </div>
           <input type="hidden" name="createdAt" value={formReComment.createdAt} onChange={(e) => handleChangeReComment(e)} />
-          <input type="button" className="commentRecomment" value="Reply" onClick={(e) => handleSubmitReComment(e, postIdco, comment)} />
+          <input type="button" className={`commentRecomment${!content ? 'disable' : ''}`} disabled={!content} value="Reply" onClick={(e) => handleSubmitReComment(e, postIdco, comment)} />
         </form>
       </div>
       )}                                

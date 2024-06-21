@@ -127,6 +127,18 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 url: POST_URL + '/user/friend' + `/${id}`,
             }),
         }),
+        getNoteByUser:builder.query({
+            query:({id}) =>({
+                url: POST_URL + '/note' + `/${id}`,
+            }),
+            providesTags: ['Notification']
+        }),
+        checkNoteSeen: builder.query({
+            query: ({ userId }) => ({
+                url: POST_URL + '/check/note' + `/${userId}`,
+            }),
+            providesTags: ['CheckNote']
+        }),
         getLikeUser:builder.query({
             query:({id})=>({
                 url:POST_URL + '/like'+ `/${id}`
@@ -181,7 +193,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 url: POST_URL + `/deletepost/${id}`,
                 method: 'POST',
             }),
-            invalidatesTags: ['Post']
+            invalidatesTags: ['Post','CountShare']
         }),
         postComment: builder.mutation({
             query: comment => ({
@@ -229,7 +241,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { ...likePost}
             }),
-            invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser']
+            invalidatesTags: ['Post', 'CheckLike', 'EnumEmo', 'CountLike', 'LikeUser','Notification', 'CheckNote']
         }),
         updateLikePost: builder.mutation({
             query:likePost => ({
@@ -252,11 +264,16 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: {...sharePost}
             }),
-  
         }),
+        changeSeenNote : builder.mutation({
+            query:({id}) =>({
+                url:POST_URL + `/note/change/${id}`,
+                method:'POST',
+            }),
+            invalidatesTags: ['Notification', 'CheckNote']
+        })
     })
 })
-
 export const {
     useFetchPostQuery,
     useCommentQuery,
@@ -274,6 +291,8 @@ export const {
     useCountShareQuery,
     useCountReactionByPostQuery,
     useGetUserFriendQuery,
+    useGetNoteByUserQuery,
+    useCheckNoteSeenQuery,
 
     usePostMutation,
     useUpdatePostMutation,
@@ -287,7 +306,8 @@ export const {
     usePostCommentMutation,
     useUpdateCommentMutation,
     useDeletePostCommentMutation,
-    useSharePostMutation
+    useSharePostMutation,
+    useChangeSeenNoteMutation
 
 } = postApiSlice
 

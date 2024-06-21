@@ -77,7 +77,7 @@
 .togglePost2{
     background-color: white;
     width: 250px;
-    height: 90px;
+    height: 51px;
     z-index: 100;
     border-radius: 10px;
     box-shadow: 2px 2px 5px 5px #d1d4dc;
@@ -89,7 +89,7 @@
     position: absolute;
     transform: translate(-50%, -50%);
     right: -121px;
-    top: 103px;
+    top: 88px;
 }
 .togglePost > * {
     margin-bottom: 10px; /* Thay đổi giá trị này để điều chỉnh khoảng cách */
@@ -129,7 +129,8 @@
 }
 .textshare{
     position: relative;
-    top:10px
+    top:10px;
+    right: 12px;
 }
 .sharepublic{
     position: relative;
@@ -163,4 +164,51 @@
     font-size: 35px;
     /* bottom: 20px; */
     gap: 9px;
+}
+.postText{
+    position: relative;
+    right: 19px !important;
+}
+.commentNote{
+    position: relative;
+    margin-bottom: 20px;
+    bottom: 15px;
+}
+.inputcommentNote{
+    position: relative;
+    border: 2px solid;
+    background-color: #f7f7f7;
+    height: 90px;
+    top: -4px;
+    width: 630px;
+    border-radius: 10px;
+    left: 0px;
+}
+.commentpostNote{
+    background-color: transparent;
+    color: #8224e3;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    height: 25px;
+    border: 0px;
+    left: 522px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.commentpostNotedisable{
+    background-color: transparent;
+    color: #b5a9a9;
+    border-radius: 5px;
+    position: relative;
+    cursor: not-allowed !important;
+    height: 25px;
+    border: 0px;
+    left: 522px;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

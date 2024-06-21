@@ -4,7 +4,7 @@ import {Dot} from 'react-bootstrap-icons';
 import '../css/post.css';
 import { Link } from "react-router-dom";
 import APIService from "../features/APIService";
-function SharePost({post,getSettingType,calculateTimeDifference}){
+function SharePostNote({post,getSettingType,calculateTimeDifference}){
     const renderCommentWithLink = (comment) => {
         if (typeof comment === 'string') {
           const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
@@ -92,8 +92,8 @@ function SharePost({post,getSettingType,calculateTimeDifference}){
                 
                 <div className="mb-2 img-media">
                     <div>
-                        { post.medias!=null?
-                        <Image src={post.medias} className="img-styleshare" fluid />
+                        { post.mediaUrl!=null?
+                        <Image src={post.mediaUrl} className="img-styleshare" fluid />
                         : (post.group_media !=null ?
                             <Image src={post.group_media.media} className="img-styleshare" fluid />
                             :<></>)
@@ -104,4 +104,4 @@ function SharePost({post,getSettingType,calculateTimeDifference}){
         </Col>
     )
 }
-export default SharePost
+export default SharePostNote

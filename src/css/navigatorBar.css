@@ -9,3 +9,88 @@
 .tooltip{
     --bs-tooltip-opacity: 1 !important;
 }
+.toggleNotification{
+    position: absolute;
+    margin-top: 20px;
+    z-index: 100;
+    width: 300px;
+    background-color: whitesmoke;
+    height: 300px;
+    overflow: auto;
+    border-radius: 5px;
+    right: 126px;
+}
+.toggleNotification-header{
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #8224e3;
+    color: white;
+    padding-left: 15px;
+    border-radius: 5px 5px 0px 0px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.toggleNotification-noNote{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 30px;
+    color: #878787;
+}
+.toggleNotificationkhung{}
+.toggleNotificationkhung :hover{
+    background-color: #efeded;
+}
+.toggleNotification-avatarAndnoteTrue{
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.toggleNotification-avatar{
+    border-radius: 50%;
+    background-color: lab(91 -0.71 -0.32);
+    width: 55px;
+    height: 55px;
+    position: relative;
+}
+.toggleNotification-note{
+    position: relative;
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+.toggleNotification-time{
+    position: relative;
+    font-size: 12px;
+    margin-left: 20px;
+    color: #8224e3;
+}
+.toggleNotificationstatusfalse{
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: #8224e3;
+    margin-left: 60px;
+}
+.toggleNotificationstatustrue{
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: #878787;
+    margin-left: 60px;
+}
+.link-as-div {
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+    cursor: pointer; /* Thêm cursor pointer để chỉnh sửa */
+}
+.iconnotecheckseen{
+    position: relative;
+    left: 35px;
+}
