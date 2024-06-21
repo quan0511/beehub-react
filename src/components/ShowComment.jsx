@@ -5,6 +5,7 @@ import { FaRegCommentAlt } from "react-icons/fa";
 import {Link} from "react-router-dom";
 import { PiShareFat} from "react-icons/pi";
 import '../css/showcomment.css';
+import { SlLike } from "react-icons/sl";
 import { uniqueTerms } from '../utils/words';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../auth/authSlice';
@@ -358,7 +359,7 @@ const handleBlur = (e) => {
                     {
                       postIdco.group_id!=null && page!='group'?(
                         postIdco.group_image!=null?
-                          <Link to={"/group/"+postIdco.group_id}><Image src={postIdcot.group_image} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
+                          <Link to={"/group/"+postIdco.group_id}><Image src={postIdco.group_image} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
                               :  <Link to={"/group/"+postIdco.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"47px",height: "47px"}} roundedCircle /></Link>
                       )
                       :(
@@ -453,9 +454,9 @@ const handleBlur = (e) => {
                     </div>
                     </div>
                     {checkLike ? (             
-                      <span onClick={() => handleChangeRemoveLike(postIdco.id)} className="click">{getEnumEmo}</span>
+                      <span onClick={() => handleChangeRemoveLike(postIdco.id)} className="clicklikeshowcomment">{getEnumEmo}</span>
                     ) : (
-                      <span onClick={() => handleChangeAddLike(postIdco.id,'👍')} className="click">👍</span>
+                      <span onClick={() => handleChangeAddLike(postIdco.id,'👍')} className="clicklikeshowcomment"><SlLike /></span>
                     )}
                       <div className="iconbinhluantest">Like</div>                    
                     </div>

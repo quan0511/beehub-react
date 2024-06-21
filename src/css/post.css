@@ -12,6 +12,16 @@
 .click{
     cursor: pointer;
 }
+.clicklike{
+    cursor: pointer;
+    position: relative;
+    bottom: 5px;
+    color: #8224e3;
+}
+.clicklikeshowcomment{
+    cursor: pointer;
+    color: #8224e3;
+}
 .toggleEmojiAll{
     background-color: whitesmoke;
     flex-direction: row;
