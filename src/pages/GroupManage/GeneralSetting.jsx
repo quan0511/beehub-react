@@ -60,7 +60,6 @@ export const GeneralSetting = ({user_id,group})=>{
                     withCredentials: true
                 },
             });
-            console.log(response.status==200);
             if(response.status==200){
                 dispatch(refresh());
                 setIsLoadingImg(false);
@@ -81,7 +80,6 @@ export const GeneralSetting = ({user_id,group})=>{
                     withCredentials: true
                 },
             });
-            console.log(response);
             if(response.status==200){
                 dispatch(refresh());
                 setIsLoadingBg(false);

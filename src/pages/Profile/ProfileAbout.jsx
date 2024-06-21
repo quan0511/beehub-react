@@ -13,9 +13,12 @@ function ProfileAbout({user,appUser}) {
     const dispatch = useDispatch();
     const [showDiv, setShowDiv ]=useState(true);
     const formatDate = (dateStr) => {
-        let [year, month, day] = dateStr.split('-');
-        let newDate = `${day}/${month}/${year}`;
-        return newDate;
+        if(dateStr!=null){
+            let [year, month, day] = dateStr.split('-');
+            let newDate = `${day}/${month}/${year}`;
+            return newDate;
+        }
+        return "";
       };
     useEffect(()=>{
         if(user!=null && user.user_settings.length>0){
