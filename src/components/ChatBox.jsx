@@ -9,7 +9,7 @@ import { useCreateMessageForGroupMutation, useCreateMessageForUserMutation, useG
 import { selectCurrentUser } from '../auth/authSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getAvatar } from '../utils/utils';
-import { RiContactsBookLine } from 'react-icons/ri';
+import { FiVideo } from 'react-icons/fi';
 
 function ChatBox() {
     const user = useSelector(selectCurrentUser)

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useSharePostMutation } from "../post/postApiSlice";
 import '../css/post.css';
 import {Link} from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { selectCurrentUser } from "../auth/authSlice";
 import APIService from '../features/APIService';
 import {Image} from "react-bootstrap";
 import { refresh,resetData,showMessageAlert } from "../features/userSlice";
-function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
+function ShareForm({setFromSharePost,formSharePost,post,handleShareClose,refetchCountShare }){
     const [share] = useSharePostMutation();
+    const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser);
     const [divClass, setDivClass] = useState({color: 'inherit', background: 'inherit'});
     const [selectedStyle, setSelectedStyle] = useState({ color: '', background: '' });
@@ -55,14 +56,16 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose }){
           background: updatedBackground,
           user:user?.id
       };
-      try {
-        await share(sharePost);
-        handleShareClose(post.id);
-        dispatch(showMessageAlert("Share post successfully"));
-        dispatch(resetData());
-      } catch (error) {
-        console.error(error)
-      }
+        try {
+          await share(sharePost);
+          handleShareClose(post.id);
+          refetchCountShare();
+          dispatch(showMessageAlert("Share post successfully"));
+          dispatch(resetData());
+          
+        } catch (error) {
+          console.error(error)
+        }
       };
       const formatcolor = (color) =>{
         if(color && color.length ===8){

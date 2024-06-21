@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import { FaXmark } from "react-icons/fa6";
 import { SlArrowLeft } from "react-icons/sl";
 import '../css/addPost.css';
+import { uniqueTerms } from '../utils/words';
 import { useGetUserFriendQuery, usePostMutation } from '../post/postApiSlice';
 import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +13,7 @@ import { selectCurrentUser } from '../auth/authSlice';
 import { Image } from 'react-bootstrap';
 import APIService from '../features/APIService';
 import { Modal } from 'react-bootstrap';
-const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
+const AddPost = ({handleCloseModal,group}) => {
     const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser)
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
@@ -69,16 +70,28 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
         setFormData({ ...formData, [event.target.name]: value });
       }
     };
+    const filterKeyWord =(text)=>{
+      
+    }
     const handleChangePost = (e) => {
       const value  = e.target.value;
       setFormData({ ...formData, [e.target.name]: value });
     };
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      setLoading(true);
+      e.preventDefault();   
       // Cập nhật giá trị của text trong formData dựa trên nội dung của div
       const inputElement = document.getElementById("myInput");
       const userInput = inputElement.textContent?.trim() || "";
+      const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+      const forbiddenWords = lowerforbiddenWords.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(userInput);
+      });
+      if(forbiddenWords){
+        alert("Your content contains vulgar and inappropriate language");
+        return;
+      }
+      setLoading(true);
       setFormData({ ...formData, 
         text: userInput, 
         color: selectedStyle.color,
@@ -262,19 +275,18 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
         return selectedName;
       }
   }
-    const handleFocus = (e) => {
-        if (e.target.textContent === "") {
-          e.target.setAttribute("data-text", "");
-        }
-      };
-    
-      const handleBlur = (e) => {
-        if (e.target.textContent === "") {
-          e.target.setAttribute("data-text", "What do you think ?");
-        }
-      };
-      const [loading, setLoading] = useState(false);
-      console.log('user',getUserFriend);
+  const handleFocus = (e) => {
+    if (e.target.textContent === "") {
+      e.target.setAttribute("data-text", "");
+    }
+  };
+
+  const handleBlur = (e) => {
+    if (e.target.textContent === "") {
+      e.target.setAttribute("data-text", "What do you think ?");
+    }
+  };
+  const [loading, setLoading] = useState(false);
   return (
     <div>
 
@@ -306,11 +318,16 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
               <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                 <a>
                   <div className="showuserli">
-                    <div className="showuserlianhcomment"> {user.gender=='female'?(
-                    <Link to={"/member/profile/"+user.username}>
-                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                    ):(
-                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    <div className="showuserlianhcomment"> 
+                    {user.image!=null?
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                          <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                      </Link> 
+                      : (
+                      user.gender=='female'?
+                        <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                        <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                     )}
                     </div>
                     <div className="showuserliname">
@@ -348,11 +365,16 @@ const AddPost = ({handleCloseModal,refetchHomePage,group}) => {
               <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                 <a>
                   <div className="showuserli">
-                    <div className="showuserlianhcomment"> {user.gender=='female'?(
-                    <Link to={"/member/profile/"+user.username}>
-                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                    ):(
-                      <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                    <div className="showuserlianhcomment"> 
+                    {user.image!=null?
+                      <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                          <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
+                      </Link> 
+                      : (
+                      user.gender=='female'?
+                        <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
+                        <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                        :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
                     )}
                     </div>
                     <div className="showuserliname">

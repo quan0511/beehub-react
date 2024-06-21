@@ -1,39 +1,41 @@
-import React, { useRef, useState } from "react";
-import { Button, Col, Form, Image, ListGroup, Overlay, Row } from "react-bootstrap";
+import React, {  useState } from "react";
+import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
-import { ChatLeft, Dot, GearFill, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
+import { ChatLeft, Dot, GearFill, GlobeAsiaAustralia,  LockFill,  PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
 import APIService from "../features/APIService";
 import { Link, json } from "react-router-dom";
 import '../css/post.css';
 import { MdReport,MdModeEdit } from "react-icons/md";
+import '../css/showcomment.css';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { selectCurrentToken, selectCurrentUser } from "../auth/authSlice";
-import { useAddLikePostMutation, useCheckLikeQuery, useCheckNoteSeenQuery, useCountCommentQuery, useCountLikeQuery, useCountReactionByPostQuery, useCountShareQuery, useDeleteLikeMutation, useDeletePostMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useGetNoteByUserQuery, useSharePostMutation, useUpdateLikePostMutation } from "../post/postApiSlice";
+import { useAddLikePostMutation, useCheckLikeQuery, useCommentQuery, useCountCommentQuery, useCountLikeQuery, useCountReactionByPostQuery, useCountShareQuery, useDeleteLikeMutation, useDeletePostMutation, useFetchPostQuery, useGetEnumEmoQuery, useGetLikeUserQuery, useGetUserFriendQuery, usePostCommentMutation, useSharePostMutation, useUpdateLikePostMutation } from "../post/postApiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ShowComment from "./ShowComment";
 import { Formik } from "formik";
-import * as Yup from 'yup';
 import { refresh,resetData,showMessageAlert } from "../features/userSlice";
 import ListLike from "./ListLike";
 import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
-import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
-import axios from "axios";
+import { useSettingPostMutation } from "../features/userApiSlice";
 import ModalReport from "./ModalReport";
-function Post ({post, page,refetchHomePage}){
+import Comment from "./Comment";
+import { IoMdSend } from "react-icons/io";
+import SharePostNote from "./SharePostNote";
+function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCheckSeenNote,calculateTimeDifference}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
   //const {data: post} = useFetchPostQuery({id:post.id})
   const token = useSelector(selectCurrentToken);
     const [addLike] = useAddLikePostMutation();
     const dispatch = useDispatch();
+    const [createComment] = usePostCommentMutation();
     const [deleteLike] = useDeleteLikeMutation();
     const [updateLike] = useUpdateLikePostMutation();
     const [deletePost] = useDeletePostMutation();
     const [sharePost] = useSharePostMutation();
-    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
-    const {data:checkSeenNote,refetch:refetchCheckSeenNote} = useCheckNoteSeenQuery({id:user?.id});
+    const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
+    const {data:getComment,refetch:refetchGetComment} = useCommentQuery({id:post.id})
     const {data: countShare,refetch:refetchCountShare} = useCountShareQuery({id:post.id}) 
     const {data:getPostById} = useFetchPostQuery({id:post.id});
     const {data:countComment,refetch:refetchCountComment} = useCountCommentQuery({id:post.id});
@@ -43,38 +45,19 @@ function Post ({post, page,refetchHomePage}){
     const { data: checkLike, refetch: refetchCheckLike } = useCheckLikeQuery({ userid: user?.id, postid: post.id });
     const { data: getEnumEmo, refetch: refetchGetEnumEmo } = useGetEnumEmoQuery({ userid: user?.id, postid: post.id });
     const total = (countReacitonByPost && countComment) ? countReacitonByPost + countComment : countComment;
-    const [createReport,{isLoading,isSuccess, isError}] = useCreateReportMutation();
     const [settingPost, {isLoading2, isSuccess2,isError2}] = useSettingPostMutation();
     const [movePostId,setMovePostId] = useState(null);
     const [showReport,setShowReport] = useState(false);
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
     const [showSettingPost, setShowSettingPost] = useState(false);
+    const [content, setContent] = useState(false);
     let reset = useSelector((state)=> state.user.reset);
     const handleCloseEditPost = (id) => {
       setShowEditPost((prevState) => ({
         ...prevState,
         [id]:false,
       }))
-    };
-    const calculateTimeDifference = (createdAt) => {
-      const createdDate = new Date(createdAt);
-      const currentDate = new Date();
-      const timeDifference = currentDate - createdDate; // Lấy thời gian chênh lệch tính bằng milliseconds
-      const secondsDifference = Math.floor(timeDifference / 1000);
-      const minutesDifference = Math.floor(secondsDifference / 60);
-      const hoursDifference = Math.floor(minutesDifference / 60);
-      const daysDifference = Math.floor(hoursDifference / 24);
-    
-      if (daysDifference > 0) {
-        return `${daysDifference} days ago`;
-      } else if (hoursDifference > 0) {
-        return `${hoursDifference} hours ago`;
-      } else if (minutesDifference > 0) {
-        return `${minutesDifference} minutes ago`;
-      } else {
-        return `${secondsDifference} seconds ago`;
-      }
     };
     const formatcolor = (color) =>{
       if(color && color.length ===8){
@@ -120,14 +103,180 @@ function Post ({post, page,refetchHomePage}){
       }));
       setCurrentPostId(null);
     };
-    const handleShow = (id) =>{
-      setShowPostModal((prev) => ({
-        ...prev,
-        [id]: true,
-      }));
-       setMovePostId(id);
-    };
+    const [formComment, setFormComment] = useState({
+        comment: "",
+        createdAt:"",
+        post: post.id,
+        user:user?.id,
+    })
+    const handleChangeComment = (e) =>{
+        const value = e.target.value;
+        setFormComment({...formComment,[e.target.name]: value})
+    }
+    const handleSubmitComment = async (e) => {
+        e.preventDefault();
+        const inputElement = document.getElementById("newMyInput") ;
+        const userInput = inputElement.textContent?.trim() || "";
+        setFormComment({...formComment, comment: userInput});
+        try {
+          await createComment(formComment)
+          setFormComment((prevState)=>({
+            ...prevState,
+            comment:"",
+          }))
+          inputElement.textContent = "";
+          refetchGetComment();
+          refetchCountComment();
+        } catch (error) {
+          console.error(error)
+        }
+      };
+    function handleInput(inputId, divId, formType) {
+      const inputElement = document.getElementById(divId);
+      const ulElement = document.getElementById(`${divId}-ul`) ;
+      let userInput = inputElement.textContent?.trim() || "";
+      userInput = userInput.replace(/\s+/g, ' ');
+      setContent(userInput.length > 0);
+      const caretPosition = getCaretPosition(inputElement);
+      const filteredText = getFilterText(userInput);
+      Array.from(ulElement.getElementsByTagName("li")).forEach(li => {
+        const a = li.getElementsByTagName("a")[0];
+        const txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().includes(filteredText.toUpperCase())) {
+          li.style.display = "";
+        } else {
+          li.style.display = "none";
+        }
+      });
+      ulElement.style.display = userInput.includes("@") ? "block" : "none";
+      const commentInputElement = document.getElementById(inputId) ;
+      const allContent = Array.from(inputElement.childNodes).map(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent?.trim() || "";
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
+          const span = node ;
+          if (span.classList.contains("selected")) {
+            const spanText = span.textContent?.trim() || "";
+            const link = span.getAttribute("data-link") || "";
+            return `tag=${spanText}&link=${link}`;
+          } else {
+            return span.textContent?.trim() || "";
+          }
+        }
+        return "";
+      }).join(" ");
     
+      if (formType === "comment") {
+        setFormComment({ ...formComment, comment: allContent.trim() });
+      } else if (formType === "reComment") {
+        setFormReComment({ ...formReComment, reaction: allContent.trim() });
+      }
+      commentInputElement.value = allContent.trim();
+      setCaretPosition(inputElement, caretPosition);
+    }
+    function getFilterText(inputValue) {
+      // Sử dụng biểu thức chính quy để trích xuất phần mong muốn
+      const regex = /^@(.+)|\s@(.+)/;
+      const match = inputValue.match(regex);
+      // Nếu có kết quả, trả về phần mong muốn, ngược lại trả về toàn bộ chuỗi
+      return match ? match[1] || match[2] || "" : inputValue;
+    }
+    function getCaretPosition(element) {
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0);
+      return range?.startOffset || 0;
+    }
+    function setCaretPosition(element, position) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+  
+      // Kiểm tra xem element có nút con hay không
+      if (element.childNodes.length === 0) {
+          // Tạo một nút văn bản mới nếu không có nút con nào tồn tại
+          const textNode = document.createTextNode("");
+          element.appendChild(textNode);
+      }
+      // Lấy nút con cuối cùng của element
+      const lastChild = element.childNodes[element.childNodes.length - 1];
+      // Kiểm tra xem lastChild có phải là nút văn bản không
+      if (lastChild.nodeType === Node.TEXT_NODE) {
+          // Đặt vị trí caret
+          const length = lastChild.length;
+          if (position > length) {
+              range.setStart(lastChild, length);
+          } else {
+              range.setStart(lastChild, position);
+          }
+          range.collapse(true);
+  
+          selection.removeAllRanges();
+          selection.addRange(range);
+      }
+  }  
+  function selectName(selectedName, inputId, divId) {
+    const currentInput = document.getElementById(divId);
+    let currentValue = currentInput.textContent?.trim() || "";
+    currentValue = currentValue.replace(/&nbsp;/g, '');
+    currentValue = currentValue.replace(/\s+/g, ' ');
+  
+    const newValue = getOverwrittenText(currentValue, selectedName);
+    const commentInputElement = document.getElementById(inputId);
+    if (!commentInputElement) {
+        console.error(`Element with id ${inputId} not found`);
+        return;
+    }
+    commentInputElement.value = newValue;
+    currentInput.innerHTML = ""; // Xóa nội dung hiện tại
+    newValue.split(" ").forEach((word, index, array) => {
+        if (word.trim() !== "") {
+            const span = document.createElement("span");
+            const wordWithSpaces = index === 0 ? `${word}` : word === "" ? "" : ` ${word}`;
+            span.textContent = wordWithSpaces;
+  
+            // Kiểm tra nếu từ đang xét có phải là một mục được chọn hay không
+            if (word.trim() === selectedName.trim() || word.trim().startsWith('user')) {
+                span.contentEditable = "false";
+                span.classList.add("selected");
+                const link = `${word.trim()}`;
+                span.setAttribute("data-link", link);
+            } else {
+                span.contentEditable = "true";
+            }
+            currentInput.appendChild(span);
+            if (index < array.length - 1) {
+                const space = document.createTextNode(" ");
+                currentInput.appendChild(space);
+            }
+        }
+    });
+    const event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+    });
+    currentInput.dispatchEvent(event);
+    (document.getElementById(`${divId}-ul`)).style.display = "none";
+  }
+  function isInList(word, divId) {
+    const ulElement = document.getElementById(`${divId}-ul`) ;
+    const listItems = ulElement.getElementsByTagName("li");
+    for (let i = 0; i < listItems.length; i++) {
+      const listItemText = listItems[i].textContent?.trim();
+      if (listItemText === word) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function getOverwrittenText(currentInput, selectedName) {
+    const regex = /^@(.+)|\s@(.+)/;
+    const match = currentInput.match(regex);
+    if (match) {
+      const prefix = match[1] || match[2] || "";
+      return currentInput.replace("@" + prefix, selectedName);
+    } else {
+      return selectedName;
+    }
+  }
     const getSettingType=()=>{
         switch(post.setting_type){
             case 'FOR_FRIEND':
@@ -148,7 +297,6 @@ function Post ({post, page,refetchHomePage}){
                 </span>
         }
     }
-
     const renderCommentWithLink = (comment) => {
       if (typeof comment === 'string') {
         const regex = /tag=(.*?)&link=(.*?)(?=\s+|$)/g;
@@ -172,16 +320,6 @@ function Post ({post, page,refetchHomePage}){
         return comment;
       }
     };
-    const getTimeOfPost = ()=>{
-        let datePost = new Date(post.create_at);
-        let diffDay = Math.round(Math.abs(new Date() - datePost)/ 86400000);
-        if(diffDay<1){
-            let diffHour =Math.round(Math.abs(new Date() - datePost)/ 3600000);
-            return <span  style={{fontSize: "12px"}}>{diffHour} hours ago</span>
-        }else{
-            return <span  style={{fontSize: "12px"}}>{datePost.toLocaleString("en-GB")}</span>
-        }  
-    }
     const [formSharePost,setFromSharePost] = useState({
       text:"",
       media:null,
@@ -273,7 +411,8 @@ function Post ({post, page,refetchHomePage}){
       }
   };
   const handleChangeRemoveLike = async (postId) => {
-      try {  
+      try {
+        console.log(user?.id, postId);   
         const response = await deleteLike({id: user?.id, postId}); // Giả sử ID người dùng là 1
         refetchGetLikeUser();
         refetchCountLike();
@@ -283,7 +422,18 @@ function Post ({post, page,refetchHomePage}){
         console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
       }
   };
-  
+  const handleFocus = (e) => {
+    const divContent = e.target.textContent.trim();
+    if (divContent === "" || divContent === e.target.getAttribute("data-text")) {
+      e.target.textContent = ""; 
+    }
+  };
+  const handleBlur = (e) => {
+    const divContent = e.target.textContent.trim();
+    if (divContent === "") {
+      e.target.textContent = e.target.getAttribute("data-text"); 
+    }
+  };
   const isLiked = () => {
       return checkLike === true; // Check if the post is liked by the user
   };
@@ -321,7 +471,7 @@ function Post ({post, page,refetchHomePage}){
                     <Col xl={9} lg={9} md={9} sm={9} xs={8} className="d-flex flex-column ms-2">
                         <Link to={"/member/profile/"+post.user_username} className="h5 text-black text-capitalize text-start mb-1 " style={{textDecoration:"none"}}>{post.user_fullname}</Link>
                         <p className="text-start" style={{fontSize: "12px"}}>
-                            {getSettingType()} &emsp;<Dot/> {calculateTimeDifference(post.create_at)}</p>
+                            {getSettingType()} &emsp;<Dot/>{calculateTimeDifference(post.create_at)} </p>
                     </Col>
                 }
                 <Col xl={1} className="text-end mt-2" onClick={() =>{
@@ -332,7 +482,7 @@ function Post ({post, page,refetchHomePage}){
                 </Col>
                 {togglePost[post.id] && (
                    <div >
-                   {post.user_id === user?.id && post.group_id==null?(
+                   {post.user === user?.id && post.group==null?(
                      <div className="togglePost">
                       <div className="selectedfunction" onClick={() =>handleShowEditPost(post.id)}>
                         <div><MdModeEdit className="iconefunctionpost" /></div>
@@ -368,6 +518,10 @@ function Post ({post, page,refetchHomePage}){
                         </div>
                          :<></>
                        }
+                       <div className="selectedfunction" >
+                         <div><RiDeleteBin6Line className="iconefunctionpost"/></div>
+                         <div className="fonttextfunctionpost">chưa biết</div>
+                       </div>
                      </div>
                    )}
                  </div>
@@ -387,7 +541,7 @@ function Post ({post, page,refetchHomePage}){
                   </div>
                 </Modal>
                 {post.share === true ?(
-                  <SharePost calculateTimeDifference={calculateTimeDifference} getSettingType={getSettingType} post={post}/>
+                  <SharePostNote getSettingType={getSettingType} calculateTimeDifference={calculateTimeDifference} post={post}/>
                 ):(
                   <Col xl={12} className="text-start">
                 {(post.color && post.color !== "inherit" && post.background && post.background !== "inherit" && post.background && post.background !== "ffffffff") ?(
@@ -407,12 +561,11 @@ function Post ({post, page,refetchHomePage}){
                   ):(
                     <p className="h6 mx-5 mb-3 text-dark postText">{renderCommentWithLink(post.text)}</p>
                   )}
-                    
                     <div className="mb-2 img-media">
                       {post.share === true ?(
                         <div>
-                          { post.medias!=null?
-                            <Image src={post.medias} className="img-style" fluid />
+                          { post.mediaUrl!=null?
+                            <Image src={post.mediaUrl} className="img-style" fluid />
                             : (post.group_media !=null ?
                                 <Image src={post.group_media.media} className="img-style" fluid />
                                 :<></>)
@@ -420,8 +573,8 @@ function Post ({post, page,refetchHomePage}){
                         </div>
                       ):(
                         <div>
-                          { post.media!=null?
-                            <Image src={post.media.media} className="img-style" fluid />
+                          { post.mediaUrl!=null?
+                            <Image src={post.mediaUrl} className="img-style" fluid />
                             : (post.group_media !=null ?
                                 <Image src={post.group_media.media} className="img-style" fluid />
                                 :<></>)
@@ -481,7 +634,7 @@ function Post ({post, page,refetchHomePage}){
                         )}           
                         <p className="h6 mx-2 text-black-50">Like</p>
                     </div>
-                    <div className="col-4 d-flex justify-content-center click" onClick={() => handleShow(post.id)}>
+                    <div className="col-4 d-flex justify-content-center click">
                         <ChatLeft size={22} fill='#8224E3'/>
                         <p className="h6 mx-2 text-black-50" >Comment</p>
                     </div>
@@ -497,15 +650,6 @@ function Post ({post, page,refetchHomePage}){
                       <Modal.Body>
                       <ShareForm post={post} handleShareClose={handleShareClose} setFromSharePost={setFromSharePost} formSharePost={formSharePost} show={showShareModal} refetchCountShare={refetchCountShare} handleClose={handleShareClose} />
                       </Modal.Body>
-                    </Modal>
-                    <Modal className="modalShowComment"  show={showPostModal[post.id]} onHide={() =>
-                      setShowPostModal((prev) => ({
-                          ...prev,
-                          [post.id]: false,
-                        }))
-                      } animation={false}>
-                      <ShowComment postIdco={post} refetchGetLikeUser={refetchGetLikeUser} refetchCountComment={refetchCountComment} getEnumEmo={getEnumEmo} checkLike={checkLike} setFromSharePost={setFromSharePost} formSharePost={formSharePost} getPostById={getPostById}
-                      countLike={countLike} refetchGetEnumEmo={refetchGetEnumEmo} refetchCheckLike={refetchCheckLike} refetchCountLike={refetchCountLike} refectGetNoteByUser={refectGetNoteByUser} refetchCheckSeenNote={refetchCheckSeenNote} getLikeUser={getLikeUser}/>
                     </Modal>
                     <ModalReport showReport={showReport} setShowReport={setShowReport} postTarget={post} />
                     <Modal show={showSettingPost} onHide={()=> setShowSettingPost(false)}>
@@ -550,8 +694,47 @@ function Post ({post, page,refetchHomePage}){
                       )}</Formik>
                     </Modal>
                 </Col>
+                <hr className="mx-auto"style={{ width:"90%"}} />
+                <div className="commentNote">
+                    {getComment?.map((comment,index) => (
+                        <Comment key={index} refetchGetComment={refetchGetComment} refetchCountComment={refetchCountComment} comment={comment} postIdco={post}/>
+                    ))}
+                </div>
+                <div className="inputcommentNote">         
+                    <form onSubmit={handleSubmitComment}>
+                      <input type="hidden" name="comment" value={formComment.comment} onChange={(e) => handleChangeComment(e)} id="newCommentInput" />
+                      <div>
+                      <div className="divcomment" id="newMyInput" contentEditable="true" onInput={() => handleInput('newCommentInput', 'newMyInput','comment')}data-text="Input Comment" onFocus={handleFocus} onBlur={handleBlur}></div>
+                      </div>
+                      <input type="hidden" name="post" value={formComment.post} onChange={(e) => handleChangeComment(e)}/>
+                      <input type="hidden" name="createdAt" value={formComment.createdAt} onChange={(e) => handleChangeComment(e)} />
+                      <button type="submit" className={`commentpostNote${!content ? 'disable' : ''}`} disabled={!content} value="Comment"><IoMdSend className="iconcomment"/></button>
+                    </form>
+                    <ul id="newMyInput-ul" className="myul" >
+                      {getUserFriend?.map((user) => (
+                        <div>
+                        <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
+                          <a>
+                            <div className="showuserli">
+                              <div className="showuserlianhcomment"> {user.gender=='female'?(
+                              <Link to={"/member/profile/"+user.username}>
+                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              ):(
+                                <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                              )}
+                              </div>
+                              <div className="showuserliname">
+                                {user.fullname}
+                              </div>
+                            </div>
+                            </a>
+                          </li>
+                        </div>
+                      ))}
+                    </ul>
+                  </div>
             </Row>
         </div>
     );
 }
-export default Post;
+export default ShowPostNote;

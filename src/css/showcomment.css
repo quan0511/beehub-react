@@ -165,8 +165,6 @@
     height: 55px;
 }
 .model-showbinhluananhdaidien{
-    border-radius: 50%;
-    background-color: lab(91 -0.71 -0.32);
     width: 43px;
     height: 43px;
     position: relative;
@@ -242,6 +240,32 @@
     height: 25px;
     border: 0px;
     /* margin-top: 5px; */
+    margin-left: 45px;
+    font-size: 13px;
+}
+.commentRecommentmodaldisable{
+    background-color: #b5a9a9;
+    color: white;
+    border-radius: 12px;
+    position: relative;
+    width: 80px;
+    height: 25px;
+    border: 0px;
+    cursor: not-allowed;
+    /* margin-top: 5px; */
+    margin-left: 45px;
+    font-size: 13px;
+}
+.commentRecommentdisable{
+    background-color: #b5a9a9;
+    color: white;
+    cursor: not-allowed !important;
+    border-radius: 12px;
+    position: relative;
+    width: 80px;
+    height: 25px;
+    border: 0px;
+    margin-top: 5px;
     margin-left: 45px;
     font-size: 13px;
 }
@@ -387,6 +411,19 @@
     font-size: 12px;
     margin-top: 7px;
 }
+.commentEditRecommentdisable{
+    background-color: #b5a9a9;
+    color: white;
+    border-radius: 12px;
+    cursor: not-allowed;
+    position: relative;
+    width: 75px;
+    height: 20px;
+    border: 0px;
+    margin-left: 45px;
+    font-size: 12px;
+    margin-top: 7px;
+}
 .cancelEditReComment{
     background-color: red;
     color: white;
@@ -474,7 +511,7 @@
     color: #b5a9a9;
     border-radius: 5px;
     position: relative;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
     height: 25px;
     border: 0px;
     left: 585px;
