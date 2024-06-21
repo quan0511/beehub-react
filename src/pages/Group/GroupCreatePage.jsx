@@ -113,7 +113,7 @@ export const GroupCreatePage =()=>{
                                 </div>
                             </div>
                             <Form.Group className="mb-3" controlId="groupnname">
-                                <Form.Label>Group Name</Form.Label>
+                                <Form.Label>Group Name <span className="text-danger">*</span></Form.Label>
                                 <Form.Control  name="groupname" 
                                         value={values.groupname} 
                                         onChange={handleChange} 
