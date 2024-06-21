@@ -33,6 +33,9 @@ function RegisterPage() {
         } else if (6 > values.username.length || values.username.length > 20) {
             errors.username = 'Username should be from 6 to 20 characters'
             errField.push('username')
+        } else if (/\s/i.test(values.username)) {
+            errors.username = "Username cannot have space"
+            errField.push('username')
         }
         if (!values.email) {
             errors.email = 'Email is required'
