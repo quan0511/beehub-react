@@ -30,8 +30,16 @@ function LoginRegisterLayout({children}) {
 
                     <div className='col-12 col-md-6 background-primary text-white p-5'>
                         <div className='mb-4 text-center'>
-                            <h3 className='fw-bold'>Join the club</h3>
-                            <p className=''>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus.</p>
+                            <h3 className='fw-bold'>Join Now</h3>
+                            <p className=''>Join Beehub and explore people with same interests.</p>
+                        </div>
+
+                        <div className='text-center'>
+                            <div className="icon-wrapper">
+                                <FaBriefcase />
+                            </div>
+                            <h4 className='fw-bold'>Build your own profile</h4>
+                            <p>Impress others with your own profile.</p>
                         </div>
 
                         <div className='text-center'>
@@ -39,7 +47,7 @@ function LoginRegisterLayout({children}) {
                                 <FaLaptop />
                             </div>
                             <h4 className='fw-bold'>Community</h4>
-                            <p>At vero eos et accusamus et.</p>
+                            <p>Sharing life journey through posts and messages.</p>
                         </div>
 
                         <div className='text-center'>
@@ -47,15 +55,7 @@ function LoginRegisterLayout({children}) {
                                 <FaShoppingBasket />
                             </div>
                             <h4 className='fw-bold'>Online shop</h4>
-                            <p>At vero eos et accusamus et.</p>
-                        </div>
-
-                        <div className='text-center'>
-                            <div className="icon-wrapper">
-                                <FaBriefcase />
-                            </div>
-                            <h4 className='fw-bold'>Job search</h4>
-                            <p>At vero eos et accusamus et.</p>
+                            <p>Purchase you own item right in the platform.</p>
                         </div>
                     </div>
 
