@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Yup from 'yup';
 import dateFormat from "dateformat";
-import { Button, ButtonGroup } from "react-bootstrap";
+import { Badge, Button, ButtonGroup } from "react-bootstrap";
 import { Field, Form, Formik } from "formik";
 import {
     useAdminCreateUserMutation,
@@ -19,6 +19,8 @@ import GetStatus from "../../utils/GetStatus";
 import GetGender from "../../utils/GetGender";
 import GetMultipleReportType from "../../utils/GetMultipleReportType";
 import UpdateRole from "../components/actions/UpdateRole";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../auth/authSlice";
 
 const userHeader = [
     { style: { width: 10 }, content: 'id' },
@@ -44,6 +46,7 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
 });
 
 function Users() {
+    const user = useSelector(selectCurrentUser);
     const { data: users, isLoading } = useAdminUsersQuery()
     const [createUser, { error, isLoading: isCreateLoading }] = useAdminCreateUserMutation()
 
@@ -146,7 +149,7 @@ function Users() {
                                     <GetMultipleReportType reports={u.reportTitleList} />
                                 </td>
                                 <td>
-                                    <UpdateRole id={u.id} role={u.role}/>
+                                    {u.id == user.id ? <Badge bg="primary">Admin</Badge> : <UpdateRole id={u.id} role={u.role}/>} 
                                 </td>
                                 <td>{<GetStatus status={u.status} />}</td>
                                 <td>

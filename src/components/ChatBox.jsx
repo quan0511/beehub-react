@@ -9,7 +9,7 @@ import { useCreateMessageForGroupMutation, useCreateMessageForUserMutation, useG
 import { selectCurrentUser } from '../auth/authSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getAvatar } from '../utils/utils';
-import { RiContactsBookLine } from 'react-icons/ri';
+import { selectWs } from '../messages/websocketSlice';
 
 function ChatBox() {
     const user = useSelector(selectCurrentUser)
@@ -27,40 +27,21 @@ function ChatBox() {
     const [messages, setMessages] = useState()
     const [chatInput, setChatInput] = useState('')
 
-    const [webSocketReady, setWebSocketReady] = useState(false);
-    const [webSocket, setWebSocket] = useState()
+    const webSocket = useSelector(selectWs)
 
     useEffect(() => {
-        if (!webSocket) return
-        webSocket.onopen = (event) => {
-            webSocket.send(JSON.stringify({ type: 'PROFILE', data: user.email }))
-            setWebSocketReady(true)
-        }
-
+        if (!webSocket || !chat.id) return
         webSocket.onmessage = handleSocketMessage
-
-        webSocket.onclose = function (event) {
-            setWebSocketReady(false)
-        }
-
-        webSocket.onerror = function (err) {
-            console.log('Socket encountered error: ', err.message, 'Closing socket')
-            setWebSocketReady(false);
-            webSocket.close()
-        }
-
-        return () => {
-            webSocket.close()
-        }
-    }, [webSocket])
+    }, [webSocket, chat])
 
     const handleSocketMessage = (event) => {
         const socketMessage = JSON.parse(event.data)
         switch (socketMessage.type) {
             case 'RECEIVE_USER_MESSAGE':
                 let userMessage = JSON.parse(socketMessage.data)
-                if (messages != null && messages instanceof Array && userMessage.creatorId === chat.id && !chat.isGroup) {
+                if (userMessage.creatorId === chat.id && !chat.isGroup) {
                     setMessages(prevMsgs => [...prevMsgs, userMessage])
+                    console.log('set message', userMessage)
                 }
                 break;
             case 'RECEIVE_GROUP_MESSAGE':
@@ -76,7 +57,6 @@ function ChatBox() {
 
     useEffect(() => {
         if (!chat.id) return
-        if (!messages || !webSocket) setWebSocket(new WebSocket('ws://localhost:8080/ws'))
         if (!chat.isGroup) {
             setMessages(userMessages)
         } else if (chat.isGroup) {
@@ -92,7 +72,6 @@ function ChatBox() {
 
     const handleClose = () => {
         dispatch(closeChat())
-        setWebSocket(null)
     }
 
     const submit = async (e) => {

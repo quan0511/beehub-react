@@ -2,6 +2,9 @@ import { Button, Image, Modal } from "react-bootstrap";
 import BeehubModal from "../../../components/BeehubModal";
 import { useAdminGroupQuery } from "../../adminApiSlice";
 import DeleteButton from "../actions/DeleteButton";
+import GetStatus from "../../../utils/GetStatus";
+import GetMultipleReportType from "../../../utils/GetMultipleReportType";
+import { getAvatar } from "../../../utils/utils";
 
 function GroupModal({ open, onClose, groupId }) {
     const { data: group, isLoading } = useAdminGroupQuery(groupId, { skip: groupId == '' })
@@ -16,15 +19,17 @@ function GroupModal({ open, onClose, groupId }) {
             <Modal.Body>
                 <div className="d-flex gap-2 mb-2">
                     <div className="avatar">
-                        <Image src={group.image_group || "http://localhost:8080/api/files/group_image.png"} alt="avatar" thumbnail />
+                        <Image src={getAvatar(group.avatar)} alt="avatar" thumbnail />
                     </div>
                     <div className="info">
                         <ul>
-                            <li>{group.name}</li>
-                            <li>{group.public_group ? "Public" : "Private"}</li>
-                            <li>{group.noOfMembers} members</li>
-                            <li>{group.post_count} posts</li>
-                            <li><small>{group.active ? 'active' : 'banned'}</small></li>
+                            <li>Group name: {group.name}</li>
+                            <li>Creator: {group.creatorUsername}</li>
+                            <li>Visibility: {group.public_group ? "Public" : "Private"}</li>
+                            <li>Members: {group.noOfMembers} members</li>
+                            <li>Posts: {group.noOfPosts}</li>
+                            <li>Status: <GetStatus status={group.active ? 'active' : 'banned'}/></li>
+                            <li>Reports: <GetMultipleReportType reports={group.reportTitleList}/></li>
                         </ul>
                     </div>
                 </div>
@@ -39,7 +44,7 @@ function GroupModal({ open, onClose, groupId }) {
                 <DeleteButton
                     caseId={group.id}
                     caseType={"group"}
-                    confirmContent={'Do you sure delete this group?'}
+                    confirmContent={'Are you sure you want to delete this group?'}
                 />
                 <Button onClick={onClose}>Close</Button>
             </Modal.Footer>
