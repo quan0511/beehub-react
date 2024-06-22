@@ -101,7 +101,6 @@ function NavigatorBar() {
           return `${secondsDifference} seconds ago`;
         }
       };
-      console.log('check seen: ',checkSeenNote)
     const tooltipAddFriend = isLoading ?
         (
             <Tooltip id="tooltip-loading" >
