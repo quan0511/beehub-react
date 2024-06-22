@@ -9,7 +9,10 @@ const websocketSlice = createSlice({
         setWs: (state, action) => {
             state.ws = action.payload
         },
-        endWs: (state, action) => { state.ws = null }
+        endWs: (state, action) => {
+            state.ws.close()
+            state.ws = null 
+        }
     }
 })
 
