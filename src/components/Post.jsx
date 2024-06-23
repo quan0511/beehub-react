@@ -22,8 +22,10 @@ import SharePost from "./SharePost";
 import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
 import axios from "axios";
 import ModalReport from "./ModalReport";
+import { selectWs } from "../messages/websocketSlice";
 function Post ({post, page,refetchHomePage}){
   const user = useSelector(selectCurrentUser);
+  const ws = useSelector(selectWs);
   const [showPostModal, setShowPostModal] = useState({});
   //const {data: post} = useFetchPostQuery({id:post.id})
   const token = useSelector(selectCurrentToken);
@@ -34,7 +36,7 @@ function Post ({post, page,refetchHomePage}){
     const [deletePost] = useDeletePostMutation();
     const [sharePost] = useSharePostMutation();
     const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
-    const {data:checkSeenNote,refetch:refetchCheckSeenNote} = useCheckNoteSeenQuery({id:user?.id});
+    const {data:checkSeenNote,refetch:refetchCheckSeenNote} = useCheckNoteSeenQuery({userId:user?.id}, {skip: !user?.id});
     const {data: countShare,refetch:refetchCountShare} = useCountShareQuery({id:post.id}) 
     const {data:getPostById} = useFetchPostQuery({id:post.id});
     const {data:countComment,refetch:refetchCountComment} = useCountCommentQuery({id:post.id});
@@ -246,7 +248,7 @@ function Post ({post, page,refetchHomePage}){
         user: user?.id,
         post: postId,
         enumEmo: enumEmo,
-      });
+      }).unwrap();
       refetchGetLikeUser();
       refetchCountLike();
       refetchCheckLike();
@@ -254,6 +256,10 @@ function Post ({post, page,refetchHomePage}){
       refectGetNoteByUser();
       refetchCheckSeenNote();
       console.log(response);
+      ws.send(JSON.stringify({
+        type: 'SEND_NOTI',
+        data: JSON.stringify(response)
+      }))
     } catch (error) {
       console.error('Error occurred while liking:', error);
     }

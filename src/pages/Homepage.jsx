@@ -19,6 +19,7 @@ function Homepage() {
     const location = useLocation();
     const preLocation = useSelector((state)=>state.user.preLocation);
     const resetHome = useSelector((state)=>state.user.resetHomepage);
+    // console.log('asd', page)
     const {data:posts, isLoading,isFetching,refetch:refetchHomePage} = useHomepageQuery({id: user.id, page: page, reset:reset,resetHome: resetHome});
     const [showInputModal, setShowInputModal] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);

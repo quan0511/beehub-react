@@ -712,15 +712,14 @@ function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCh
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
-                        <div>
+                        <div key={user.id}>
                         <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                           <a>
                             <div className="showuserli">
                               <div className="showuserlianhcomment"> {user.gender=='female'?(
-                              <Link to={"/member/profile/"+user.username}>
-                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                               ):(
-                                <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                  <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                               )}
                               </div>
                               <div className="showuserliname">

@@ -14,9 +14,8 @@ function PostNote() {
     const user = useSelector(selectCurrentUser);
     const reset = useSelector((state) => state.user.reset);
     const resetHome = useSelector((state) => state.user.resetHomepage);
-    const { data: getNoteByUser, refetch: refectGetNoteByUser } = useGetNoteByUserQuery({ id: user?.id });
-    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ id: user?.id });
-    const { data: posts, isLoading, isFetching, refetch: refetchHomePage } = useHomepageQuery({ id: user.id, reset: reset, resetHome: resetHome });
+    const { data: getNoteByUser, refetch: refectGetNoteByUser } = useGetNoteByUserQuery({ id: user?.id }, {skip: !user?.id});
+    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id }, {skip: !user?.id});
     
     const { postid } = useParams();
     const postIdNumber = Number(postid);
@@ -41,10 +40,6 @@ function PostNote() {
           return `${secondsDifference} seconds ago`;
         }
     };
-
-    console.log('id post:', postIdNumber);
-    console.log('getPostById:', getPostById);
-
     React.useEffect(() => {
         if (!getPostById) {
             refetchPost();

@@ -17,6 +17,7 @@ import '../css/navigatorBar.css';
 import dateFormat from "dateformat";
 import { BiMinus } from "react-icons/bi";
 import { useChangeSeenNoteMutation, useCheckNoteSeenQuery, useGetNoteByUserQuery } from "../post/postApiSlice";
+import { selectWs } from "../messages/websocketSlice";
 
 function NavigatorBar() {
     const user = useSelector(selectCurrentUser);
@@ -25,8 +26,8 @@ function NavigatorBar() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [changeSeen] = useChangeSeenNoteMutation();
-    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
-    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id });
+    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id}, {skip: !user?.id});
+    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id }, {skip: !user?.id});
     const [show, setShow] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
@@ -36,6 +37,29 @@ function NavigatorBar() {
     const [newFriendNotification, setNewFriendNotification] = useState([]);
     const [joinedGroupNotification, setJoinedGroupNotification] = useState([]);
     const [toggleNote,setToggleNote] = useState(false);
+    const ws = useSelector(selectWs);
+    const [userNotes, setUserNotes] = useState([])
+
+    useEffect(() => {
+        if (getNoteByUser) {
+            setUserNotes(getNoteByUser)
+        }
+    }, [getNoteByUser, userNotes])
+
+    useEffect(() => {
+        if (!ws) return;
+
+        ws.onmessage = (event) => {
+            const socketMessage = JSON.parse(event.data);
+            if (socketMessage.type === 'RECEIVE_NOTI') {
+                let noti = JSON.parse(socketMessage.data)
+                setUserNotes(prevNotes => [...prevNotes, noti])
+                // dispatch(addNotification(message.notification));
+                refectGetNoteByUser();
+                refetchCheckSeenNote ();
+            }
+        };
+    }, [ws]);
     const handleToggleNote = () =>{
         setToggleNote(!toggleNote);
     }
@@ -287,7 +311,7 @@ function NavigatorBar() {
                             <div className="toggleNotification">           
                                 <div>
                                 <div className="toggleNotification-header">Notification</div>
-                                {getNoteByUser?.map((note) =>(
+                                {userNotes?.map((note) =>(
                                 <div key={note.id}>
                                 {note.length === 0 ? (
                                 <div className="toggleNotification-noNote">
