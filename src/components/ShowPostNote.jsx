@@ -22,6 +22,7 @@ import ModalReport from "./ModalReport";
 import Comment from "./Comment";
 import { IoMdSend } from "react-icons/io";
 import SharePostNote from "./SharePostNote";
+import { SlLike } from "react-icons/sl";
 function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCheckSeenNote,calculateTimeDifference}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
@@ -630,7 +631,7 @@ function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCh
                         {checkLike ? (             
                         <span onClick={() => handleChangeRemoveLike(post.id)} className="click">{getEnumEmo}</span>
                         ) : (
-                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click">👍</span>
+                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click"><SlLike /></span>
                         )}           
                         <p className="h6 mx-2 text-black-50">Like</p>
                     </div>

@@ -12,7 +12,7 @@ import { selectCurrentUser } from '../auth/authSlice';
 import { SlArrowLeft } from 'react-icons/sl';
 import { Modal } from 'react-bootstrap';
 import { uniqueTerms } from '../utils/words';
-function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost}){
+function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleCloseEditPost,notifyPost,refetchGetPostById}){
     const dispatch = useDispatch();
     const [viewFoundBackground, setViewFoundBackground] = useState(false);
     const [editPost] = useUpdatePostMutation();
@@ -76,54 +76,62 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
         return comment;
       }
     };
-      const handleSubmitEditPost = async (e) => {
-        e.preventDefault(); 
-        const inputElement = document.getElementById("myInput");
-        const parsedContent = Array.from(inputElement.childNodes).map((node) => {
+    const handleSubmitEditPost = async (e) => {
+      e.preventDefault();
+      const inputElement = document.getElementById("myInput");
+      const parsedContent = Array.from(inputElement.childNodes).map((node) => {
           if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent?.trim() || "";
+              return node.textContent?.trim() || "";
           } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "SPAN") {
-            const span = node;
-            if (span.classList.contains("selected")) {
-              const spanText = span.textContent?.trim() || "";
-              const link = span.getAttribute("data-link") || "";
-              return `tag=${spanText}&link=${link}`;
-            } else {
-              return span.textContent?.trim() || "";
-            }
+              const span = node;
+              if (span.classList.contains("selected")) {
+                  const spanText = span.textContent?.trim() || "";
+                  const link = span.getAttribute("data-link") || "";
+                  return `tag=${spanText}&link=${link}`;
+              } else {
+                  return span.textContent?.trim() || "";
+              }
+          } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "A") {
+              const anchor = node;
+              const href = anchor.getAttribute("href") || "";
+              const parts = href.split("/");
+              const lastPart = parts[parts.length - 1];
+              return `tag=${lastPart}&link=${lastPart}`;
           }
           return "";
-        }).join(" ");
-      const lowerforbiddenWords = uniqueTerms.map(term=>term.toLowerCase());
+      }).join(" ");
+      
+      const lowerforbiddenWords = uniqueTerms.map(term => term.toLowerCase());
       const forbiddenWords = lowerforbiddenWords.some(term => {
-        const regex = new RegExp(`\\b${term}\\b`, 'i');
-        return regex.test(parsedContent);
+          const regex = new RegExp(`\\b${term}\\b`, 'i');
+          return regex.test(parsedContent);
       });
-      if(forbiddenWords){
-        alert("Your content contains vulgar and inappropriate language");
-        return;
+      if (forbiddenWords) {
+          notifyPost();
+          return;
       }
       setLoading(true);
-        const prevColor = formUpdatePost.color;
-        const prevBackground = formUpdatePost.background;
-        const updatedColor = selectedStyle.color || prevColor;
-        const updatedBackground = selectedStyle.background || prevBackground;
-        const updatedPost = {
+      const prevColor = formUpdatePost.color;
+      const prevBackground = formUpdatePost.background;
+      const updatedColor = selectedStyle.color || prevColor;
+      const updatedBackground = selectedStyle.background || prevBackground;
+      const updatedPost = {
           ...formUpdatePost,
           text: parsedContent.trim(),
           color: updatedColor,
           background: updatedBackground,
-        };
-        try {
+      };
+      try {
           await editPost(updatedPost);
           handleCloseEditPost(post.id);
+          refetchGetPostById();
           dispatch(showMessageAlert("Edit post successfully"));
           dispatch(resetData());
           console.log('resetData dispatched');
-        } catch (error) {
+      } catch (error) {
           console.error(error);
-        }
-      };
+      }
+    };
       const handleInput = (inputId, divId, formType) => {
         const inputElement = document.getElementById(divId);
         const ulElement = document.getElementById(`${divId}-ul`);

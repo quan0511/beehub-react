@@ -13,7 +13,7 @@ import { selectCurrentUser } from '../auth/authSlice';
 import { Image } from 'react-bootstrap';
 import APIService from '../features/APIService';
 import { Modal } from 'react-bootstrap';
-const AddPost = ({handleCloseModal,group}) => {
+const AddPost = ({handleCloseModal,group,notifyPost}) => {
     const dispatch = useDispatch();
     const user = useSelector(selectCurrentUser)
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
@@ -89,7 +89,7 @@ const AddPost = ({handleCloseModal,group}) => {
         return regex.test(userInput);
       });
       if(forbiddenWords){
-        alert("Your content contains vulgar and inappropriate language");
+        notifyPost();
         return;
       }
       setLoading(true);

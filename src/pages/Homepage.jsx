@@ -11,6 +11,8 @@ import Modal from 'react-bootstrap/Modal';
 import '../css/addPost.css';
 import { cancelReset, cancelResetHomepage, refresh, resetData, setPreLocation, startResetHomepage } from '../features/userSlice';
 import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function Homepage() {
     const [page, setPage] = useState(0);
     const user = useSelector(selectCurrentUser);
@@ -59,6 +61,8 @@ function Homepage() {
           document.removeEventListener("scroll", onScroll);
         };
       }, [page,isFetching]);
+      const notifyPost = () => toast.error("Your content contains vulgar and inappropriate language!");
+      const notify = () => toast.error("Your comment contains vulgar and inappropriate language!");
     return (
         <Container fluid className='ps-4' style={{marginTop: "50px",marginBottom: "10px"}}>
             <Row>
@@ -92,16 +96,17 @@ function Homepage() {
                             </Modal.Title>
                             </Modal.Header>
                             <Modal.Body >
-                            <AddPost handleCloseModal={handleCloseInputModal} refetchHomePage={refetchHomePage}/>
+                            <AddPost notifyPost={notifyPost} handleCloseModal={handleCloseInputModal} refetchHomePage={refetchHomePage}/>
                             </Modal.Body>
                             </div>
                         </div>
                     </Modal>
+                    <ToastContainer />
                     {isLoading && posts==null?
                        <></>
                         :
                         posts?.map((post, index)=>{
-                            return <Post key={index} post={post} refetchHomePage={refetchHomePage} page="activity" />;
+                            return <Post key={index} post={post} notifyPost={notifyPost} notify={notify} refetchHomePage={refetchHomePage} page="activity" />;
                         })    
                     }
                     {

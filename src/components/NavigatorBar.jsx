@@ -37,29 +37,7 @@ function NavigatorBar() {
     const [newFriendNotification, setNewFriendNotification] = useState([]);
     const [joinedGroupNotification, setJoinedGroupNotification] = useState([]);
     const [toggleNote,setToggleNote] = useState(false);
-    const ws = useSelector(selectWs);
-    const [userNotes, setUserNotes] = useState([])
-
-    useEffect(() => {
-        if (getNoteByUser) {
-            setUserNotes(getNoteByUser)
-        }
-    }, [getNoteByUser, userNotes])
-
-    useEffect(() => {
-        if (!ws) return;
-
-        ws.onmessage = (event) => {
-            const socketMessage = JSON.parse(event.data);
-            if (socketMessage.type === 'RECEIVE_NOTI') {
-                let noti = JSON.parse(socketMessage.data)
-                setUserNotes(prevNotes => [...prevNotes, noti])
-                // dispatch(addNotification(message.notification));
-                refectGetNoteByUser();
-                refetchCheckSeenNote ();
-            }
-        };
-    }, [ws]);
+    
     const handleToggleNote = () =>{
         setToggleNote(!toggleNote);
     }
@@ -311,7 +289,7 @@ function NavigatorBar() {
                             <div className="toggleNotification">           
                                 <div>
                                 <div className="toggleNotification-header">Notification</div>
-                                {userNotes?.map((note) =>(
+                                {getNoteByUser?.map((note) =>(
                                 <div key={note.id}>
                                 {note.length === 0 ? (
                                 <div className="toggleNotification-noNote">
@@ -323,7 +301,7 @@ function NavigatorBar() {
                                             <div className="link-as-div" onClick={async () => {
                                                 await handleChangeSeenNote(note.id);
                                                 navigate(`/postnote/${note.post}`);
-  
+                                                window.location.reload();
                                             }}>
                                                 <div className="toggleNotification-avatarAndnoteTrue">
                                                     <div>
