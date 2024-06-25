@@ -3,6 +3,7 @@ import BeehubModal from "../../../components/BeehubModal";
 import { useAdminPostQuery } from "../../adminApiSlice";
 import dateFormat from "dateformat";
 import BlockButton from "../actions/BlockButton";
+import { getAvatar } from "../../../utils/utils";
 
 function PostModal({ open, onClose, postId }) {
     const { data: post, isLoading } = useAdminPostQuery(postId, { skip: postId == "" })
@@ -16,7 +17,7 @@ function PostModal({ open, onClose, postId }) {
             </Modal.Header>
             <Modal.Body>
                 {post.creatorImage &&
-                    <Image className="me-2 float-start" src={post.creatorImage} alt="creator" roundedCircle width={40} />
+                    <Image className="me-2 float-start" src={getAvatar(post.creatorImage)} alt="creator" roundedCircle width={40} />
                 }
                 <Badge className="float-end" bg={post.isBlocked ? "danger" : "success"}>{post.isBlocked ? "blocked" : "active"}</Badge>
                 <span className="fw-bold">{post.creatorUsername}</span>
