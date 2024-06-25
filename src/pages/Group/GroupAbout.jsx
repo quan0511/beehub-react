@@ -3,7 +3,6 @@ import { Col, Container, Image, Row, Table } from "react-bootstrap";
 import { ChatRightText, ClockFill, Eye, EyeSlash, GlobeAmericas, LockFill, PeopleFill } from "react-bootstrap-icons";
 
 export const GroupAbout = ({group}) =>{
-    console.log(group);
     const getDateCreate = ()=>{
         let datePost = new Date(group.created_at);
         return datePost.toLocaleString('en-GB');
