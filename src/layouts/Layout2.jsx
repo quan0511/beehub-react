@@ -4,6 +4,7 @@ import NavigatorBar from "../components/NavigatorBar";
 import Panel from "../components/Panel";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "react-bootstrap";
+import { closeMessageAlert } from "../features/userSlice";
 function Layout2(){
     const showMessage = useSelector((state)=> state.user.showMessage);
     const message = useSelector((state)=> state.user.message);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Badge, Button, Col, Container, Form, Image, InputGroup, Row } from "react-bootstrap";
-import { Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
+import { App, Ban, EyeFill, Messenger, Plus, Search, ThreeDots } from "react-bootstrap-icons";
 import APIService from "../../features/APIService";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,7 +61,7 @@ function GroupPeople({members}){
                     </Form>
                     <div className="p-2 my-3 d-flex flex-row justify-content-between align-items-center"  style={{borderTop: "2px solid grey",borderBottom: "2px solid grey"}}>
                         <div>
-                            {appUser.image!=null?
+                            {appUser.image!=null && appUser.image.length>0?
                              <Image src={appUser.image} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />
                             :(appUser.gender=='female'? <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />:
                             <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"60px",height: "60px",marginRight: "20px"}} roundedCircle />)
