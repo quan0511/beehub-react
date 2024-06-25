@@ -16,7 +16,7 @@ import Showcommentshare from './Showcomentshare';
 import {Image} from "react-bootstrap";
 import APIService from '../features/APIService';
 function ShowComment({
-  setFromSharePost,formSharePost,getPostById,
+  setFromSharePost,formSharePost,getPostById,notify,
   postIdco,getLikeUser,countLike,checkLike,getEnumEmo,refetchCountComment,refetchGetLikeUser,refetchCountLike,refetchCheckLike,refetchGetEnumEmo,refectGetNoteByUser,refetchCheckSeenNote
 }){
   const {data:getComment,refetch:refetchGetComment} = useCommentQuery({id:postIdco.id})
@@ -84,7 +84,7 @@ function ShowComment({
         return regex.test(userInput);
       });
       if(forbiddenWords){
-        alert("Your comment contains vulgar and inappropriate language");
+        notify();
         return;
       }
       setFormComment({...formComment, comment: userInput});
@@ -345,8 +345,8 @@ const handleBlur = (e) => {
     return color;
   }
     return(
-        <div className="modalshowpostandcomment">
-              <div key={postIdco.id} className="modelkhung">           
+        <div key={postIdco.id} className="modalshowpostandcomment"> 
+              <div  className="modelkhung">           
                 <div className="modalright-img ">
                 <Modal.Header className="classmodalheader" closeButton>
                   <Modal.Title className="modaltitleshowcomment">
@@ -482,7 +482,7 @@ const handleBlur = (e) => {
                   <div className="modalShowComment-showbinhluan">
                   
                   {getComment?.map((comment,index) => (
-                    <Comment key={index} refetchGetComment={refetchGetComment} refetchCountComment={refetchCountComment} comment={comment} postIdco={postIdco}/>
+                    <Comment key={index} notify={notify} refetchGetComment={refetchGetComment} refetchCountComment={refetchCountComment} comment={comment} postIdco={postIdco}/>
                     ))}              
                   </div>
                   </div>
@@ -498,20 +498,17 @@ const handleBlur = (e) => {
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
-                        <div>
+                        <div key={user.id}>
                         <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                           <a>
                             <div className="showuserli">
                               <div className="showuserlianhcomment"> 
                               {user.image!=null?
-                                <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
-                                    <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
-                                </Link> 
+                                <Image src={user.image} style={{width:"40px",height: "40px"}} roundedCircle />
                                 : (
                                 user.gender=='female'?
-                                  <Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}>
-                                  <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                                  :<Link className="showuserlianhrecomment" to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                  <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle />
+                                  :<Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                               )}
                               </div>
                               <div className="showuserliname">

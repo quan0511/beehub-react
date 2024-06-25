@@ -208,6 +208,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { ...comment }
             }),
+            invalidatesTags: ['Post']
         }),
         deletePostComment: builder.mutation({
             query: ({id}) => ({

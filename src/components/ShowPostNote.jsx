@@ -22,6 +22,7 @@ import ModalReport from "./ModalReport";
 import Comment from "./Comment";
 import { IoMdSend } from "react-icons/io";
 import SharePostNote from "./SharePostNote";
+import { SlLike } from "react-icons/sl";
 function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCheckSeenNote,calculateTimeDifference}){
   const user = useSelector(selectCurrentUser);
   const [showPostModal, setShowPostModal] = useState({});
@@ -630,7 +631,7 @@ function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCh
                         {checkLike ? (             
                         <span onClick={() => handleChangeRemoveLike(post.id)} className="click">{getEnumEmo}</span>
                         ) : (
-                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click">👍</span>
+                            <span onClick={() => handleChangeAddLike(post.id,'👍')} className="click"><SlLike /></span>
                         )}           
                         <p className="h6 mx-2 text-black-50">Like</p>
                     </div>
@@ -712,15 +713,14 @@ function ShowPostNote ({post, page,refetchHomePage,refectGetNoteByUser,refetchCh
                     </form>
                     <ul id="newMyInput-ul" className="myul" >
                       {getUserFriend?.map((user) => (
-                        <div>
+                        <div key={user.id}>
                         <li onClick={() => selectName(user.username, 'newCommentInput', 'newMyInput')} >
                           <a>
                             <div className="showuserli">
                               <div className="showuserlianhcomment"> {user.gender=='female'?(
-                              <Link to={"/member/profile/"+user.username}>
-                              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                               ):(
-                                <Link to={"/member/profile/"+user.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                                  <Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                               )}
                               </div>
                               <div className="showuserliname">

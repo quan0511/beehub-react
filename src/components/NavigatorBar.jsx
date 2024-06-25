@@ -17,6 +17,7 @@ import '../css/navigatorBar.css';
 import dateFormat from "dateformat";
 import { BiMinus } from "react-icons/bi";
 import { useChangeSeenNoteMutation, useCheckNoteSeenQuery, useGetNoteByUserQuery } from "../post/postApiSlice";
+import { selectWs } from "../messages/websocketSlice";
 
 function NavigatorBar() {
     const user = useSelector(selectCurrentUser);
@@ -25,8 +26,8 @@ function NavigatorBar() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [changeSeen] = useChangeSeenNoteMutation();
-    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
-    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id });
+    const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id}, {skip: !user?.id});
+    const { data: checkSeenNote, refetch: refetchCheckSeenNote } = useCheckNoteSeenQuery({ userId: user?.id }, {skip: !user?.id});
     const [show, setShow] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
@@ -36,6 +37,7 @@ function NavigatorBar() {
     const [newFriendNotification, setNewFriendNotification] = useState([]);
     const [joinedGroupNotification, setJoinedGroupNotification] = useState([]);
     const [toggleNote,setToggleNote] = useState(false);
+    
     const handleToggleNote = () =>{
         setToggleNote(!toggleNote);
     }
@@ -101,7 +103,6 @@ function NavigatorBar() {
           return `${secondsDifference} seconds ago`;
         }
       };
-      console.log('check seen: ',checkSeenNote)
     const tooltipAddFriend = isLoading ?
         (
             <Tooltip id="tooltip-loading" >
@@ -300,7 +301,7 @@ function NavigatorBar() {
                                             <div className="link-as-div" onClick={async () => {
                                                 await handleChangeSeenNote(note.id);
                                                 navigate(`/postnote/${note.post}`);
-  
+                                                window.location.reload();
                                             }}>
                                                 <div className="toggleNotification-avatarAndnoteTrue">
                                                     <div>

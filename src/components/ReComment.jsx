@@ -10,7 +10,7 @@ import {Link} from "react-router-dom";
 import { uniqueTerms } from '../utils/words';
 import {Image } from "react-bootstrap";
 import APIService from '../features/APIService';
-function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend,refetchCountReComment}){
+function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend,refetchCountReComment,notify}){
     const user = useSelector(selectCurrentUser);
     const [editReComment] = useUpdateReCommentMutation();
     const [deleteReComment] = useDeletePostReCommentMutation();
@@ -109,7 +109,7 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
         return regex.test(userInput);
       });
       if(forbiddenWords){
-        alert("Your comment contains vulgar and inappropriate language");
+        notify();
         return;
       }
       const updateReComment = {
@@ -296,17 +296,26 @@ function ReComment({postIdco,recomment,comment,refetchGetReComment,getUserFriend
         return selectedName;
       }
     }
+    console.log("recomment",recomment)
     return(
     <div className="model-showrecomment">
         <div className="modalthreedotrecomment">
             <div className="modal-showrecommentkhungcon">
             <div className="model-showrecommentanhdaidien">
-            {postIdco.user_gender=='female'?(
-            <Link to={"/member/profile/"+postIdco.user_username}>
-              <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-            ):(
-              <Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-            )}
+            {
+            (
+              recomment.userimage!=null?
+              <Link to={"/member/profile/"+recomment.username}>
+                  <Image src={recomment.userimage} style={{width:"40px",height: "40px"}} roundedCircle />
+              </Link> 
+              : (
+                recomment.usergender =='female'?
+                  <Link to={"/member/profile/"+recomment.username}>
+                  <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                  :<Link to={"/member/profile/"+recomment.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+              )
+            ) 
+          }
             </div>
             <div className="modarecommetthreedottraloi" style={{display:editReCommentId !== recomment.id ? 'block':'none'}}>
                 <div className="modalanhrecommentthreedot">
