@@ -44,11 +44,11 @@ function GroupDiscussion({group,posts, description, toAbout, toListMedia, list_m
         <Row className="group-section">
             <Col xl={7} lg={8} md={10} sm={10} className="mx-sm-auto ms-lg-auto ms-sm-0 mx-md-auto " >
                 {
-                    joined?
+                    joined && joined !="send request"?
                         <div className="border-1 rounded-2 border pe-2 text-start" onClick={handleOpenInputModal} style={{paddingTop:"10px", paddingLeft: "1px",boxShadow: "rgba(0, 0, 0, 0.03) 0px 1px 2px, rgba(0, 0, 0, 0.03) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 4px 8px, rgba(0, 0, 0, 0.03) 0px 8px 16px, rgba(0, 0, 0, 0.03) 0px 16px 32px, rgba(0, 0, 0, 0.03) 0px 32px 64px"}}>
                             <div className="row" style={{padding: "10px 20px "}}>
                                 <label className="col-1 ms-2 me-1 col-form-label">
-                                    {appUser.image!=null?
+                                    {appUser.image!=null && appUser.image.length>0?
                                     <Image src={appUser.image} style={{width:"50px",height: "50px"}}roundedCircle />
                                     :(appUser.gender=='female'?
                                     <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}}roundedCircle />
