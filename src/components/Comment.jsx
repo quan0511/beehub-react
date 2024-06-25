@@ -12,7 +12,7 @@ import { useCommentByIdQuery,  useCountReactionQuery, useDeletePostCommentMutati
 import { MdModeEdit } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
 import ReComment from './ReComment';
-function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
+function Comment({comment,postIdco,refetchGetComment,refetchCountComment,notify}){
     const user = useSelector(selectCurrentUser);
     const [toggleComment, setToggleComment] = useState({});
     const {data:getUserFriend} = useGetUserFriendQuery({id:user?.id})
@@ -96,7 +96,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
             return regex.test(userInput);
           });
           if(forbiddenWords){
-            alert("Your comment contains vulgar and inappropriate language");
+            notify();
             return;
           }
           const updateComment = {
@@ -191,7 +191,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           return regex.test(userInput);
         });
         if(forbiddenWords){
-          alert("Your comment contains vulgar and inappropriate language");
+          notify();
           return;
         }
         const updatedFormReComment = {
@@ -369,21 +369,16 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
         <div className="modal-showbinhluankhungcon">
           <div className="model-showbinhluananhdaidien">
           {
-            postIdco.group_id!=null && page!='group'?(
-              postIdco.group_image!=null?
-                <Link to={"/group/"+postIdco.group_id}><Image src={postIdcot.group_image} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                    :  <Link to={"/group/"+postIdco.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-            )
-            :(
-              postIdco.user_image!=null?
-              <Link to={"/member/profile/"+postIdco.user_username}>
-                  <Image src={postIdco.user_image} style={{width:"40px",height: "40px"}} roundedCircle />
+            (
+              comment.userimage!=null?
+              <Link to={"/member/profile/"+comment.username}>
+                  <Image src={comment.userimage} style={{width:"40px",height: "40px"}} roundedCircle />
               </Link> 
               : (
-                postIdco.user_gender=='female'?
-                  <Link to={"/member/profile/"+postIdco.user_username}>
+                comment.usergender =='female'?
+                  <Link to={"/member/profile/"+comment.username}>
                   <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                  :<Link to={"/member/profile/"+postIdco.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
+                  :<Link to={"/member/profile/"+comment.username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
               )
             ) 
           }
@@ -391,7 +386,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
           <div className="modalbinhluanthreedottraloi" style={{display:editCommentId !== comment.id ? 'block':'none'}}>
             <div className="modalanhbinhluanithreedot">
               <div className="modal-showbinhluantencomment" >
-                  <div className="modal-showbinhluanname">{comment.username}</div>
+                  <div className="modal-showbinhluanname">{comment.fullname}</div>
                   <div className="modal-showbinhluancomment">
                     {renderCommentWithLink(comment.comment)}
                   </div>
@@ -479,7 +474,7 @@ function Comment({comment,postIdco,refetchGetComment,refetchCountComment}){
       )}
       
       {viewReplies[comment.id] && getReComment && getReComment.map((recomment)=>(
-      <ReComment refetchCountReComment={refetchCountReComment} getUserFriend={getUserFriend} postIdco={postIdco} recomment={recomment} comment={comment} refetchGetReComment={refetchGetReComment} />
+      <ReComment notify={notify} refetchCountReComment={refetchCountReComment} getUserFriend={getUserFriend} postIdco={postIdco} recomment={recomment} comment={comment} refetchGetReComment={refetchGetReComment} />
       ))}
       {replyStates[comment.id] &&  (
       <div className="div-ReComment">

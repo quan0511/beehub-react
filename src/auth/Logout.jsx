@@ -4,6 +4,8 @@ import { useLogoutMutation } from "./authApiSlice";
 import { Navigate } from "react-router-dom";
 import BeehubSpinner from "../components/BeehubSpinner";
 import { logOut } from "./authSlice";
+import { closeChat } from "../messages/chatboxSlice";
+import { endWs } from "../messages/websocketSlice";
 
 function Logout() {
     const [logout, { isLoading }] = useLogoutMutation()
@@ -13,10 +15,11 @@ function Logout() {
         // logout from server
         await logout()
         // logout from client
+        dispatch(closeChat())
+        dispatch(endWs())
         dispatch(logOut())
     }
     useEffect(() => {
-        console.log('logout');
         handleLogout()
     })
     return isLoading ?

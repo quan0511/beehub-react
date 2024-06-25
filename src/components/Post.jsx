@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Form, Image, ListGroup, Overlay, Row } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import { ChatLeft, Dot, GearFill, GlobeAsiaAustralia, HandThumbsUp, HandThumbsUpFill, HeartFill, LockFill, People, PeopleFill, Reply, Shuffle, ThreeDots } from 'react-bootstrap-icons';
@@ -20,10 +20,11 @@ import EditPost from "./EditPost";
 import ShareForm from "./ShareForm";
 import SharePost from "./SharePost";
 import { useCreateReportMutation, useGetReportTypesQuery, useSettingPostMutation } from "../features/userApiSlice";
-import axios from "axios";
 import ModalReport from "./ModalReport";
-function Post ({post, page,refetchHomePage}){
+import { selectWs } from "../messages/websocketSlice";
+function Post ({post, page,refetchHomePage,notify,notifyPost}){
   const user = useSelector(selectCurrentUser);
+  const ws = useSelector(selectWs);
   const [showPostModal, setShowPostModal] = useState({});
   //const {data: post} = useFetchPostQuery({id:post.id})
   const token = useSelector(selectCurrentToken);
@@ -34,9 +35,9 @@ function Post ({post, page,refetchHomePage}){
     const [deletePost] = useDeletePostMutation();
     const [sharePost] = useSharePostMutation();
     const {data:getNoteByUser,refetch:refectGetNoteByUser} = useGetNoteByUserQuery({id:user?.id});
-    const {data:checkSeenNote,refetch:refetchCheckSeenNote} = useCheckNoteSeenQuery({id:user?.id});
-    const {data: countShare,refetch:refetchCountShare} = useCountShareQuery({id:post.id}) 
-    const {data:getPostById} = useFetchPostQuery({id:post.id});
+    const {data:checkSeenNote,refetch:refetchCheckSeenNote} = useCheckNoteSeenQuery({userId:user?.id}, {skip: !user?.id});
+    const {data: countShare,refetch:refetchCountShare} = useCountShareQuery({id:post.id});
+    const {data:getPostById,refetch:refetchGetPostById} = useFetchPostQuery({id:post.id});
     const {data:countComment,refetch:refetchCountComment} = useCountCommentQuery({id:post.id});
     const {data:countReacitonByPost,refetch:refetchCountReactionByPost} = useCountReactionByPostQuery({id:post.id});
     const { data: getLikeUser, refetch: refetchGetLikeUser } = useGetLikeUserQuery({ id: post.id });
@@ -51,6 +52,7 @@ function Post ({post, page,refetchHomePage}){
     const [showEditPost, setShowEditPost] = useState({});
     const [showLike, setShowLike] = useState({});
     const [showSettingPost, setShowSettingPost] = useState(false);
+    
     let reset = useSelector((state)=> state.user.reset);
     const handleCloseEditPost = (id) => {
       setShowEditPost((prevState) => ({
@@ -224,15 +226,39 @@ function Post ({post, page,refetchHomePage}){
       try {
         await deletePost({id});
         refetchCountShare();
+        refectGetNoteByUser();
         dispatch(showMessageAlert("Delete post successfully"));
         dispatch(resetData());
-        
       } catch (error) {
         console.log(error);
       }
     }
   };
+  const [userLikes, setUserLikes] = useState([])
+  useEffect(() => {
+    if (getLikeUser) {
+        setUserLikes(getLikeUser)
+    }
+}, [getLikeUser, userLikes])
+useEffect(() => {
+  if (!ws) return;
 
+  ws.onmessage = (event) => {
+      const socketMessage = JSON.parse(event.data);
+      if (socketMessage.type === 'RECEIVE_NOTI') {
+          let noti = JSON.parse(socketMessage.data)
+          refectGetNoteByUser();
+          refetchCheckSeenNote ();
+      }else if(socketMessage.type === 'RECEIVE_LIKE'){
+        let like = JSON.parse(socketMessage.data);
+          refetchGetLikeUser();
+          refetchCountLike();
+          refetchCheckLike();
+          refetchGetEnumEmo();
+          refectGetNoteByUser();
+      }
+  };
+}, [ws]);
   const [togglePost, setTogglePost] = useState({});
   const handleTogglePost = (postId) =>{
     setTogglePost((prevState) =>({
@@ -246,7 +272,7 @@ function Post ({post, page,refetchHomePage}){
         user: user?.id,
         post: postId,
         enumEmo: enumEmo,
-      });
+      }).unwrap();
       refetchGetLikeUser();
       refetchCountLike();
       refetchCheckLike();
@@ -254,21 +280,27 @@ function Post ({post, page,refetchHomePage}){
       refectGetNoteByUser();
       refetchCheckSeenNote();
       console.log(response);
+      ws.send(JSON.stringify({
+        type: 'SEND_NOTI',
+        data: JSON.stringify(response)
+      }))
     } catch (error) {
       console.error('Error occurred while liking:', error);
     }
   };
   const handleChangeUpdateLike = async (postId, enumEmo) => {
       try {
-        await updateLike({
+        const response =  await updateLike({
           user: user?.id, // Assuming user ID is 1
           post: postId,
           enumEmo: enumEmo,
-        });
+        }).unwrap();
         refetchGetLikeUser();
         refetchCountLike();
         refetchCheckLike();
         refetchGetEnumEmo();
+        console.log(response);
+        ws.send(JSON.stringify({ type: "SEND_LIKE", data: JSON.stringify(response) }));
       } catch (error) {
         console.error('Error occurred while updating like:', error);
       }
@@ -280,16 +312,17 @@ function Post ({post, page,refetchHomePage}){
         refetchCountLike();
         refetchCheckLike();
         refetchGetEnumEmo();
+        ws.send(JSON.stringify({ type: "SEND_LIKE", data: JSON.stringify(response) }));
       } catch (error) {
         console.error('Đã xảy ra lỗi khi gỡ bỏ lượt thích:', error);
       }
   };
-  
   const isLiked = () => {
       return checkLike === true; // Check if the post is liked by the user
   };
+    
     return (
-        <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>
+        <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>  
             <Row>
                 <Col xl={1} lg={1} md={1} sm={1} xs={1} className="mx-3">
                     {
@@ -382,7 +415,7 @@ function Post ({post, page,refetchHomePage}){
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body >
-                      <EditPost post={post} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
+                      <EditPost post={post} refetchGetPostById={refetchGetPostById} notifyPost={notifyPost} handleCloseEditPost={handleCloseEditPost} refetchHomePage={refetchHomePage} formUpdatePost={formUpdatePost} setFromUpdatePost={setFromUpdatePost}/>
                     </Modal.Body>
                     </div>
                   </div>
@@ -505,7 +538,7 @@ function Post ({post, page,refetchHomePage}){
                           [post.id]: false,
                         }))
                       } animation={false}>
-                      <ShowComment postIdco={post} refetchGetLikeUser={refetchGetLikeUser} refetchCountComment={refetchCountComment} getEnumEmo={getEnumEmo} checkLike={checkLike} setFromSharePost={setFromSharePost} formSharePost={formSharePost} getPostById={getPostById}
+                      <ShowComment notify={notify} postIdco={post} refetchGetLikeUser={refetchGetLikeUser} refetchCountComment={refetchCountComment} getEnumEmo={getEnumEmo} checkLike={checkLike} setFromSharePost={setFromSharePost} formSharePost={formSharePost} getPostById={getPostById}
                       countLike={countLike} refetchGetEnumEmo={refetchGetEnumEmo} refetchCheckLike={refetchCheckLike} refetchCountLike={refetchCountLike} refectGetNoteByUser={refectGetNoteByUser} refetchCheckSeenNote={refetchCheckSeenNote} getLikeUser={getLikeUser}/>
                     </Modal>
                     <ModalReport showReport={showReport} setShowReport={setShowReport} postTarget={post} />
