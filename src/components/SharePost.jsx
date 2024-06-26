@@ -33,7 +33,7 @@ function SharePost({post,getSettingType,calculateTimeDifference}){
           return `#${color.slice(2)}`;
         }
         return color;
-      }
+    }
     return(
         <Col xl={12} className="text-start sharekhung">
             <div className="useshare row">
@@ -45,9 +45,9 @@ function SharePost({post,getSettingType,calculateTimeDifference}){
                                 : <Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"40px",height: "40px"}} roundedCircle />
                         )
                         :(
-                            post.user_image!=null?
+                            post.usershareimage!=null?
                                 <Link to={"/member/profile/"+post.usershare_username}>
-                                    <Image src={post.user_image} style={{width:"40px",height: "40px"}} roundedCircle />
+                                    <Image src={post.usershareimage} style={{width:"40px",height: "40px"}} roundedCircle />
                                 </Link> 
                                 : (
                                     post.usershare_gender=='female'?

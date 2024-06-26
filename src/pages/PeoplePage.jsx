@@ -79,19 +79,7 @@ function PeoplePage(){
                             <hr/>
                             <Container fluid>
                                 <Row >
-                                    <Col xl={12} className="mb-3">
-                                    <Form >
-                                        <InputGroup >
-                                            <InputGroup.Text  style={{borderRight: 0,backgroundColor: "#ffffff"}}>
-                                                <Search />
-                                            </InputGroup.Text>
-                                            <Form.Control style={{borderLeft: 0}} 
-                                                placeholder="Search"
-                                                aria-describedby="basic-addon2"
-                                            />
-                                        </InputGroup>
-                                    </Form>
-                                    </Col>
+                                    
                                     {handleSelect()}
                                     
                                 </Row>

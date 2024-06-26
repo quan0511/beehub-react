@@ -320,7 +320,6 @@ useEffect(() => {
   const isLiked = () => {
       return checkLike === true; // Check if the post is liked by the user
   };
-    
     return (
         <div className="position-relative border-2 rounded-2 border-dark mt-4" style={{paddingTop:"20px", paddingLeft: "15px",paddingRight: "15px", boxShadow: "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px"}}>  
             <Row>
@@ -329,7 +328,7 @@ useEffect(() => {
                         post.group_id!=null && page!='group'?(
                             post.group_image!=null?
                             <Link to={"/group/"+post.group_id}><Image src={post.group_image} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
-                                :  <Link to={"/group/"+post.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                :  <Link to={"/group/"+post.group_id}><Image src={APIService.URL_REST_API+"/files/group_image.png"} style={{width:"50px",height: "50px",objectFit:"cover"}} roundedCircle /></Link>
                         )
                         :(
                             post.user_image!=null?
@@ -340,7 +339,7 @@ useEffect(() => {
                                     post.user_gender=='female'?
                                     <Link to={"/member/profile/"+post.user_username}>
                                     <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
-                                    :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px"}} roundedCircle /></Link>
+                                    :<Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"50px",height: "50px",objectFit:"cover"}} roundedCircle /></Link>
                                 )
                         ) 
                     }
@@ -394,7 +393,7 @@ useEffect(() => {
                      </div>
                    )
                    :(
-                     <div className="togglePost2">
+                     <div className="togglePost3">
                        {post.user_id != user.id?
                         <div className="selectedfunction" onClick={()=> setShowReport(true)}>
                           <div><MdReport className="iconefunctionpost" /></div>

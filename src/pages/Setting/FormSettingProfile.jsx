@@ -157,7 +157,7 @@ export const FormSettingProfile = ({user,setMessageToast})=>{
                 </Form.Group>
                 <Form.Group  className="mb-3">
                     <Form.Label>Birthday</Form.Label>
-                    <Form.Control type="date" name="birthday" value={values.birthday} onChange={handleChange}  />
+                    <Form.Control type="date" name="birthday" max={'2024-06-01'} value={values.birthday} onChange={handleChange}  />
                 </Form.Group>
                 <Form.Group  className="mb-3">
                     <Form.Label>Gender</Form.Label>

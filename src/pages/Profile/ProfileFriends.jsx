@@ -29,24 +29,7 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                         <Col xl={6} lg={6} md={5} sm={5}>
                             <h3>Friends</h3>
                         </Col>
-                        <Col xl={4} lg={4} md={5} sm={5}>
-                            <Form  >
-                                <InputGroup >
-                                    <InputGroup.Text id="basic-addon2" style={{borderRight: 0, borderTopLeftRadius: "50rem", borderBottomLeftRadius: "50rem",backgroundColor: "#ffffff"}}>
-                                        <Search />
-                                    </InputGroup.Text>
-                                    <Form.Control style={{borderLeft: 0 , borderTopRightRadius: "50rem", borderBottomRightRadius: "50rem"}} 
-                                        placeholder="Search Friends"
-                                        aria-describedby="basic-addon2"
-                                    />
-                                </InputGroup>
-                            </Form>
-                        </Col>
-                        <Col >
-                            <Button variant="secondary">
-                                <ThreeDots/>
-                            </Button>
-                        </Col>
+                        
                     </Row>
                     <hr/>
                     <Row xl={2} lg={2} md={2} sm={1}>
@@ -54,10 +37,10 @@ function ProfileFriends({appUser,friends,hideFriend,user_id}){
                             friends.map((friend,index)=>{
                                 let urlImage = friend.image!=null?friend.image: (friend.gender =='female'? APIService.URL_REST_API+"/files/user_female.png": APIService.URL_REST_API+"/files/user_male.png");
                                 return (<Col key={index}>
-                                            <Card className="p-1 mb-2 text-start">
+                                            <Card className="p-1 mb-2 text-start" style={{height:"167px"}}>
                                                 <Row className="g-0" >
                                                     <Col xl={3} md={3} sm={2}>
-                                                    <Link to={`/member/profile/${friend.username}`}><Image src={urlImage} fluid rounded /></Link>
+                                                    <Link to={`/member/profile/${friend.username}`}><Image src={urlImage} fluid rounded style={{height: "150px", width:"150px", objectFit: "cover"}} /></Link>
                                                     </Col>
                                                     <Col xl={5} md={5} sm={6} className="d-flex flex-column ms-auto justify-content-center align-items-start ps-4">
                                                         <h4>

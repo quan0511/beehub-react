@@ -144,7 +144,7 @@ function Group (){
                                     group.public_group || group.member_role!=null?
                                     group.group_members.map((member,index)=>{
                                         let urlImg = member.user_image ? member.user_image: (member.user_gender=='female'? APIService.URL_REST_API+"/files/user_female.png":APIService.URL_REST_API+"/files/user_male.png");
-                                        return <Image key={index} src={urlImg} width={40} roundedCircle />
+                                        return <Image key={index} src={urlImg} style={{width: "40px", height:"40px",objectFit: "cover"}} roundedCircle />
                                     })
                                     :
                                     <></>

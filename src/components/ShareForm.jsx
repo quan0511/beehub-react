@@ -78,12 +78,15 @@ function ShareForm({setFromSharePost,formSharePost,post,handleShareClose,refetch
         <form onSubmit={handleSubmitSharePost} >
             <div className="modalpost-nameanh">
                 <div className="model-showbinhluananhdaidien">
-                {post.user_gender=='female'?(
-                  <Link to={"/member/profile/"+post.user_username}>
-                    <Image src={APIService.URL_REST_API+"/files/user_female.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                  ):(
-                    <Link to={"/member/profile/"+post.user_username}><Image src={APIService.URL_REST_API+"/files/user_male.png"} style={{width:"40px",height: "40px"}} roundedCircle /></Link>
-                  )}
+                {
+                user?.image?
+                    <Image src={user.image} style={{width:"43px",height: "43px",objectFit:"cover"}}roundedCircle />
+                :(
+                    user?.gender=='female'?
+                    <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"43px",height: "43px"}}roundedCircle />
+                    :<Image src={`${APIService.URL_REST_API}/files/user_male.png`} style={{width:"43px",height: "43px"}}roundedCircle />
+                )
+              }
                 </div>
                 <div className="modalpost-name">Name</div>
             </div>

@@ -22,7 +22,6 @@ const AddPost = ({handleCloseModal,group,notifyPost}) => {
     const handleToggleBackground= () =>{
       setViewFoundBackground((prevSate) => !prevSate);
     }
-    console.log('user',user);
     const [divClass, setDivClass] = useState({color: 'inherit', background: 'inherit'});
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState({ color: '', background: '' });
@@ -304,7 +303,7 @@ const AddPost = ({handleCloseModal,group,notifyPost}) => {
               <div className="model-showbinhluananhdaidien">
               {
                 user?.image?
-                    <Image src={user.image} style={{width:"43px",height: "43px"}}roundedCircle />
+                    <Image src={user.image} style={{width:"43px",height: "43px",objectFit:"cover"}}roundedCircle />
                 :(
                     user?.gender=='female'?
                     <Image src={`${APIService.URL_REST_API}/files/user_female.png`} style={{width:"43px",height: "43px"}}roundedCircle />

@@ -38,7 +38,7 @@ function SessionLeft ({appUser}){
                     <div className="d-flex flex-column align-items-center ">
                         <Link to={"/member/profile/"+user.username} className="text-decoration-none ">
                             { user.image!=null?
-                                <Image src={user.image} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto"}} roundedCircle className="d-block" />
+                                <Image src={user.image} style={{width:"50px",height: "50px",marginLeft: "auto",marginRight: "auto",objectFit:"cover"}} roundedCircle className="d-block" />
                                 :
                                 (
                                     user.gender == 'female'? 

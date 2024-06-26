@@ -344,7 +344,7 @@ function Profile (){
                                     <Col xl={2} lg={3} md={2} sm={12} className="d-flex justify-content-md-center align-items-center ms-md-3">
                                         <ListGroup horizontal>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">
-                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships.length}</span><span className="d-block text-black-50">Friends</span></p>
+                                                <p className="text-center fs-5"><span className="fw-bold">{user.relationships ==null? "0": user.relationships.filter((e)=> e.typeRelationship !="BLOCKED").length}</span><span className="d-block text-black-50">Friends</span></p>
                                                 
                                             </ListGroup.Item>
                                             <ListGroup.Item className="w-50 border-0 px-md-2">

@@ -21,12 +21,12 @@ function TopBar({ sidebarOpen, setSidebarOpen }) {
                 </Nav>
                 <Nav className="ms-auto">
                     <Nav.Item className="d-flex align-items-center me-4">
-                        <Form className="">
+                        {/* <Form className="">
                             <Form.Control
                                 type="text"
                                 placeholder="Search"
                             />
-                        </Form>
+                        </Form> */}
                     </Nav.Item>
                     <Hero
                         img={"https://scontent.fsgn5-10.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?stp=cp0_dst-png_p40x40&_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_ohc=RgLVRluimRUQ7kNvgGJ3dOK&_nc_ht=scontent.fsgn5-10.fna&oh=00_AYC_l9mz6D3hGtnGi07Zah4S62I1RMgwL0dWjggzvPO-4w&oe=6680C938"}

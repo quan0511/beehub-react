@@ -36,8 +36,10 @@ function PeopleCard({img,people, size}){
     return (
         <Card className="people-card h-100" style={{ padding: "10px 15px" ,transition: "box-shadow .3s"}}>
             <Card.Body className="m-0 py-3 px-0 text-center d-flex flex-column">
-                <Link to={"/member/profile/"+people.username}>
-                    <Image src={img} width={200} height={200} roundedCircle fluid  />
+                <Link to={"/member/profile/"+people.username} 
+                style={{height:'200px'}}
+                >
+                    <Image src={img}  roundedCircle fluid style={{objectFit:"cover", height:'200px',width:"200px"}}  />
                 </Link>
                 <div className="my-2" style={{height:"30px"}}>
                     <Link className="text-decoration-none text-black d-flex flex-row justify-content-center align-items-center" to={"/member/profile/"+people.username}>

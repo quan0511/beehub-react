@@ -408,7 +408,6 @@ function EditPost({post,formUpdatePost,setFromUpdatePost,refetchHomePage,handleC
                   ))}
                   </ul>
                   <div className="modalpost-image">
-                  <div aria-label="file" className="modalpost-xoafile" ><FaXmark className="modalpost-iconxoafile" /></div>
                       <div className="modalpost-imagechil" >
                           <img src={formUpdatePost.medias} alt="" width="100%" height="100%"/>
                           
