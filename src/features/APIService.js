@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class APIService {    
-    URL_REST_API = 'http://localhost:8080/api';
+    URL_REST_API = 'https://beehub-spring.onrender.com/api';
     
     createRequirement = async (id, data, token) => {
         let isSuccess;

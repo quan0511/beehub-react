@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selectCurrentToken } from '../auth/authSlice';
 
-const baseURL = 'http://localhost:8080/api';
+const baseURL = 'https://beehub-spring.onrender.com/api';
 
 export const axiosInstance = axios.create({
     baseURL,
